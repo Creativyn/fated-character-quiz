@@ -1,0 +1,258 @@
+/* =========================
+   Base + Reset
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+.result-heading {
+  margin: 16px 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================
+   Accessibility helpers
+========================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: #fff;
+  color: #000;
+  padding: 8px 12px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 10px;
+}
+
+/* =========================
+   Layout
+========================= */
+
+.header {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* =========================
+   Quiz Questions
+========================= */
+
+.question {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.question legend {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.answers {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.answer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.answer:hover {
+  background: #1f2937;
+}
+
+.answer input {
+  transform: scale(1.1);
+}
+
+/* Focus visibility */
+.answer input:focus + span,
+.answer:focus-within {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* =========================
+   Buttons
+========================= */
+
+.actions,
+.results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #2563eb;
+  color: white;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+/* =========================
+   Results Section
+========================= */
+
+.hidden {
+  display: none;
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#results-container {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Personality Card */
+.result-card {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1rem;
+  align-items: center;
+  background: #111827;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #1f2937;
+}
+
+.result-card img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.result-title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+/* Progress bar */
+.bar {
+  width: 100%;
+  height: 10px;
+  background: #1f2937;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+/* =========================
+   Footer
+========================= */
+
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   Print Styles
+========================= */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .header,
+  .actions,
+  .results-actions,
+  .footer {
+    display: none !important;
+  }
+
+  .result-card {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+  }
+}

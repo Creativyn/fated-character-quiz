@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personality Quiz</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#quiz">Skip to quiz</a>
+
+    <header class="header">
+      <h1 id="title">Personality Quiz</h1>
+      <p class="subtitle">Discover your dominant personality blend</p>
+    </header>
+
+    <main>
+      <!-- QUIZ SECTION -->
+      <section id="quiz-section" aria-labelledby="title">
+        <form id="quiz" aria-describedby="quiz-instructions">
+          <p id="quiz-instructions" class="sr-only">
+            Select one answer for each question, then submit to see your
+            results.
+          </p>
+
+          <div id="questions-container"></div>
+
+          <div class="actions">
+            <button type="submit" id="submit-btn">See My Results</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- RESULTS SECTION -->
+      <section id="results-section" class="hidden" aria-live="polite">
+        <div class="results-header">
+          <h2>Your Personality Results</h2>
+          <p id="top-result"></p>
+        </div>
+
+        <div id="results-container"></div>
+
+        <div class="results-actions">
+          <button id="retake-btn" type="button">Retake Quiz</button>
+          <button id="share-btn" type="button">Share Results</button>
+          <button id="print-btn" type="button">Print</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
