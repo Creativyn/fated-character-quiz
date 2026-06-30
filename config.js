@@ -115,7 +115,7 @@ export const PERSONALITIES = [
   },
   {
     id: "justene",
-    name: "Justene Triumfs",
+    name: "Justene Triumfes",
     icon: "🎭",
     color: "#e535a1",
     accent: "#e469b5",
