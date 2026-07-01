@@ -5,6 +5,7 @@ export function renderResults(results) {
   container.innerHTML = "";
 
   const top = results[0];
+  window.__TOP_PERSONALITY__ = top.id;
   if (!top) return;
 
   // Top headline only
