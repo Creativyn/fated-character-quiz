@@ -126,24 +126,6 @@ function showResults(results) {
 /* -----------------------------
    Init
 ------------------------------ */
-
-function initQuiz() {
-  const container = document.getElementById("questions-container");
-
-  if (!container) {
-    console.warn("questions-container not ready, retrying...");
-    setTimeout(initQuiz, 50);
-    return;
-  }
-
-  buildQuiz(QUESTIONS);
-  refreshLayout();
-}
-
-// -----------------------------
-// Routing
-// -----------------------------
-
 const forcedResultId = getRoute();
 
 if (forcedResultId) {
@@ -159,7 +141,7 @@ if (forcedResultId) {
     ]);
   }
 } else {
-  initQuiz();
+  showQuiz(); // builds + reveals quiz correctly
 }
 
 /* -----------------------------
