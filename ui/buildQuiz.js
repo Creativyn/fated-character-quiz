@@ -1,3 +1,5 @@
+console.log("🔥 buildQuiz CALLED");
+
 export function buildQuiz(QUESTIONS) {
   console.log("A. buildQuiz entered");
 
