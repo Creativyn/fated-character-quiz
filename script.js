@@ -1,3 +1,10 @@
+console.log("SCRIPT LOADED");
+console.log("buildQuiz =", buildQuiz);
+console.log("QUESTIONS =", QUESTIONS);
+console.log(QUESTIONS.length);
+
+console.log("container:", document.getElementById("questions-container"));
+
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
 
