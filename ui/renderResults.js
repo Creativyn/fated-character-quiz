@@ -7,50 +7,45 @@ export function renderResults(results) {
   const top = results[0];
   if (!top) return;
 
-  topResult.textContent = `Your top personality is ${top.name} (${top.percent}%)`;
+  // Top headline only
+  topResult.textContent = `You are ${top.heading}`;
 
-  const fragment = document.createDocumentFragment();
+  // Single card instead of loop
+  const card = document.createElement("div");
+  card.className = "result-card";
 
-  results.forEach((p) => {
-    const card = document.createElement("div");
-    card.className = "result-card";
+  const img = document.createElement("img");
+  img.src = top.image;
+  img.alt = top.name;
 
-    const title = document.createElement("div");
-    title.className = "result-title";
+  const content = document.createElement("div");
 
-    const left = document.createElement("span");
-    const right = document.createElement("span");
+  const title = document.createElement("div");
+  title.className = "result-title";
 
-    left.textContent = p.name;
-    right.textContent = `${p.percent}%`;
+  const left = document.createElement("span");
+  const right = document.createElement("span");
 
-    title.append(left, right);
+  left.textContent = `${top.name}`;
+  right.textContent = `${top.percent}%`;
 
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    bar.setAttribute("role", "progressbar");
-    bar.setAttribute("aria-valuemin", "0");
-    bar.setAttribute("aria-valuemax", "100");
-    bar.setAttribute("aria-valuenow", p.percent);
-    bar.setAttribute("aria-label", `${p.name} compatibility`);
+  title.append(left, right);
 
-    const fill = document.createElement("div");
-    fill.className = "bar-fill";
-    fill.style.width = `${p.percent}%`;
-    fill.style.background = p.color;
+  const bar = document.createElement("div");
+  bar.className = "bar";
 
-    bar.appendChild(fill);
+  const fill = document.createElement("div");
+  fill.className = "bar-fill";
+  fill.style.width = `${top.percent}%`;
+  fill.style.background = top.color;
 
-    const heading = document.createElement("h3");
-    heading.className = "result-heading";
-    heading.textContent = p.heading;
+  bar.appendChild(fill);
 
-    const desc = document.createElement("p");
-    desc.textContent = p.description;
+  const desc = document.createElement("p");
+  desc.textContent = top.description;
 
-    card.append(title, bar, heading, desc);
-    fragment.appendChild(card);
-  });
+  content.append(title, bar, desc);
+  card.append(img, content);
 
-  container.appendChild(fragment);
+  container.appendChild(card);
 }
