@@ -1,53 +1,51 @@
-console.log("🔥 buildQuiz CALLED");
+console.log("🔥 buildQuiz loaded");
 
 export function buildQuiz(QUESTIONS) {
   console.log("A. buildQuiz entered");
 
-  const container = document.getElementById("questions-container");
+  const container = document.querySelector("#questions-container");
 
   if (!container) {
-    console.error("Container not found");
+    console.error("❌ #questions-container NOT FOUND");
     return;
   }
 
   container.innerHTML = "";
 
-  const fragment = document.createDocumentFragment();
+  console.log("APPENDING INTO:", container);
 
   QUESTIONS.forEach((q, index) => {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
     const legend = document.createElement("legend");
-    legend.textContent = `${index + 1}. ${q.text}`;
-    legend.id = q.id;
-    fieldset.setAttribute("aria-labelledby", q.id);
+    legend.textContent = q.text || q.question || `Question ${index + 1}`;
 
-    const answersWrap = document.createElement("div");
-    answersWrap.className = "answers";
+    fieldset.appendChild(legend);
 
-    q.answers.forEach((a) => {
+    const answers = q.answers || q.options || [];
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "answers";
+
+    answers.forEach((a) => {
       const label = document.createElement("label");
       label.className = "answer";
 
       const input = document.createElement("input");
       input.type = "radio";
-      input.name = q.id;
-      input.value = a.value;
-      input.required = true;
+      input.name = q.id || `q${index}`;
+      input.value = a.value ?? a;
 
-      const span = document.createElement("span");
-      span.textContent = a.text;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(a.text ?? a));
 
-      label.append(input, span);
-      answersWrap.appendChild(label);
+      wrapper.appendChild(label);
     });
 
-    fieldset.append(legend, answersWrap);
-    fragment.appendChild(fieldset);
+    fieldset.appendChild(wrapper);
+    container.appendChild(fieldset);
   });
 
-  container.appendChild(fragment);
-
-  console.log("E. Done. Child count:", container.children.length);
+  console.log("✅ QUESTIONS RENDERED:", container.children.length);
 }

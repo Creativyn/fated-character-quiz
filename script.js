@@ -5,7 +5,6 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS);
 
 /* -----------------------------
    DOM
@@ -21,31 +20,7 @@ const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
 
 /* -----------------------------
-   SAFE RESIZE SYSTEM (FIXED)
------------------------------- */
-
-function sendHeight() {
-  const height = Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-  );
-
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESIZE",
-      height,
-    },
-    "*",
-  );
-}
-
-// IMPORTANT: used by renderResults.js (fixes your crash)
-window.requestResize = () => {
-  requestAnimationFrame(sendHeight);
-};
-
-/* -----------------------------
-   Wait helper
+   WAIT UTILITY
 ------------------------------ */
 
 function waitForElement(selector, timeout = 5000) {
@@ -68,36 +43,36 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 /* -----------------------------
-   INIT
+   RESIZE (Wix-safe single source)
 ------------------------------ */
 
-async function bootApp() {
-  console.log("🚀 Boot starting...");
+function sendHeight() {
+  const height = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+  );
 
-  try {
-    await waitForElement("#questions-container");
+  window.parent.postMessage({ type: "FATED_QUIZ_RESIZE", height }, "*");
+}
 
-    buildQuiz(QUESTIONS);
+function initResize() {
+  const ro = new ResizeObserver(() => {
+    requestAnimationFrame(sendHeight);
+  });
 
-    showQuiz();
+  ro.observe(document.body);
 
-    requestResize();
-
-    console.log("✅ Boot complete");
-  } catch (err) {
-    console.error("BOOT FAILED:", err);
-  }
+  window.addEventListener("load", sendHeight);
 }
 
 /* -----------------------------
-   UI
+   UI STATE
 ------------------------------ */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
-
-  requestResize();
+  requestAnimationFrame(sendHeight);
 }
 
 function showResults(results) {
@@ -125,11 +100,31 @@ function showResults(results) {
     "*",
   );
 
-  requestResize();
+  requestAnimationFrame(sendHeight);
 }
 
 /* -----------------------------
-   Submit
+   BOOT
+------------------------------ */
+
+async function bootApp() {
+  console.log("🚀 Boot starting...");
+
+  await waitForElement("#questions-container");
+
+  buildQuiz(QUESTIONS);
+
+  initResize();
+
+  showQuiz();
+
+  requestAnimationFrame(sendHeight);
+
+  console.log("✅ Boot complete");
+}
+
+/* -----------------------------
+   QUIZ SUBMIT
 ------------------------------ */
 
 if (quizForm) {
@@ -163,7 +158,7 @@ if (quizForm) {
 }
 
 /* -----------------------------
-   Buttons
+   BUTTONS
 ------------------------------ */
 
 retakeBtn?.addEventListener("click", () => {
@@ -190,35 +185,10 @@ shareBtn?.addEventListener("click", async () => {
       });
     } else {
       await navigator.clipboard.writeText(shareUrl);
-      alert("Share link copied!");
+      alert("Link copied!");
     }
   } catch (err) {
     console.error(err);
-  }
-});
-
-/* -----------------------------
-   Messages (optional external control)
------------------------------- */
-
-window.addEventListener("message", (event) => {
-  const { type, payload } = event.data || {};
-
-  if (type === "FATED_SHOW_RESULT") {
-    const personality = PERSONALITIES.find((p) => p.id === payload?.id);
-    if (!personality) return;
-
-    showResults([
-      {
-        ...personality,
-        score: 1,
-        percent: 100,
-      },
-    ]);
-  }
-
-  if (type === "FATED_SHOW_QUIZ") {
-    showQuiz();
   }
 });
 
