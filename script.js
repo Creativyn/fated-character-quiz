@@ -8,12 +8,15 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 function getRoute() {
-  const forcedResultId = getRoute();
   const hash = window.location.hash;
   const match = hash.match(/^#\/result\/(.+)$/);
   return match ? match[1] : null;
 }
 
+function getResultFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("result");
+}
 
 if (forcedResultId) {
   const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
@@ -64,24 +67,33 @@ quizForm.addEventListener("submit", (e) => {
   const quizForm = document.getElementById("quiz");
   const resultsSection = document.getElementById("results-section");
   const quizSection = document.getElementById("quiz-section");
-});
 
-document.getElementById("retake-btn").addEventListener("click", () => {
-  quizForm.reset();
+  
 
-  resultsSection.classList.add("hidden");
-  quizSection.classList.remove("hidden");
+  function getResultFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("result");
+  }
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+z  document.getElementById("retake-btn").addEventListener("click", () => {
+    quizForm.reset();
 
-document.getElementById("print-btn").addEventListener("click", () => {
-  window.print();
+    resultsSection.classList.add("hidden");
+    quizSection.classList.remove("hidden");
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  document.getElementById("print-btn").addEventListener("click", () => {
+    window.print();
+  });
+
   document.getElementById("share-btn").addEventListener("click", async () => {
     const top = document.getElementById("top-result").textContent;
 
-    const topId = window.__TOP_PERSONALITY__;
-    const shareUrl = `${window.location.origin}/#/result/${topId}`;
+    const topId = window.__TOP_PERSONALITY__; // we'll add this next
+
+    const shareUrl = `${window.location.origin}/#/result/${top.id}`;
 
     if (navigator.share) {
       await navigator.share({
@@ -94,9 +106,10 @@ document.getElementById("print-btn").addEventListener("click", () => {
       alert("Share link copied!");
     }
   });
-
   console.log(results);
-  renderResults(results, (window.__TOP_PERSONALITY__ = top.id));
+  renderResults(results);
+  const resultsSection = document.getElementById("results-section");
+  const quizSection = document.getElementById("quiz-section");
 
   resultsSection.classList.remove("hidden");
   quizSection.classList.add("hidden");
