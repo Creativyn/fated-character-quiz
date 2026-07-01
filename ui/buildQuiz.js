@@ -24,27 +24,6 @@ export function buildQuiz(QUESTIONS) {
 
     const legend = document.createElement("legend");
     legend.textContent = `${index + 1}. ${q.text}`;
-
-    fieldset.appendChild(legend);
-
-    fragment.appendChild(fieldset);
-  });
-
-  console.log("D. Appending fragment");
-
-  container.appendChild(fragment);
-
-  console.log("E. Done. Child count:", container.children.length);
-}
-
-  const fragment = document.createDocumentFragment();
-
-  QUESTIONS.forEach((q, index) => {
-    const fieldset = document.createElement("fieldset");
-    fieldset.className = "question";
-
-    const legend = document.createElement("legend");
-    legend.textContent = `${index + 1}. ${q.text}`;
     legend.id = q.id;
     fieldset.setAttribute("aria-labelledby", q.id);
 
@@ -72,5 +51,9 @@ export function buildQuiz(QUESTIONS) {
     fragment.appendChild(fieldset);
   });
 
+  console.log("D. Appending fragment");
+
   container.appendChild(fragment);
+
+  console.log("E. Done. Child count:", container.children.length);
 }
