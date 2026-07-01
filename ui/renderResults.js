@@ -2,22 +2,31 @@ export function renderResults(results) {
   const container = document.getElementById("results-container");
   const topResult = document.getElementById("top-result");
 
-  container.innerHTML = "";
-
-  const top = results[0];
-  window.__TOP_PERSONALITY__ = top.id;
+  const top = results?.[0];
   if (!top) return;
 
-  // Top headline only
+  container.innerHTML = "";
+
+  window.__TOP_PERSONALITY__ = top.id;
+
   topResult.textContent = `You are ${top.heading}`;
 
-  // Single card instead of loop
   const card = document.createElement("div");
   card.className = "result-card";
 
   const img = document.createElement("img");
   img.src = top.image;
   img.alt = top.name;
+
+  img.addEventListener("load", () => {
+    window.parent.postMessage(
+      {
+        type: "FATED_QUIZ_RESIZE",
+        height: document.body.scrollHeight,
+      },
+      "*",
+    );
+  });
 
   const content = document.createElement("div");
 
@@ -27,7 +36,7 @@ export function renderResults(results) {
   const left = document.createElement("span");
   const right = document.createElement("span");
 
-  left.textContent = `${top.name}`;
+  left.textContent = top.name;
   right.textContent = `${top.percent}%`;
 
   title.append(left, right);
