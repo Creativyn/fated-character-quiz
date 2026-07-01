@@ -38,7 +38,6 @@ export const PERSONALITIES = [
     name: "Hoep Majesticus",
     color: "#8E44AD",
     accent: "#C39BD3",
-
     image: "images/guardian.webp",
     heading: "You are Hoep!",
     description:
