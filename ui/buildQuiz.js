@@ -3,8 +3,6 @@ export function buildQuiz(QUESTIONS) {
 
   const container = document.getElementById("questions-container");
 
-  console.log("B. container =", container);
-
   if (!container) {
     console.error("Container not found");
     return;
@@ -14,11 +12,7 @@ export function buildQuiz(QUESTIONS) {
 
   const fragment = document.createDocumentFragment();
 
-  console.log("C. QUESTIONS =", QUESTIONS.length);
-
   QUESTIONS.forEach((q, index) => {
-    console.log("Adding question", index + 1);
-
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
@@ -50,8 +44,6 @@ export function buildQuiz(QUESTIONS) {
     fieldset.append(legend, answersWrap);
     fragment.appendChild(fieldset);
   });
-
-  console.log("D. Appending fragment");
 
   container.appendChild(fragment);
 
