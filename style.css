@@ -229,6 +229,16 @@ button:active {
   max-width: 100%;
 }
 
+.result-card.compact {
+  grid-template-columns: 1fr;
+  padding: 0.75rem 1rem;
+  opacity: 0.85;
+}
+
+.result-card.compact p {
+  display: none;
+}
+
 .result-title {
   display: flex;
   justify-content: space-between;
