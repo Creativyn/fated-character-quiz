@@ -18,7 +18,7 @@ body {
     "EB Garamond",
     Garamond,
     serif;
-  background: #0f172a;
+  background: #566fb8;
   color: #e5e7eb;
   line-height: 1.5;
 }
@@ -109,7 +109,7 @@ main {
 ========================= */
 
 .question {
-  background: #111827;
+  background: #566fb8;
   border: 1px solid #1f2937;
   border-radius: 12px;
   padding: 1rem;
@@ -216,7 +216,7 @@ button:active {
   grid-template-columns: 80px 1fr;
   gap: 1rem;
   align-items: center;
-  background: #111827;
+  background: #566fb8;
   border-radius: 12px;
   padding: 1rem;
   border: 1px solid #1f2937;

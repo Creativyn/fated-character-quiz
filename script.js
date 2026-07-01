@@ -97,12 +97,20 @@ document.fonts?.ready?.then(refreshLayout);
 ------------------------------ */
 
 function showQuiz() {
+  console.log("showQuiz() called");
+
+  const container = document.getElementById("questions-container");
+
+  if (container && container.children.length === 0) {
+    console.log("Calling buildQuiz()");
+    buildQuiz(QUESTIONS);
+  }
+
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
   refreshLayout();
+}
 }
 
 function showResults(results) {

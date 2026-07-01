@@ -1,8 +1,18 @@
 export function buildQuiz(QUESTIONS) {
+  console.log("✅ buildQuiz() called");
+
   const container = document.getElementById("questions-container");
-  if (!container) return;
+  console.log("Container:", container);
+
+  if (!container) {
+    console.error("questions-container not found!");
+    return;
+  }
 
   container.innerHTML = "";
+
+  // ...rest of your existing code...
+}
 
   const fragment = document.createDocumentFragment();
 
