@@ -1,16 +1,12 @@
-console.log("SCRIPT LOADED");
-console.log("buildQuiz =", buildQuiz);
-console.log("QUESTIONS =", QUESTIONS);
-console.log(QUESTIONS.length);
-
-console.log("container:", document.getElementById("questions-container"));
-
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
-
 import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
+
+console.log("SCRIPT LOADED");
+console.log("buildQuiz:", buildQuiz);
+console.log("QUESTIONS:", QUESTIONS);
 
 /* -----------------------------
    DOM
