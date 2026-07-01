@@ -18,6 +18,10 @@ const retakeBtn = document.getElementById("retake-btn");
 const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
 
+const ALLOWED_ORIGIN = "https://your-site.wixsite.com";
+if (event.origin !== ALLOWED_ORIGIN) return;
+window.parent.postMessage(message, ALLOWED_ORIGIN);
+
 /* -----------------------------
    Routing
 ------------------------------ */
@@ -25,6 +29,30 @@ const shareBtn = document.getElementById("share-btn");
 function getRoute() {
   const match = window.location.hash.match(/^#\/result\/(.+)$/);
   return match ? match[1] : null;
+}
+
+function postResize(height) {
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESIZE",
+      height,
+    },
+    "*",
+  );
+}
+
+function postResult(top) {
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESULT",
+      payload: {
+        id: top.id,
+        name: top.name,
+        percent: top.percent,
+      },
+    },
+    "*",
+  );
 }
 
 /* -----------------------------
@@ -237,3 +265,33 @@ if (shareBtn) {
     }
   });
 }
+
+window.addEventListener("message", (event) => {
+  const { type, payload } = event.data || {};
+
+  switch (type) {
+    case "FATED_SHOW_RESULT":
+      if (!payload?.id) return;
+
+      const personality = PERSONALITIES.find((p) => p.id === payload.id);
+
+      if (!personality) return;
+
+      showResults([
+        {
+          ...personality,
+          score: 1,
+          percent: 100,
+        },
+      ]);
+      break;
+
+    case "FATED_SHOW_QUIZ":
+      showQuiz();
+      break;
+
+    case "FATED_REFRESH_LAYOUT":
+      refreshLayout();
+      break;
+  }
+});
