@@ -18,10 +18,6 @@ const retakeBtn = document.getElementById("retake-btn");
 const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
 
-const ALLOWED_ORIGIN = "https://your-site.wixsite.com";
-if (event.origin !== ALLOWED_ORIGIN) return;
-window.parent.postMessage(message, ALLOWED_ORIGIN);
-
 /* -----------------------------
    Routing
 ------------------------------ */
@@ -119,17 +115,7 @@ function showResults(results) {
 
   window.__TOP_PERSONALITY__ = top.id;
 
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESULT",
-      payload: {
-        id: top.id,
-        name: top.name,
-        percent: top.percent,
-      },
-    },
-    "*",
-  );
+  postResult(top);
 
   refreshLayout();
 }
