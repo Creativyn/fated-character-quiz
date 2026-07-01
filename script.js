@@ -34,4 +34,9 @@ quizForm.addEventListener("submit", (e) => {
   });
 
   renderResults(results);
+  const resultsSection = document.getElementById("results-section");
+  const quizSection = document.getElementById("quiz-section");
+
+  resultsSection.classList.remove("hidden");
+  quizSection.classList.add("hidden");
 });
