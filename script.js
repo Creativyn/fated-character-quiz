@@ -1,3 +1,5 @@
+console.log("SCRIPT LOADED");
+
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
 
@@ -13,6 +15,7 @@ const validationMessage = document.getElementById("validation-message");
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  console.log("FORM SUBMITTED");
   const formData = new FormData(quizForm);
 
   // ✅ VALIDATION GOES HERE (BEFORE CALCULATION)
@@ -33,5 +36,11 @@ quizForm.addEventListener("submit", (e) => {
     questions: QUESTIONS,
   });
 
+  console.log(results);
   renderResults(results);
+  const resultsSection = document.getElementById("results-section");
+  const quizSection = document.getElementById("quiz-section");
+
+  resultsSection.classList.remove("hidden");
+  quizSection.classList.add("hidden");
 });

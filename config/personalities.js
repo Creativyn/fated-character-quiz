@@ -38,7 +38,6 @@ export const PERSONALITIES = [
     name: "Hoep Majesticus",
     color: "#8E44AD",
     accent: "#C39BD3",
-
     image: "images/guardian.webp",
     heading: "You are Hoep!",
     description:
@@ -87,10 +86,6 @@ export const PERSONALITIES = [
   {
     id: "justene",
     name: "Justene Triumfes",
-<<<<<<< HEAD:config/personalities.js
-=======
-    icon: "🎭",
->>>>>>> 8afa46322c8c117a7e3b2e786feb1a9dfb8346e0:config.js
     color: "#e535a1",
     accent: "#e469b5",
     image: "images/entertainer.webp",
