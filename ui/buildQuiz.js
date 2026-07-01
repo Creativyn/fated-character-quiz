@@ -1,0 +1,43 @@
+export function buildQuiz(QUESTIONS) {
+  const container = document.getElementById("questions-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const fragment = document.createDocumentFragment();
+
+  QUESTIONS.forEach((q, index) => {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "question";
+
+    const legend = document.createElement("legend");
+    legend.textContent = `${index + 1}. ${q.text}`;
+    legend.id = q.id;
+    fieldset.setAttribute("aria-labelledby", q.id);
+
+    const answersWrap = document.createElement("div");
+    answersWrap.className = "answers";
+
+    q.answers.forEach((a) => {
+      const label = document.createElement("label");
+      label.className = "answer";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = q.id;
+      input.value = a.value;
+      input.required = true;
+
+      const span = document.createElement("span");
+      span.textContent = a.text;
+
+      label.append(input, span);
+      answersWrap.appendChild(label);
+    });
+
+    fieldset.append(legend, answersWrap);
+    fragment.appendChild(fieldset);
+  });
+
+  container.appendChild(fragment);
+}
