@@ -87,9 +87,20 @@ document.fonts?.ready?.then(refreshLayout);
 ------------------------------ */
 
 function showQuiz() {
-  console.log("showQuiz() called");
+  console.log("1. showQuiz()");
+
+  console.log("2. quizSection:", quizSection);
+  console.log("3. resultsSection:", resultsSection);
+
+  const container = document.getElementById("questions-container");
+  console.log("4. container:", container);
+
+  console.log("5. QUESTIONS length:", QUESTIONS.length);
 
   buildQuiz(QUESTIONS);
+
+  console.log("6. container after build:", container);
+  console.log("7. child count:", container?.children.length);
 
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");

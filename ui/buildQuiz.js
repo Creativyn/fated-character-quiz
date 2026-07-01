@@ -1,15 +1,41 @@
 export function buildQuiz(QUESTIONS) {
-  console.log("✅ buildQuiz() called");
+  console.log("A. buildQuiz entered");
 
   const container = document.getElementById("questions-container");
-  console.log("Container:", container);
+
+  console.log("B. container =", container);
 
   if (!container) {
-    console.error("questions-container not found!");
+    console.error("Container not found");
     return;
   }
 
   container.innerHTML = "";
+
+  const fragment = document.createDocumentFragment();
+
+  console.log("C. QUESTIONS =", QUESTIONS.length);
+
+  QUESTIONS.forEach((q, index) => {
+    console.log("Adding question", index + 1);
+
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "question";
+
+    const legend = document.createElement("legend");
+    legend.textContent = `${index + 1}. ${q.text}`;
+
+    fieldset.appendChild(legend);
+
+    fragment.appendChild(fieldset);
+  });
+
+  console.log("D. Appending fragment");
+
+  container.appendChild(fragment);
+
+  console.log("E. Done. Child count:", container.children.length);
+}
 
   const fragment = document.createDocumentFragment();
 
