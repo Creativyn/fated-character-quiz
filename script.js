@@ -30,16 +30,6 @@ function getRoute() {
   return match ? match[1] : null;
 }
 
-function postResize(height) {
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESIZE",
-      height,
-    },
-    "*",
-  );
-}
-
 function postResult(top) {
   window.parent.postMessage(
     {
@@ -99,18 +89,12 @@ document.fonts?.ready?.then(refreshLayout);
 function showQuiz() {
   console.log("showQuiz() called");
 
-  const container = document.getElementById("questions-container");
-
-  if (container && container.children.length === 0) {
-    console.log("Calling buildQuiz()");
-    buildQuiz(QUESTIONS);
-  }
+  buildQuiz(QUESTIONS);
 
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
 
   refreshLayout();
-}
 }
 
 function showResults(results) {
@@ -262,7 +246,7 @@ window.addEventListener("message", (event) => {
   const { type, payload } = event.data || {};
 
   switch (type) {
-    case "FATED_SHOW_RESULT":
+    case "FATED_SHOW_RESULT": {
       if (!payload?.id) return;
 
       const personality = PERSONALITIES.find((p) => p.id === payload.id);
@@ -276,7 +260,9 @@ window.addEventListener("message", (event) => {
           percent: 100,
         },
       ]);
+
       break;
+    }
 
     case "FATED_SHOW_QUIZ":
       showQuiz();

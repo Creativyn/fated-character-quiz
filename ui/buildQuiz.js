@@ -11,9 +11,6 @@ export function buildQuiz(QUESTIONS) {
 
   container.innerHTML = "";
 
-  // ...rest of your existing code...
-}
-
   const fragment = document.createDocumentFragment();
 
   QUESTIONS.forEach((q, index) => {
