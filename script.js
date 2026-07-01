@@ -1,5 +1,3 @@
-console.log("SCRIPT LOADED");
-
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
 
@@ -7,40 +5,235 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
-buildQuiz(QUESTIONS);
+/* -----------------------------
+   DOM
+------------------------------ */
 
 const quizForm = document.getElementById("quiz");
+const quizSection = document.getElementById("quiz-section");
+const resultsSection = document.getElementById("results-section");
 const validationMessage = document.getElementById("validation-message");
 
-quizForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+const retakeBtn = document.getElementById("retake-btn");
+const printBtn = document.getElementById("print-btn");
+const shareBtn = document.getElementById("share-btn");
 
-  console.log("FORM SUBMITTED");
-  const formData = new FormData(quizForm);
+/* -----------------------------
+   Routing
+------------------------------ */
 
-  // ✅ VALIDATION GOES HERE (BEFORE CALCULATION)
-  const answeredCount = new Set([...formData.keys()]).size;
+function getRoute() {
+  const match = window.location.hash.match(/^#\/result\/(.+)$/);
+  return match ? match[1] : null;
+}
 
-  if (answeredCount < QUESTIONS.length) {
-    validationMessage.textContent =
-      "Please answer all questions before submitting.";
-    return;
-  }
+/* -----------------------------
+   Wix iframe resize (SINGLE SOURCE OF TRUTH)
+------------------------------ */
 
-  validationMessage.textContent = "";
+let lastHeight = 0;
+let resizeTimer;
 
-  // ✅ ONLY RUN IF VALID
-  const results = calculateResults({
-    formData,
-    personalities: PERSONALITIES,
-    questions: QUESTIONS,
+function reportHeight() {
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(() => {
+    const height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+    );
+
+    if (Math.abs(height - lastHeight) < 2) return;
+
+    lastHeight = height;
+
+    window.parent.postMessage(
+      {
+        type: "FATED_QUIZ_RESIZE",
+        height,
+      },
+      "*",
+    );
+  }, 50);
+}
+
+function refreshLayout() {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(reportHeight);
   });
+}
 
-  console.log(results);
+document.fonts?.ready?.then(refreshLayout);
+
+/* -----------------------------
+   UI
+------------------------------ */
+
+function showQuiz() {
+  quizSection.classList.remove("hidden");
+  resultsSection.classList.add("hidden");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  refreshLayout();
+}
+
+function showResults(results) {
+  const top = results?.[0];
+  if (!top) return;
+
   renderResults(results);
-  const resultsSection = document.getElementById("results-section");
-  const quizSection = document.getElementById("quiz-section");
 
-  resultsSection.classList.remove("hidden");
   quizSection.classList.add("hidden");
+  resultsSection.classList.remove("hidden");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  window.__TOP_PERSONALITY__ = top.id;
+
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESULT",
+      payload: {
+        id: top.id,
+        name: top.name,
+        percent: top.percent,
+      },
+    },
+    "*",
+  );
+
+  refreshLayout();
+}
+
+/* -----------------------------
+   Init
+------------------------------ */
+
+const forcedResultId = getRoute();
+
+if (forcedResultId) {
+  const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
+
+  if (personality) {
+    showResults([
+      {
+        ...personality,
+        score: 1,
+        percent: 100,
+      },
+    ]);
+  } else {
+    buildQuiz(QUESTIONS);
+    refreshLayout();
+  }
+} else {
+  buildQuiz(QUESTIONS);
+  refreshLayout();
+}
+
+/* -----------------------------
+   External layout triggers
+------------------------------ */
+
+window.addEventListener("load", () => {
+  refreshLayout();
+
+  document.querySelectorAll("img").forEach((img) => {
+    if (img.complete) return;
+
+    img.addEventListener("load", refreshLayout, { once: true });
+  });
 });
+
+/* -----------------------------
+   Quiz Submission
+------------------------------ */
+
+if (quizForm) {
+  quizForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(quizForm);
+    const answeredCount = new Set([...formData.keys()]).size;
+
+    if (answeredCount < QUESTIONS.length) {
+      validationMessage.textContent =
+        "Please answer every question before viewing your results.";
+
+      validationMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      refreshLayout();
+      return;
+    }
+
+    validationMessage.textContent = "";
+
+    const results = calculateResults({
+      formData,
+      personalities: PERSONALITIES,
+      questions: QUESTIONS,
+    });
+
+    showResults(results);
+  });
+}
+
+/* -----------------------------
+   Retake
+------------------------------ */
+
+if (retakeBtn) {
+  retakeBtn.addEventListener("click", () => {
+    quizForm.reset();
+
+    window.history.replaceState({}, "", window.location.pathname);
+
+    showQuiz();
+  });
+}
+
+/* -----------------------------
+   Print
+------------------------------ */
+
+if (printBtn) {
+  printBtn.addEventListener("click", () => {
+    window.print();
+  });
+}
+
+/* -----------------------------
+   Share
+------------------------------ */
+
+if (shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    const topId = window.__TOP_PERSONALITY__;
+    if (!topId) return;
+
+    const shareUrl = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
+
+    const shareText = document.getElementById("top-result")?.textContent || "";
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "My Fated Character Result",
+          text: shareText,
+          url: shareUrl,
+        });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Share link copied to your clipboard!");
+      } else {
+        prompt("Copy this link:", shareUrl);
+      }
+    } catch (err) {
+      console.error("Share failed:", err);
+    }
+  });
+}
