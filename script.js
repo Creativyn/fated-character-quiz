@@ -1,46 +1,52 @@
-console.log("SCRIPT LOADED");
+export function renderResults(results) {
+  const container = document.getElementById("results-container");
+  const topResult = document.getElementById("top-result");
 
-import { QUESTIONS } from "./data/questions.js";
-import { PERSONALITIES } from "./config/personalities.js";
+  container.innerHTML = "";
 
-import { buildQuiz } from "./ui/buildQuiz.js";
-import { renderResults } from "./ui/renderResults.js";
-import { calculateResults } from "./logic/calculateResults.js";
+  const top = results[0];
+  window.__TOP_PERSONALITY__ = top.id;
+  if (!top) return;
 
-buildQuiz(QUESTIONS);
+  // Top headline only
+  topResult.textContent = `You are ${top.heading}`;
 
-const quizForm = document.getElementById("quiz");
-const validationMessage = document.getElementById("validation-message");
+  // Single card instead of loop
+  const card = document.createElement("div");
+  card.className = "result-card";
 
-quizForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+  const img = document.createElement("img");
+  img.src = top.image;
+  img.alt = top.name;
 
-  console.log("FORM SUBMITTED");
-  const formData = new FormData(quizForm);
+  const content = document.createElement("div");
 
-  // ✅ VALIDATION GOES HERE (BEFORE CALCULATION)
-  const answeredCount = new Set([...formData.keys()]).size;
+  const title = document.createElement("div");
+  title.className = "result-title";
 
-  if (answeredCount < QUESTIONS.length) {
-    validationMessage.textContent =
-      "Please answer all questions before submitting.";
-    return;
-  }
+  const left = document.createElement("span");
+  const right = document.createElement("span");
 
-  validationMessage.textContent = "";
+  left.textContent = `${top.name}`;
+  right.textContent = `${top.percent}%`;
 
-  // ✅ ONLY RUN IF VALID
-  const results = calculateResults({
-    formData,
-    personalities: PERSONALITIES,
-    questions: QUESTIONS,
-  });
+  title.append(left, right);
 
-  console.log(results);
-  renderResults(results);
-  const resultsSection = document.getElementById("results-section");
-  const quizSection = document.getElementById("quiz-section");
+  const bar = document.createElement("div");
+  bar.className = "bar";
 
-  resultsSection.classList.remove("hidden");
-  quizSection.classList.add("hidden");
-});
+  const fill = document.createElement("div");
+  fill.className = "bar-fill";
+  fill.style.width = `${top.percent}%`;
+  fill.style.background = top.color;
+
+  bar.appendChild(fill);
+
+  const desc = document.createElement("p");
+  desc.textContent = top.description;
+
+  content.append(title, bar, desc);
+  card.append(img, content);
+
+  container.appendChild(card);
+}
