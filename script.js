@@ -14,7 +14,7 @@ function getRoute() {
   return match ? match[1] : null;
 }
 
-const forcedResultId = getRoute();
+
 if (forcedResultId) {
   const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
 
