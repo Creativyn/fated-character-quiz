@@ -1,5 +1,3 @@
-console.log("SCRIPT LOADED");
-
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
 
