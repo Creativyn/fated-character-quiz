@@ -7,110 +7,169 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
+/* -----------------------------
+   DOM
+------------------------------ */
+
+const quizForm = document.getElementById("quiz");
+const quizSection = document.getElementById("quiz-section");
+const resultsSection = document.getElementById("results-section");
+const validationMessage = document.getElementById("validation-message");
+
+const retakeBtn = document.getElementById("retake-btn");
+const printBtn = document.getElementById("print-btn");
+const shareBtn = document.getElementById("share-btn");
+
+/* -----------------------------
+   Routing
+------------------------------ */
+
 function getRoute() {
-  const hash = window.location.hash;
-  const match = hash.match(/^#\/result\/(.+)$/);
+  const match = window.location.hash.match(/^#\/result\/(.+)$/);
   return match ? match[1] : null;
 }
 
-function getResultFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("result");
+/* -----------------------------
+   UI Helpers
+------------------------------ */
+
+function showQuiz() {
+  quizSection.classList.remove("hidden");
+  resultsSection.classList.add("hidden");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 }
 
+function showResults(results) {
+  renderResults(results);
+
+  quizSection.classList.add("hidden");
+  resultsSection.classList.remove("hidden");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
+
+/* -----------------------------
+   Shared URL Support
+------------------------------ */
+
+const forcedResultId = getRoute();
+
 if (forcedResultId) {
-  const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
+  const personality = PERSONALITIES.find(
+    (p) => p.id === forcedResultId,
+  );
 
   if (personality) {
-    renderResults([
+    showResults([
       {
         ...personality,
         score: 1,
         percent: 100,
       },
     ]);
-
-    document.getElementById("quiz-section").classList.add("hidden");
-    document.getElementById("results-section").classList.remove("hidden");
+  } else {
+    buildQuiz(QUESTIONS);
   }
 } else {
   buildQuiz(QUESTIONS);
 }
 
-const quizForm = document.getElementById("quiz");
-const validationMessage = document.getElementById("validation-message");
+/* -----------------------------
+   Quiz Submission
+------------------------------ */
 
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   console.log("FORM SUBMITTED");
+
   const formData = new FormData(quizForm);
 
-  // ✅ VALIDATION GOES HERE (BEFORE CALCULATION)
   const answeredCount = new Set([...formData.keys()]).size;
 
   if (answeredCount < QUESTIONS.length) {
     validationMessage.textContent =
-      "Please answer all questions before submitting.";
+      "Please answer every question before viewing your results.";
+
+    validationMessage.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
     return;
   }
 
   validationMessage.textContent = "";
 
-  // ✅ ONLY RUN IF VALID
   const results = calculateResults({
     formData,
     personalities: PERSONALITIES,
     questions: QUESTIONS,
   });
 
-  const quizForm = document.getElementById("quiz");
-  const resultsSection = document.getElementById("results-section");
-  const quizSection = document.getElementById("quiz-section");
+  showResults(results);
+});
 
-  
+/* -----------------------------
+   Retake
+------------------------------ */
 
-  function getResultFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("result");
-  }
+retakeBtn.addEventListener("click", () => {
+  quizForm.reset();
 
-z  document.getElementById("retake-btn").addEventListener("click", () => {
-    quizForm.reset();
+  validationMessage.textContent = "";
 
-    resultsSection.classList.add("hidden");
-    quizSection.classList.remove("hidden");
+  window.history.replaceState({}, "", window.location.pathname);
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  showQuiz();
+});
 
-  document.getElementById("print-btn").addEventListener("click", () => {
-    window.print();
-  });
+/* -----------------------------
+   Print
+------------------------------ */
 
-  document.getElementById("share-btn").addEventListener("click", async () => {
-    const top = document.getElementById("top-result").textContent;
+printBtn.addEventListener("click", () => {
+  window.print();
+});
 
-    const topId = window.__TOP_PERSONALITY__; // we'll add this next
+/* -----------------------------
+   Share
+------------------------------ */
 
-    const shareUrl = `${window.location.origin}/#/result/${top.id}`;
+shareBtn.addEventListener("click", async () => {
+  const topId = window.__TOP_PERSONALITY__;
 
+  if (!topId) return;
+
+  const shareUrl =
+    `${window.location.origin}` +
+    `${window.location.pathname}` +
+    `#/result/${topId}`;
+
+  const shareText =
+    document.getElementById("top-result").textContent;
+
+  try {
     if (navigator.share) {
       await navigator.share({
         title: "My Fated Character Result",
-        text: top,
+        text: shareText,
         url: shareUrl,
       });
-    } else {
+    } else if (navigator.clipboard) {
       await navigator.clipboard.writeText(shareUrl);
-      alert("Share link copied!");
+      alert("Share link copied to your clipboard!");
+    } else {
+      prompt("Copy this link:", shareUrl);
     }
-  });
-  console.log(results);
-  renderResults(results);
-  const resultsSection = document.getElementById("results-section");
-  const quizSection = document.getElementById("quiz-section");
-
-  resultsSection.classList.remove("hidden");
-  quizSection.classList.add("hidden");
+  } catch (err) {
+    console.error("Share cancelled or failed:", err);
+  }
 });
