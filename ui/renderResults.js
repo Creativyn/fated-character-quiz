@@ -22,6 +22,8 @@ export function renderResults(results) {
       img.src = personality.image;
       img.alt = personality.name;
 
+      img.addEventListener("load", requestResize);
+
       const content = document.createElement("div");
 
       const title = document.createElement("div");
@@ -50,6 +52,7 @@ export function renderResults(results) {
 
       content.append(title, bar, desc);
       card.append(img, content);
+      requestAnimationFrame(requestResize);
     }
 
     // 📊 OTHER RESULTS (COMPACT)
