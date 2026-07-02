@@ -11,14 +11,12 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-
   font-family:
     system-ui,
     -apple-system,
     "EB Garamond",
     Garamond,
     serif;
-
   background: #0f172a;
   color: #e5e7eb;
   line-height: 1.5;
@@ -75,43 +73,47 @@ main {
 }
 
 /* =========================
-   FIELDSET HARD RESET (IMPORTANT FIX)
+   FIELDSET RESET
 ========================= */
 
 fieldset {
-  all: unset;
-  display: flex;
-  flex-direction: column;
-
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-
-  padding: 1rem;
-  margin-bottom: 1rem;
-
-  color: #e5e7eb;
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }
 
 /* =========================
-   LEGEND FIX
+   LEGEND FIX (CENTERING ISSUE)
 ========================= */
 
 legend {
-  all: unset;
-  display: block;
-
+  margin: 0 0 0.75rem 0;
+  padding: 0;
+  width: 100%;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+
+  /* FIX: proper alignment inside card */
+  text-align: left;
+  line-height: 1.4;
 }
 
 /* =========================
-   QUESTION CARD (now redundant but safe)
+   QUESTION CARD
 ========================= */
 
 .question {
+  background: #111827;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
   display: flex;
   flex-direction: column;
+
+  /* FIX: spacing consistency */
+  gap: 0.75rem;
 }
 
 /* =========================
@@ -125,10 +127,9 @@ legend {
   width: 100%;
 }
 
-/* IMPORTANT: FULL WIDTH ROW FIX */
 .answer {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* FIX: was flex-start */
   gap: 0.75rem;
 
   width: 100%;
