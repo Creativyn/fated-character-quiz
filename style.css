@@ -108,20 +108,16 @@ body {
 ========================= */
 
   .question {
-    background: #111827;
+    background: #566fb8;
     border: 1px solid #1f2937;
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1.25rem;
   }
 
-  .question legend {
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-
   .answers {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
 
@@ -131,14 +127,12 @@ body {
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 8px;
-    cursor: pointer;
     border: 1px solid transparent;
   }
 
   .answer:hover {
     background: #1f2937;
   }
-
   .answer input {
     width: 18px;
     height: 18px;
@@ -302,23 +296,4 @@ body {
   .question {
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-}
-
-.answers {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.answer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.question {
-  border: 1px solid #1f2937;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
 }
