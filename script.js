@@ -4,60 +4,58 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
-console.log("SCRIPT LOADED");
+/* -----------------------------
+   Helpers
+------------------------------ */
+
+function scrollToFirstUnanswered(formData) {
+  const questions = document.querySelectorAll(".question");
+
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const answered = formData.get(`q${i}`);
+
+    if (!answered) {
+      questions[i]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      questions[i]?.classList.add("missing");
+      return;
+    }
+  }
+}
+
+/* -----------------------------
+   DOM
+------------------------------ */
 
 const quizForm = document.getElementById("quiz");
 const validationMessage = document.getElementById("validation-message");
-
 const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
 
-function showQuiz() {
-  quizSection.classList.remove("hidden");
-  resultsSection.classList.add("hidden");
-}
+/* -----------------------------
+   Init
+------------------------------ */
 
-function showResults(results) {
-  const top = results?.[0];
-  if (!top) return;
+buildQuiz(QUESTIONS);
 
-  renderResults(results);
-
-  quizSection.classList.add("hidden");
-  resultsSection.classList.remove("hidden");
-
-  document.getElementById("top-result").textContent =
-    `You are most like ${top.name}`;
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function init() {
-  const container = document.getElementById("questions-container");
-
-  if (!container) {
-    console.error("Missing questions container");
-    return;
-  }
-
-  buildQuiz(QUESTIONS);
-  showQuiz();
-}
-
-/* ---------------- SUBMIT ---------------- */
+/* -----------------------------
+   Submit
+------------------------------ */
 
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(quizForm);
+  const answeredCount = new Set([...formData.keys()]).size;
 
-  // FIX: reliable answered count
-  const answered = quizForm.querySelectorAll(
-    "input[type='radio']:checked",
-  ).length;
+  if (answeredCount < QUESTIONS.length) {
+    validationMessage.textContent =
+      "Please answer every question before viewing results.";
 
-  if (answered < QUESTIONS.length) {
-    validationMessage.textContent = "Please answer all questions.";
+    scrollToFirstUnanswered(formData);
     return;
   }
 
@@ -69,14 +67,10 @@ quizForm.addEventListener("submit", (e) => {
     questions: QUESTIONS,
   });
 
-  showResults(results);
+  renderResults(results);
+
+  quizSection.classList.add("hidden");
+  resultsSection.classList.remove("hidden");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
-
-/* ---------------- RETAKE ---------------- */
-
-document.getElementById("retake-btn")?.addEventListener("click", () => {
-  quizForm.reset();
-  showQuiz();
-});
-
-init();
