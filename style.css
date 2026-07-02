@@ -197,12 +197,19 @@ button:focus-visible {
 
 .results-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0; /* remove spacing control */
 }
 
 #results-container {
   display: grid;
   gap: 1rem;
+  margin: 0;
+}
+
+#results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* controls spacing between all blocks */
 }
 
 .result-card {
@@ -256,7 +263,8 @@ button:focus-visible {
   align-items: center;
   gap: 1rem;
 
-  flex-wrap: wrap;
+  margin: 0; /* IMPORTANT */
+  padding-top: 0.5rem;
 }
 
 /* =========================
