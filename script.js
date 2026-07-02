@@ -4,10 +4,17 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
+console.log("SCRIPT LOADED");
+
+if (!Array.isArray(QUESTIONS)) {
+  throw new Error("QUESTIONS failed to load (check export/import path)");
+}
+
 const quizForm = document.getElementById("quiz");
+const validationMessage = document.getElementById("validation-message");
+
 const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
-const validationMessage = document.getElementById("validation-message");
 
 const retakeBtn = document.getElementById("retake-btn");
 
@@ -25,6 +32,9 @@ function showResults(results) {
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
+  document.getElementById("top-result").textContent =
+    `You are most like ${top.name}`;
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -37,11 +47,14 @@ function init() {
   }
 
   buildQuiz(QUESTIONS);
+
   showQuiz();
 }
 
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  console.log("SUBMIT FIRED");
 
   const formData = new FormData(quizForm);
   const answered = new Set([...formData.keys()]).size;

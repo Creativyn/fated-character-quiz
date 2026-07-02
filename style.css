@@ -98,21 +98,17 @@ body {
   }
 
   main {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
-
-  /* =========================
-   Quiz Questions
-========================= */
 
   .question {
     background: #566fb8;
-    border: 1px solid #1f2937;
     border-radius: 12px;
     padding: 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #1f2937;
   }
 
   .answers {
@@ -123,15 +119,16 @@ body {
 
   .answer {
     display: flex;
-    align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 8px;
-    border: 1px solid transparent;
+    cursor: pointer;
+    transition: 0.2s ease;
   }
 
   .answer:hover {
-    background: #1f2937;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(2px);
   }
   .answer input {
     width: 18px;
