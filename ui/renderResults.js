@@ -43,7 +43,8 @@ export function renderResults(results) {
     /* DESCRIPTION */
     const desc = document.createElement("p");
     desc.className = "result-desc";
-    desc.textContent = item.description || "";
+    desc.textContent =
+      item.description || item.desc || item.bio || "No description available.";
 
     /* BAR */
     const bar = document.createElement("div");
