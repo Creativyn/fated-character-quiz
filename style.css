@@ -47,7 +47,7 @@ textarea {
 .result-card,
 .result-title,
 .result-description {
-  color: var(--text-inverse);
+  color: var(--text);
 }
 
 /* =========================
