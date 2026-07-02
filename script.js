@@ -1,9 +1,10 @@
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
-
 import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
+
+console.log("SCRIPT LOADED");
 
 /* -----------------------------
    DOM
@@ -19,152 +20,134 @@ const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
 
 /* -----------------------------
-   Routing
------------------------------- */
-
-function getRoute() {
-  const match = window.location.hash.match(/^#\/result\/(.+)$/);
-  return match ? match[1] : null;
-}
-
-/* -----------------------------
-   UI Helpers
+   QUIZ FLOW
 ------------------------------ */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
 }
 
 function showResults(results) {
+  const top = results?.[0];
+  if (!top) return;
+
   renderResults(results);
 
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  window.__TOP_PERSONALITY__ = top.id;
 }
 
 /* -----------------------------
-   Shared URL Support
+   INIT
 ------------------------------ */
 
-const forcedResultId = getRoute();
+function bootApp() {
+  console.log("BOOTING...");
 
-if (forcedResultId) {
-  const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
-
-  if (personality) {
-    showResults([
-      {
-        ...personality,
-        score: 1,
-        percent: 100,
-      },
-    ]);
-  } else {
-    buildQuiz(QUESTIONS);
-  }
-} else {
   buildQuiz(QUESTIONS);
+  showQuiz();
+
+  console.log("READY");
 }
 
+bootApp();
+
 /* -----------------------------
-   Quiz Submission
+   SUBMIT
 ------------------------------ */
 
-quizForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+if (quizForm) {
+  quizForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  console.log("FORM SUBMITTED");
+    const formData = new FormData(quizForm);
+    const answeredCount = new Set([...formData.keys()]).size;
 
-  const formData = new FormData(quizForm);
+    if (answeredCount < QUESTIONS.length) {
+      validationMessage.textContent =
+        "Please answer every question before viewing your results.";
+      return;
+    }
 
-  const answeredCount = new Set([...formData.keys()]).size;
+    validationMessage.textContent = "";
 
-  if (answeredCount < QUESTIONS.length) {
-    validationMessage.textContent =
-      "Please answer every question before viewing your results.";
-
-    validationMessage.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
+    const results = calculateResults({
+      formData,
+      personalities: PERSONALITIES,
+      questions: QUESTIONS,
     });
 
-    return;
+    showResults(results);
+  });
+}
+
+/* -----------------------------
+   RETAKE
+------------------------------ */
+
+if (retakeBtn) {
+  retakeBtn.addEventListener("click", () => {
+    quizForm.reset();
+    window.history.replaceState({}, "", window.location.pathname);
+    showQuiz();
+  });
+}
+
+/* -----------------------------
+   PRINT
+------------------------------ */
+
+if (printBtn) {
+  printBtn.addEventListener("click", () => window.print());
+}
+
+/* -----------------------------
+   SHARE
+------------------------------ */
+
+if (shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    const topId = window.__TOP_PERSONALITY__;
+    if (!topId) return;
+
+    const shareUrl = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "My Fated Character Result",
+          url: shareUrl,
+        });
+      } else {
+        navigator.clipboard.writeText(shareUrl);
+        alert("Copied!");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}
+
+/* -----------------------------
+   ROUTE SUPPORT
+------------------------------ */
+
+window.addEventListener("message", (event) => {
+  const { type, payload } = event.data || {};
+
+  if (type === "FATED_SHOW_RESULT") {
+    const personality = PERSONALITIES.find((p) => p.id === payload?.id);
+    if (!personality) return;
+
+    showResults([{ ...personality, percent: 100 }]);
   }
 
-  validationMessage.textContent = "";
-
-  const results = calculateResults({
-    formData,
-    personalities: PERSONALITIES,
-    questions: QUESTIONS,
-  });
-
-  showResults(results);
-});
-
-/* -----------------------------
-   Retake
------------------------------- */
-
-retakeBtn.addEventListener("click", () => {
-  quizForm.reset();
-
-  validationMessage.textContent = "";
-
-  window.history.replaceState({}, "", window.location.pathname);
-
-  showQuiz();
-});
-
-/* -----------------------------
-   Print
------------------------------- */
-
-printBtn.addEventListener("click", () => {
-  window.print();
-});
-
-/* -----------------------------
-   Share
------------------------------- */
-
-shareBtn.addEventListener("click", async () => {
-  const topId = window.__TOP_PERSONALITY__;
-
-  if (!topId) return;
-
-  const shareUrl =
-    `${window.location.origin}` +
-    `${window.location.pathname}` +
-    `#/result/${topId}`;
-
-  const shareText = document.getElementById("top-result").textContent;
-
-  try {
-    if (navigator.share) {
-      await navigator.share({
-        title: "My Fated Character Result",
-        text: shareText,
-        url: shareUrl,
-      });
-    } else if (navigator.clipboard) {
-      await navigator.clipboard.writeText(shareUrl);
-      alert("Share link copied to your clipboard!");
-    } else {
-      prompt("Copy this link:", shareUrl);
-    }
-  } catch (err) {
-    console.error("Share cancelled or failed:", err);
+  if (type === "FATED_SHOW_QUIZ") {
+    showQuiz();
   }
 });
