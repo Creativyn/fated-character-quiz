@@ -32,29 +32,27 @@ body {
 }
 
 /* =========================
-   APP SCREEN SYSTEM (NEW)
+   SCREEN SYSTEM (NEW FIX)
 ========================= */
 
 .app-screen {
   display: none;
+  min-height: 100vh;
   width: 100%;
 }
 
 .app-screen.active {
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
-/* =========================
-   ACCESSIBILITY
-========================= */
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
+/* CENTER BUTTON GROUP PROPERLY */
+.actions,
+.results-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 /* =========================
@@ -81,21 +79,6 @@ main {
   border-radius: 12px;
   padding: 1.25rem 1rem;
   margin-bottom: 1rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-/* =========================
-   TEXT
-========================= */
-
-.question-title,
-.answer,
-.answer-text,
-.result-title,
-.result-description {
   color: var(--text);
 }
 
@@ -116,29 +99,34 @@ main {
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.answer:hover {
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
 }
 
 /* =========================
-   BUTTONS
+   BUTTONS (FIXED CENTERING)
 ========================= */
+
+.actions,
+.results-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 2rem;
+  width: 100%;
+}
 
 button {
   padding: 0.75rem 1.25rem;
   border: none;
   border-radius: 10px;
+
   cursor: pointer;
   font-weight: 600;
 
   background: var(--card);
   color: var(--text);
-}
-
-button:hover {
-  filter: brightness(1.1);
 }
 
 /* =========================
@@ -159,27 +147,17 @@ button:hover {
   background: var(--card);
   border-radius: 12px;
   padding: 1rem;
-}
-
-.result-title {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.result-description {
   color: var(--text);
 }
 
 /* =========================
-   PROGRESS BAR
+   BAR
 ========================= */
 
 .bar {
   width: 100%;
   height: 10px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -189,19 +167,6 @@ button:hover {
   width: 0%;
   background: var(--accent);
   transition: width 0.6s ease;
-}
-
-/* =========================
-   RESULTS ACTIONS (FIXED SPACING)
-========================= */
-
-.results-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-
-  margin-top: 2rem; /* KEY FIX: pushes buttons away from results */
 }
 
 /* =========================

@@ -5,6 +5,21 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 /* =========================
+   SCREEN HELPERS
+========================= */
+
+function showScreen(name) {
+  const quiz = document.getElementById("quiz-section");
+  const results = document.getElementById("results-section");
+
+  quiz.classList.remove("active");
+  results.classList.remove("active");
+
+  if (name === "quiz") quiz.classList.add("active");
+  if (name === "results") results.classList.add("active");
+}
+
+/* =========================
    DOM WAIT
 ========================= */
 
@@ -32,12 +47,10 @@ function waitForElement(selector, timeout = 5000) {
 ========================= */
 
 let quizForm;
-let quizSection;
-let resultsSection;
 let validationMessage;
 
 /* =========================
-   SCROLL TO UNANSWERED (FIXED)
+   SCROLL TO UNANSWERED
 ========================= */
 
 function scrollToFirstUnanswered() {
@@ -56,11 +69,10 @@ function scrollToFirstUnanswered() {
         });
 
         el.classList.add("missing");
-
         setTimeout(() => el.classList.remove("missing"), 1200);
       }
 
-      return true; // found missing
+      return true;
     }
   }
 
@@ -68,7 +80,7 @@ function scrollToFirstUnanswered() {
 }
 
 /* =========================
-   RESULTS BUTTONS
+   RESULT BUTTONS
 ========================= */
 
 function initResultButtons() {
@@ -78,10 +90,7 @@ function initResultButtons() {
 
   retakeBtn?.addEventListener("click", () => {
     quizForm?.reset();
-
-    resultsSection?.classList.remove("active");
-    quizSection?.classList.add("active");
-
+    showScreen("quiz");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
@@ -105,20 +114,18 @@ function initResultButtons() {
           text,
           url,
         });
-      } else if (navigator.clipboard) {
+      } else {
         await navigator.clipboard.writeText(url);
         alert("Link copied!");
-      } else {
-        prompt("Copy link:", url);
       }
     } catch (err) {
-      console.error("Share failed:", err);
+      console.error(err);
     }
   });
 }
 
 /* =========================
-   RESULTS
+   SHOW RESULTS
 ========================= */
 
 function showResults(results) {
@@ -127,24 +134,20 @@ function showResults(results) {
 
   renderResults(results);
 
-  quizSection.classList.add("hidden");
-  resultsSection.classList.remove("hidden");
-
   window.__TOP_PERSONALITY__ = top.id;
 
+  showScreen("results");
   initResultButtons();
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /* =========================
-   QUIZ VIEW
+   SHOW QUIZ
 ========================= */
 
 function showQuiz() {
-  quizSection.classList.remove("active");
-  resultsSection.classList.add("active");
-
+  showScreen("quiz");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -153,15 +156,11 @@ function showQuiz() {
 ========================= */
 
 async function bootApp() {
-  console.log("🚀 Boot starting...");
-
   await waitForElement("#questions-container");
 
   buildQuiz(QUESTIONS);
 
   quizForm = document.getElementById("quiz");
-  quizSection = document.getElementById("quiz-section");
-  resultsSection = document.getElementById("results-section");
   validationMessage = document.getElementById("validation-message");
 
   quizForm?.addEventListener("submit", (e) => {
@@ -188,7 +187,7 @@ async function bootApp() {
     showResults(results);
   });
 
-  console.log("✅ Boot complete");
+  console.log("Boot complete");
 }
 
 bootApp();
