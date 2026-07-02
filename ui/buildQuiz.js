@@ -15,7 +15,7 @@ export function buildQuiz(QUESTIONS) {
     fieldset.className = "question";
 
     const legend = document.createElement("legend");
-    legend.textContent = `${index + 1}. ${q.question}`;
+    legend.textContent = `${index + 1}. ${q.text}`;
     fieldset.appendChild(legend);
 
     const answersWrap = document.createElement("div");

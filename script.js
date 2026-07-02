@@ -138,8 +138,9 @@ quizForm?.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(quizForm);
-  const answered = new Set([...formData.keys()]).size;
-
+  const answered = quizForm.querySelectorAll(
+    "input[type='radio']:checked",
+  ).length;
   if (answered < QUESTIONS.length) {
     validationMessage.textContent =
       "Please answer every question before viewing your results.";
