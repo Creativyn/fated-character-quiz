@@ -1,3 +1,4 @@
+console.log("QUESTIONS DEBUG:", QUESTIONS);
 export function buildQuiz(QUESTIONS) {
   const container = document.getElementById("questions-container");
 

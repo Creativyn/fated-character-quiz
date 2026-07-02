@@ -55,7 +55,7 @@ let quizForm;
 let validationMessage;
 
 /* =========================
-   REDUCED MOTION GUARD (GLOBAL)
+   SAFETY: reduced motion
 ========================= */
 
 function shouldReduceMotion() {
@@ -63,7 +63,7 @@ function shouldReduceMotion() {
 }
 
 /* =========================
-   SCROLL VALIDATION
+   VALIDATION SCROLL
 ========================= */
 
 function scrollToFirstUnanswered() {
@@ -103,7 +103,6 @@ function initResultButtons() {
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
 
-  // safer routing (works on GitHub Pages too)
   homeBtn?.addEventListener("click", () => {
     window.location.href = "./";
   });
@@ -157,7 +156,7 @@ function initResultButtons() {
 }
 
 /* =========================
-   SHOW RESULTS (CINEMATIC SAFE)
+   SHOW RESULTS (STABLE)
 ========================= */
 
 async function showResults(results) {
@@ -178,7 +177,7 @@ async function showResults(results) {
     return;
   }
 
-  // 🔴 HARD SAFETY FALLBACK BEFORE CINEMATIC
+  // SAFE MODE: reduced motion
   if (shouldReduceMotion()) {
     renderResults(results);
     initResultButtons();
@@ -211,13 +210,27 @@ function showQuiz() {
 }
 
 /* =========================
-   BOOT
+   BOOT (CRITICAL FIX)
 ========================= */
 
 async function bootApp() {
   await waitForElement("#questions-container");
 
+  // IMPORTANT: verify QUESTIONS before rendering
+  if (!Array.isArray(QUESTIONS) || QUESTIONS.length === 0) {
+    console.error("QUESTIONS missing or invalid", QUESTIONS);
+    return;
+  }
+
   buildQuiz(QUESTIONS);
+
+  // VERIFY quiz actually rendered
+  const rendered = document.querySelectorAll(".question").length;
+
+  if (rendered === 0) {
+    console.error("Quiz failed to render → buildQuiz issue or DOM timing");
+    return;
+  }
 
   quizForm = document.getElementById("quiz");
   validationMessage = document.getElementById("validation-message");
@@ -246,7 +259,7 @@ async function bootApp() {
     showResults(results);
   });
 
-  console.log("✅ Quiz boot stable");
+  console.log("✅ Quiz fully stable boot complete");
 }
 
 bootApp();

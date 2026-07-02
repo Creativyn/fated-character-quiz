@@ -14,27 +14,58 @@ const prefersReducedMotion = window.matchMedia?.(
 )?.matches;
 
 /* =========================
-   SCENE ENGINE
+   SAFE SKIP STATE (LIVE)
+========================= */
+
+let skipRequested = false;
+
+function watchSkip(skipToggle) {
+  skipRequested = false;
+
+  if (!skipToggle) return;
+
+  skipToggle.addEventListener("change", () => {
+    if (skipToggle.checked) {
+      skipRequested = true;
+    }
+  });
+}
+
+/* =========================
+   SAFE CHECK
+========================= */
+
+function shouldAbort() {
+  return skipRequested || prefersReducedMotion;
+}
+
+/* =========================
+   SCENE ENGINE (STABLE)
 ========================= */
 
 export async function runScene(scene, context) {
   const { results, container, overlay, resultsSection, skipToggle } = context;
 
-  const top = results?.[0];
-  if (!top) return;
+  if (!results?.length) return;
 
+  const top = results[0];
   window.__TOP_PERSONALITY__ = top.id;
 
-  const reducedMotion = prefersReducedMotion;
-  const skip = skipToggle?.checked;
+  const text = overlay?.querySelector?.(".fate-text");
 
-  const text = overlay.querySelector(".fate-text");
+  if (!overlay || !resultsSection || !container) {
+    console.error("SceneEngine: missing critical DOM nodes");
+    renderResults(results);
+    return;
+  }
+
+  watchSkip(skipToggle);
 
   /* =========================
      HARD BYPASS
   ========================= */
 
-  if (reducedMotion || skip) {
+  if (shouldAbort()) {
     resultsSection.classList.remove("cinematic-mode");
     overlay.classList.add("hidden");
     renderResults(results);
@@ -44,11 +75,14 @@ export async function runScene(scene, context) {
   resultsSection.classList.add("cinematic-mode");
   overlay.classList.remove("hidden");
 
+  /* =========================
+     AUDIO THEME
+  ========================= */
+
   const theme = SOUND_THEMES?.[top.id] || SOUND_THEMES?.prometheia;
+  const mute = await shouldMuteAudio?.();
 
   let ambient = null;
-
-  const mute = await shouldMuteAudio?.();
 
   if (!mute && theme?.ambient) {
     ambient = playLayeredSound({
@@ -60,10 +94,12 @@ export async function runScene(scene, context) {
   }
 
   /* =========================
-     EXECUTOR
+     EXECUTION LOOP (INTERRUPT SAFE)
   ========================= */
 
   for (const step of scene) {
+    if (shouldAbort()) break;
+
     switch (step.type) {
       case "text":
         if (text) {
@@ -86,7 +122,7 @@ export async function runScene(scene, context) {
 
       case "revealCard": {
         const cards = container.querySelectorAll(".result-card");
-        const card = cards[step.index];
+        const card = cards?.[step.index];
 
         if (card) {
           playLayeredSound({
@@ -104,27 +140,33 @@ export async function runScene(scene, context) {
       case "revealAll": {
         const cards = container.querySelectorAll(".result-card");
 
-        cards.forEach((c, i) => {
-          setTimeout(() => {
-            c.classList.add("reveal");
-            c.style.opacity = "1";
-            c.style.transform = "translateY(0)";
-          }, i * 200);
-        });
+        for (let i = 0; i < cards.length; i++) {
+          if (shouldAbort()) break;
+
+          await sleep(200);
+
+          const c = cards[i];
+          c.classList.add("reveal");
+          c.style.opacity = "1";
+          c.style.transform = "translateY(0)";
+        }
         break;
       }
 
       case "bars": {
         const bars = container.querySelectorAll(".bar-fill");
 
-        bars.forEach((bar, i) => {
+        for (let i = 0; i < bars.length; i++) {
+          if (shouldAbort()) break;
+
+          const bar = bars[i];
           const value =
             bar.dataset.target || bar.getAttribute("data-value") || "0";
 
-          setTimeout(() => {
-            bar.style.width = `${value}%`;
-          }, i * 120);
-        });
+          await sleep(120);
+
+          bar.style.width = `${value}%`;
+        }
         break;
       }
 
@@ -159,12 +201,17 @@ export async function runScene(scene, context) {
   }
 
   /* =========================
-     CLEANUP
+     CLEANUP (ALWAYS RUN)
   ========================= */
 
   if (ambient) {
     fadeOutSound?.(ambient, 1200);
   }
 
+  overlay.classList.add("hidden");
   resultsSection.classList.remove("cinematic-mode");
+
+  if (shouldAbort()) {
+    renderResults(results);
+  }
 }

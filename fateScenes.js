@@ -1,4 +1,8 @@
 export const fateScene = [
+  /* =========================
+     PHASE 1: INTRO
+  ========================= */
+
   {
     type: "text",
     value: "Analyzing your fate...",
@@ -15,9 +19,17 @@ export const fateScene = [
 
   { type: "textHide" },
 
+  /* =========================
+     PHASE 2: RENDER BASE UI
+  ========================= */
+
   { type: "render" },
 
-  { type: "wait", ms: 500 },
+  { type: "wait", ms: 600 },
+
+  /* =========================
+     PHASE 3: REVEAL MAIN CARD
+  ========================= */
 
   {
     type: "revealCard",
@@ -27,14 +39,40 @@ export const fateScene = [
 
   { type: "wait", ms: 400 },
 
-  { type: "bars" },
+  /* =========================
+     PHASE 4: STAGGER REMAINING CARDS
+     (IMPORTANT: smoother than instant bars)
+  ========================= */
 
+  {
+    type: "revealAll",
+  },
+
+  { type: "wait", ms: 500 },
+
+  /* =========================
+     PHASE 5: BAR ANIMATION
+  ========================= */
+
+  {
+    type: "bars",
+  },
+
+  /* CRITICAL FIX: allow bars to finish */
   { type: "wait", ms: 900 },
+
+  /* =========================
+     PHASE 6: THEME (FIXED)
+  ========================= */
 
   {
     type: "theme",
-    color: null,
+    color: "var(--accent)", // or replace with dynamic personality color if available
   },
+
+  /* =========================
+     PHASE 7: FINAL MOMENT
+  ========================= */
 
   {
     type: "finalText",
@@ -42,6 +80,10 @@ export const fateScene = [
   },
 
   { type: "wait", ms: 1200 },
+
+  /* =========================
+     PHASE 8: CLEAN EXIT
+  ========================= */
 
   { type: "hideOverlay" },
 ];
