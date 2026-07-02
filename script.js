@@ -1,11 +1,11 @@
-import { QUESTIONS } from "./data/questions.js";
-import { PERSONALITIES } from "./config/personalities.js";
-import { buildQuiz } from "./ui/buildQuiz.js";
-import { renderResults } from "./ui/renderResults.js";
-import { calculateResults } from "./logic/calculateResults.js";
+import { QUESTIONS } from "./questions.js";
+import { PERSONALITIES } from "./personalities.js";
+import { buildQuiz } from "./buildQuiz.js";
+import { renderResults } from "./renderResults.js";
+import { calculateResults } from "./calculateResults.js";
 
 console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS.length);
+console.log("QUESTIONS:", QUESTIONS?.length);
 
 const quizForm = document.getElementById("quiz");
 const quizSection = document.getElementById("quiz-section");
@@ -15,6 +15,10 @@ const validationMessage = document.getElementById("validation-message");
 const retakeBtn = document.getElementById("retake-btn");
 const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
+
+/* -----------------------------
+   UI STATE
+------------------------------ */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
@@ -33,10 +37,13 @@ function showResults(results) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-async function bootApp() {
-  console.log("Boot starting...");
+/* -----------------------------
+   BOOT
+------------------------------ */
 
+function bootApp() {
   const container = document.querySelector("#questions-container");
+
   if (!container) {
     console.error("Missing #questions-container");
     return;
@@ -46,20 +53,20 @@ async function bootApp() {
 
   showQuiz();
 
-  console.log("Boot complete");
+  console.log("BOOT COMPLETE");
 }
 
 quizForm?.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(quizForm);
+  const answered = [...formData.keys()];
+  const answeredCount = new Set(answered).size;
 
-  const answered = new Set([...formData.keys()]).size;
+  console.log("Answered:", answeredCount, "/", QUESTIONS.length);
 
-  if (answered < QUESTIONS.length) {
-    validationMessage.textContent =
-      "Please answer every question before viewing results.";
-    validationMessage.scrollIntoView({ behavior: "smooth" });
+  if (answeredCount < QUESTIONS.length) {
+    validationMessage.textContent = "Please answer all questions.";
     return;
   }
 
@@ -74,9 +81,12 @@ quizForm?.addEventListener("submit", (e) => {
   showResults(results);
 });
 
+/* -----------------------------
+   BUTTONS
+------------------------------ */
+
 retakeBtn?.addEventListener("click", () => {
   quizForm.reset();
-  window.location.hash = "";
   showQuiz();
 });
 

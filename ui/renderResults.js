@@ -9,6 +9,7 @@ export function renderResults(results) {
   container.innerHTML = "";
 
   const top = results[0];
+
   if (topText && top) {
     topText.textContent = `You are most like ${top.name}`;
   }
@@ -19,10 +20,10 @@ export function renderResults(results) {
 
     card.innerHTML = `
       <div>
-        <h3 class="result-title">
+        <div class="result-title">
           <span>${r.name}</span>
           <span>${Math.round(r.percent)}%</span>
-        </h3>
+        </div>
 
         <div class="bar">
           <div class="bar-fill" style="width:${r.percent}%"></div>
@@ -35,8 +36,5 @@ export function renderResults(results) {
     container.appendChild(card);
   });
 
-  // store dominant personality
-  if (results?.[0]) {
-    window.__TOP_PERSONALITY__ = results[0].id;
-  }
+  window.__TOP_PERSONALITY__ = results?.[0]?.id;
 }
