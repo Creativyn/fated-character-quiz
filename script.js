@@ -55,6 +55,14 @@ let quizForm;
 let validationMessage;
 
 /* =========================
+   REDUCED MOTION GUARD (GLOBAL)
+========================= */
+
+function shouldReduceMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+}
+
+/* =========================
    SCROLL VALIDATION
 ========================= */
 
@@ -95,12 +103,13 @@ function initResultButtons() {
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
 
+  // safer routing (works on GitHub Pages too)
   homeBtn?.addEventListener("click", () => {
-    window.location.href = "/";
+    window.location.href = "./";
   });
 
   exploreBtn?.addEventListener("click", () => {
-    window.location.href = "/characters";
+    window.location.href = "./characters";
   });
 
   retakeBtn?.addEventListener("click", () => {
@@ -164,17 +173,29 @@ async function showResults(results) {
   const resultsSection = document.getElementById("results-section");
 
   if (!container || !overlay || !resultsSection) {
-    console.error("Missing results DOM elements");
+    console.error("Missing results DOM elements → fallback render");
     renderResults(results);
     return;
   }
 
-  await fateReveal({
-    results,
-    container,
-    overlay,
-    resultsSection,
-  });
+  // 🔴 HARD SAFETY FALLBACK BEFORE CINEMATIC
+  if (shouldReduceMotion()) {
+    renderResults(results);
+    initResultButtons();
+    return;
+  }
+
+  try {
+    await fateReveal({
+      results,
+      container,
+      overlay,
+      resultsSection,
+    });
+  } catch (err) {
+    console.error("fateReveal failed → fallback render", err);
+    renderResults(results);
+  }
 
   initResultButtons();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -225,7 +246,7 @@ async function bootApp() {
     showResults(results);
   });
 
-  console.log("✅ Quiz boot complete");
+  console.log("✅ Quiz boot stable");
 }
 
 bootApp();

@@ -29,10 +29,13 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+
+  /* IMPORTANT: prevents cinematic jitter */
+  min-height: 100%;
 }
 
 /* =========================
-   SCREEN SYSTEM
+   SCREEN SYSTEM (STABLE)
 ========================= */
 
 .app-screen {
@@ -70,6 +73,9 @@ main {
   padding: 1.25rem 1rem;
   margin-bottom: 1rem;
   color: var(--text);
+
+  /* prevents layout shift during missing highlight */
+  transition: border-color 0.3s ease;
 }
 
 /* =========================
@@ -97,7 +103,7 @@ main {
 }
 
 /* =========================
-   BUTTON SYSTEM (FIXED)
+   BUTTON SYSTEM (STABLE + MOBILE SAFE)
 ========================= */
 
 .actions,
@@ -105,15 +111,21 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+
   gap: 1rem;
 
   width: 100%;
+
   margin-top: 2.5rem;
 
-  flex-wrap: wrap; /* prevents mobile overflow */
+  flex-wrap: wrap;
+
+  /* prevents overlap during cinematic transitions */
+  position: relative;
+  z-index: 1;
 }
 
-/* Buttons ONLY style — no layout */
+/* Buttons ONLY style — no layout logic */
 button {
   padding: 0.75rem 1.25rem;
   border: none;
@@ -124,6 +136,8 @@ button {
 
   background: var(--card);
   color: var(--text);
+
+  transition: filter 0.2s ease;
 }
 
 button:hover {
@@ -150,6 +164,10 @@ button:hover {
   border-radius: 12px;
   padding: 1rem;
   color: var(--text);
+
+  /* IMPORTANT for cinematic reveal stability */
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* =========================
@@ -172,7 +190,7 @@ button:hover {
 }
 
 /* =========================
-   CINEMATIC OVERLAY (FIXED + SAFE)
+   CINEMATIC OVERLAY (HARD STABLE LAYER)
 ========================= */
 
 .fate-overlay {
@@ -189,8 +207,12 @@ button:hover {
   font-size: 1.5rem;
   text-align: center;
 
-  z-index: 1000;
+  z-index: 9999;
+
   padding: 2rem;
+
+  /* prevents click-through bugs */
+  pointer-events: auto;
 }
 
 .fate-text {
@@ -212,11 +234,13 @@ button:hover {
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.6s ease;
+  pointer-events: none;
 }
 
 .cinematic-mode .result-card.reveal {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* =========================
@@ -235,5 +259,16 @@ button:hover {
   .actions,
   .results-actions {
     flex-direction: column;
+  }
+}
+
+/* =========================
+   REDUCED MOTION SAFETY (CSS BACKUP)
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
   }
 }
