@@ -26,7 +26,8 @@ export function renderResults(results) {
       </div>
 
       <div class="bar">
-        <div class="bar-fill" style="width:${p.percent}%"></div>
+        <div class="bar-fill" style="width:${p.percent}%" barFill.dataset.target = percent;
+barFill.style.width = "0%";;></div>
       </div>
 
       ${

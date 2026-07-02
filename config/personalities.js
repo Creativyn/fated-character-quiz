@@ -104,14 +104,3 @@ export const PERSONALITIES = [
       "Manipulative, underhanded, and unscrupulous, you are eager to promote any deal that will get you ahead. Making money, personal advancement, and gain are the only things that really matter to you…although feverish, mind-blowing sex is a close follow-up. You cannot be trusted, and you never trust. Naturally wary of everyone, you enjoy preying upon the innocent as they make the easiest targets, bestowing the quickest returns.",
   },
 ];
-
-/**
- * Theme settings (global UI styling)
- */
-export const THEME = {
-  background: "#0f172a",
-  surface: "#111827",
-  text: "#e5e7eb",
-  muted: "#94a3b8",
-  border: "#1f2937",
-};

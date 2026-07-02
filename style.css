@@ -32,7 +32,7 @@ body {
 }
 
 /* =========================
-   SCREEN SYSTEM (NEW FIX)
+   SCREEN SYSTEM
 ========================= */
 
 .app-screen {
@@ -45,18 +45,8 @@ body {
   display: block;
 }
 
-/* CENTER BUTTON GROUP PROPERLY */
-.actions,
-.results-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
 /* =========================
-   LAYOUT
+   GLOBAL LAYOUT
 ========================= */
 
 .header {
@@ -71,7 +61,7 @@ main {
 }
 
 /* =========================
-   QUESTION CARD
+   QUIZ STRUCTURE
 ========================= */
 
 .question {
@@ -102,8 +92,12 @@ main {
   color: var(--text);
 }
 
+.answer input {
+  flex-shrink: 0;
+}
+
 /* =========================
-   BUTTONS (FIXED CENTERING)
+   BUTTON SYSTEM (FIXED)
 ========================= */
 
 .actions,
@@ -113,10 +107,13 @@ main {
   align-items: center;
   gap: 1rem;
 
-  margin-top: 2rem;
   width: 100%;
+  margin-top: 2.5rem;
+
+  flex-wrap: wrap; /* prevents mobile overflow */
 }
 
+/* Buttons ONLY style — no layout */
 button {
   padding: 0.75rem 1.25rem;
   border: none;
@@ -129,8 +126,12 @@ button {
   color: var(--text);
 }
 
+button:hover {
+  filter: brightness(1.1);
+}
+
 /* =========================
-   RESULTS
+   RESULTS LAYOUT
 ========================= */
 
 .results-header {
@@ -141,6 +142,7 @@ button {
 #results-container {
   display: grid;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .result-card {
@@ -170,9 +172,68 @@ button {
 }
 
 /* =========================
+   CINEMATIC OVERLAY (FIXED + SAFE)
+========================= */
+
+.fate-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(10, 10, 20, 0.85);
+  color: white;
+
+  font-size: 1.5rem;
+  text-align: center;
+
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.fate-text {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: all 0.5s ease;
+}
+
+.fate-text.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* =========================
+   CINEMATIC STATE SAFETY
+========================= */
+
+.cinematic-mode .result-card {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.6s ease;
+}
+
+.cinematic-mode .result-card.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =========================
    ERROR STATE
 ========================= */
 
 .question.missing {
   border: 2px solid #a01d1d;
+}
+
+/* =========================
+   MOBILE SAFETY
+========================= */
+
+@media (max-width: 480px) {
+  .actions,
+  .results-actions {
+    flex-direction: column;
+  }
 }

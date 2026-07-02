@@ -3,14 +3,18 @@ import { PERSONALITIES } from "./config/personalities.js";
 import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
+import { fateReveal } from "./ui/fateReveal.js";
+import { generateResultCard } from "./utils/shareCard.js";
 
 /* =========================
-   SCREEN HELPERS
+   SCREEN SYSTEM
 ========================= */
 
 function showScreen(name) {
   const quiz = document.getElementById("quiz-section");
   const results = document.getElementById("results-section");
+
+  if (!quiz || !results) return;
 
   quiz.classList.remove("active");
   results.classList.remove("active");
@@ -32,7 +36,8 @@ function waitForElement(selector, timeout = 5000) {
       if (el) return resolve(el);
 
       if (Date.now() - start > timeout) {
-        return reject(`Timeout waiting for ${selector}`);
+        reject(`Timeout waiting for ${selector}`);
+        return;
       }
 
       requestAnimationFrame(check);
@@ -50,7 +55,7 @@ let quizForm;
 let validationMessage;
 
 /* =========================
-   SCROLL TO UNANSWERED
+   SCROLL VALIDATION
 ========================= */
 
 function scrollToFirstUnanswered() {
@@ -84,9 +89,19 @@ function scrollToFirstUnanswered() {
 ========================= */
 
 function initResultButtons() {
+  const homeBtn = document.getElementById("home-btn");
+  const exploreBtn = document.getElementById("explore-btn");
   const retakeBtn = document.getElementById("retake-btn");
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
+
+  homeBtn?.addEventListener("click", () => {
+    window.location.href = "/";
+  });
+
+  exploreBtn?.addEventListener("click", () => {
+    window.location.href = "/characters";
+  });
 
   retakeBtn?.addEventListener("click", () => {
     quizForm?.reset();
@@ -100,18 +115,26 @@ function initResultButtons() {
 
   shareBtn?.addEventListener("click", async () => {
     const topId = window.__TOP_PERSONALITY__;
-    if (!topId) return;
+    const personality = PERSONALITIES.find((p) => p.id === topId);
 
     const url = `${window.location.origin}${window.location.pathname}#/result/${topId}`;
 
-    const text =
-      document.getElementById("top-result")?.textContent || "My result";
-
     try {
-      if (navigator.share) {
+      const image = await generateResultCard(personality);
+
+      if (navigator.share && image) {
+        const blob = await (await fetch(image)).blob();
+        const file = new File([blob], "result.png", { type: "image/png" });
+
         await navigator.share({
-          title: "My Fated Character Result",
-          text,
+          title: personality?.name || "My Result",
+          text: personality?.heading || "My Fated Result",
+          url,
+          files: [file],
+        });
+      } else if (navigator.share) {
+        await navigator.share({
+          title: personality?.name || "My Result",
           url,
         });
       } else {
@@ -119,26 +142,41 @@ function initResultButtons() {
         alert("Link copied!");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Share failed:", err);
     }
   });
 }
 
 /* =========================
-   SHOW RESULTS
+   SHOW RESULTS (CINEMATIC SAFE)
 ========================= */
 
-function showResults(results) {
+async function showResults(results) {
   const top = results?.[0];
   if (!top) return;
-
-  renderResults(results);
 
   window.__TOP_PERSONALITY__ = top.id;
 
   showScreen("results");
-  initResultButtons();
 
+  const container = document.getElementById("results-container");
+  const overlay = document.getElementById("fate-overlay");
+  const resultsSection = document.getElementById("results-section");
+
+  if (!container || !overlay || !resultsSection) {
+    console.error("Missing results DOM elements");
+    renderResults(results);
+    return;
+  }
+
+  await fateReveal({
+    results,
+    container,
+    overlay,
+    resultsSection,
+  });
+
+  initResultButtons();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -187,7 +225,7 @@ async function bootApp() {
     showResults(results);
   });
 
-  console.log("Boot complete");
+  console.log("✅ Quiz boot complete");
 }
 
 bootApp();
