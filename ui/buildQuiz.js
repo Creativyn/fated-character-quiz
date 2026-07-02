@@ -1,35 +1,24 @@
 export function buildQuiz(QUESTIONS) {
-  console.log("🔥 buildQuiz CALLED");
-  console.log("QUESTIONS RECEIVED:", QUESTIONS);
+  console.log("BUILD QUIZ");
 
-  const container = document.querySelector("#questions-container");
+  const container = document.getElementById("questions-container");
 
   if (!container) {
-    console.error("❌ #questions-container NOT FOUND in DOM");
-    return;
-  }
-
-  if (!Array.isArray(QUESTIONS)) {
-    console.error("❌ QUESTIONS is not an array:", QUESTIONS);
+    console.error("Missing #questions-container");
     return;
   }
 
   container.innerHTML = "";
 
-  QUESTIONS.forEach((q, index) => {
-    if (!q || !q.answers) {
-      console.warn("Skipping invalid question:", q);
-      return;
-    }
-
+  QUESTIONS.forEach((q) => {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
     const legend = document.createElement("legend");
-    legend.textContent = q.question || `Question ${index + 1}`;
+    legend.textContent = q.question;
 
-    const answersDiv = document.createElement("div");
-    answersDiv.className = "answers";
+    const answers = document.createElement("div");
+    answers.className = "answers";
 
     q.answers.forEach((a) => {
       const label = document.createElement("label");
@@ -43,14 +32,14 @@ export function buildQuiz(QUESTIONS) {
       label.appendChild(input);
       label.appendChild(document.createTextNode(a.text));
 
-      answersDiv.appendChild(label);
+      answers.appendChild(label);
     });
 
     fieldset.appendChild(legend);
-    fieldset.appendChild(answersDiv);
+    fieldset.appendChild(answers);
 
     container.appendChild(fieldset);
   });
 
-  console.log("✅ Quiz rendered. Questions:", container.children.length);
+  console.log("Rendered:", container.children.length);
 }

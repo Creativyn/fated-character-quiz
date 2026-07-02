@@ -16,31 +16,10 @@ const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
 const validationMessage = document.getElementById("validation-message");
 
-/* -----------------------------
-   Helpers
------------------------------- */
-
-function waitForElement(selector, timeout = 5000) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-
-    const check = () => {
-      const el = document.querySelector(selector);
-      if (el) return resolve(el);
-
-      if (Date.now() - start > timeout) {
-        return reject(`Timeout waiting for ${selector}`);
-      }
-
-      requestAnimationFrame(check);
-    };
-
-    check();
-  });
-}
+const retakeBtn = document.getElementById("retake-btn");
 
 /* -----------------------------
-   UI
+   UI STATE
 ------------------------------ */
 
 function showQuiz() {
@@ -59,34 +38,28 @@ function showResults(results) {
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  const topResultEl = document.getElementById("top-result");
-  if (topResultEl) {
-    topResultEl.textContent = `You are most like ${top.name}`;
+  const topResult = document.getElementById("top-result");
+  if (topResult) {
+    topResult.textContent = `You are most like ${top.name}`;
   }
 }
 
 /* -----------------------------
-   Init
+   INIT
 ------------------------------ */
 
-async function bootApp() {
-  console.log("BOOT START");
-
-  await waitForElement("#questions-container");
-
-  console.log("QUESTIONS CONTAINER FOUND");
+function init() {
+  console.log("INIT");
 
   buildQuiz(QUESTIONS);
 
   showQuiz();
-
-  console.log("BOOT COMPLETE");
 }
 
-bootApp().catch((err) => console.error("BOOT ERROR:", err));
+init();
 
 /* -----------------------------
-   Submit
+   SUBMIT
 ------------------------------ */
 
 quizForm?.addEventListener("submit", (e) => {
@@ -95,8 +68,6 @@ quizForm?.addEventListener("submit", (e) => {
   const formData = new FormData(quizForm);
 
   const answered = new Set([...formData.keys()]).size;
-
-  console.log("ANSWERED:", answered, "/", QUESTIONS.length);
 
   if (answered < QUESTIONS.length) {
     validationMessage.textContent =
@@ -122,10 +93,10 @@ quizForm?.addEventListener("submit", (e) => {
 });
 
 /* -----------------------------
-   Retake
+   RETAKE
 ------------------------------ */
 
-document.getElementById("retake-btn")?.addEventListener("click", () => {
+retakeBtn?.addEventListener("click", () => {
   quizForm.reset();
   showQuiz();
 });
