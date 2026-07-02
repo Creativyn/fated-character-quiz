@@ -79,8 +79,8 @@ function initResultButtons() {
   retakeBtn?.addEventListener("click", () => {
     quizForm?.reset();
 
-    resultsSection?.classList.add("hidden");
-    quizSection?.classList.remove("hidden");
+    resultsSection?.classList.remove("active");
+    quizSection?.classList.add("active");
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -142,8 +142,8 @@ function showResults(results) {
 ========================= */
 
 function showQuiz() {
-  quizSection.classList.remove("hidden");
-  resultsSection.classList.add("hidden");
+  quizSection.classList.remove("active");
+  resultsSection.classList.add("active");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
