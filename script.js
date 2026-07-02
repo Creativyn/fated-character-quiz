@@ -5,7 +5,6 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS);
 
 /* -----------------------------
    DOM
@@ -16,46 +15,8 @@ const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
 const validationMessage = document.getElementById("validation-message");
 
-const retakeBtn = document.getElementById("retake-btn");
-const printBtn = document.getElementById("print-btn");
-const shareBtn = document.getElementById("share-btn");
-
-let ro;
-
 /* -----------------------------
-   SAFE RESIZE SYSTEM (GitHub + Wix safe)
------------------------------- */
-
-function sendHeight() {
-  const height = document.body.scrollHeight;
-
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESIZE",
-      height,
-    },
-    "*",
-  );
-}
-
-function initResize() {
-  if (ro) return;
-
-  ro = new ResizeObserver(() => {
-    requestAnimationFrame(sendHeight);
-  });
-
-  ro.observe(document.body);
-
-  window.addEventListener("load", sendHeight);
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(sendHeight);
-  });
-}
-
-/* -----------------------------
-   WAIT FOR DOM
+   WAIT UTIL
 ------------------------------ */
 
 function waitForElement(selector, timeout = 5000) {
@@ -78,31 +39,52 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 /* -----------------------------
-   RESULTS
+   WIX RESIZE (FIXED)
 ------------------------------ */
 
-function postResult(top) {
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESULT",
-      payload: {
-        id: top.id,
-        name: top.name,
-        percent: top.percent,
-      },
-    },
-    "*",
-  );
+let ro;
+let mo;
+
+function sendHeight() {
+  const height = document.body.scrollHeight;
+
+  window.parent.postMessage({ type: "FATED_QUIZ_RESIZE", height }, "*");
+}
+
+function initWixResize() {
+  if (window.__WIX_INIT__) return;
+  window.__WIX_INIT__ = true;
+
+  ro = new ResizeObserver(() => {
+    requestAnimationFrame(sendHeight);
+  });
+
+  ro.observe(document.body);
+
+  mo = new MutationObserver(() => {
+    requestAnimationFrame(sendHeight);
+  });
+
+  mo.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+
+  window.addEventListener("load", sendHeight);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(sendHeight);
+  });
 }
 
 /* -----------------------------
-   UI
+   UI HELPERS
 ------------------------------ */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
-
   sendHeight();
 }
 
@@ -115,37 +97,64 @@ function showResults(results) {
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
   window.__TOP_PERSONALITY__ = top.id;
 
-  postResult(top);
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESULT",
+      payload: {
+        id: top.id,
+        name: top.name,
+        percent: top.percent,
+      },
+    },
+    "*",
+  );
 
   sendHeight();
 }
 
 /* -----------------------------
-   BOOT
+   VALIDATION FIX (IMPORTANT)
+------------------------------ */
+
+function scrollToFirstUnanswered() {
+  const questions = document.querySelectorAll(".question");
+
+  for (const q of questions) {
+    const answered = q.querySelector("input:checked");
+    if (!answered) {
+      q.scrollIntoView({ behavior: "smooth", block: "center" });
+      q.style.outline = "2px solid #ff4d4d";
+      return;
+    }
+  }
+}
+
+/* -----------------------------
+   INIT
 ------------------------------ */
 
 async function bootApp() {
-  console.log("🚀 Boot starting...");
+  console.log("BOOT START");
 
   await waitForElement("#questions-container");
 
   buildQuiz(QUESTIONS);
 
-  initResize();
+  initWixResize();
 
   showQuiz();
 
-  console.log("✅ Boot complete");
+  sendHeight();
+
+  console.log("BOOT COMPLETE");
 }
 
-bootApp();
+requestAnimationFrame(bootApp);
 
 /* -----------------------------
-   FORM SUBMIT
+   SUBMIT
 ------------------------------ */
 
 if (quizForm) {
@@ -153,11 +162,13 @@ if (quizForm) {
     e.preventDefault();
 
     const formData = new FormData(quizForm);
-    const answered = new Set([...formData.keys()]).size;
+    const answeredCount = new Set([...formData.keys()]).size;
 
-    if (answered < QUESTIONS.length) {
+    if (answeredCount < QUESTIONS.length) {
       validationMessage.textContent =
-        "Please answer every question before viewing your results.";
+        "Please answer every question before viewing results.";
+
+      scrollToFirstUnanswered();
       return;
     }
 
@@ -177,9 +188,9 @@ if (quizForm) {
    RETAKE
 ------------------------------ */
 
-retakeBtn?.addEventListener("click", () => {
+document.getElementById("retake-btn")?.addEventListener("click", () => {
   quizForm.reset();
-  window.history.replaceState({}, "", window.location.pathname);
+  window.location.hash = "";
   showQuiz();
 });
 
@@ -187,51 +198,48 @@ retakeBtn?.addEventListener("click", () => {
    PRINT
 ------------------------------ */
 
-printBtn?.addEventListener("click", () => window.print());
+document.getElementById("print-btn")?.addEventListener("click", () => {
+  window.print();
+});
 
 /* -----------------------------
    SHARE
 ------------------------------ */
 
-shareBtn?.addEventListener("click", async () => {
+document.getElementById("share-btn")?.addEventListener("click", async () => {
   const topId = window.__TOP_PERSONALITY__;
   if (!topId) return;
 
-  const shareUrl = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
-
-  const text = document.getElementById("top-result")?.textContent || "";
+  const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
 
   try {
     if (navigator.share) {
       await navigator.share({
         title: "My Fated Character Result",
-        text,
-        url: shareUrl,
+        url,
       });
     } else {
-      await navigator.clipboard.writeText(shareUrl);
-      alert("Copied!");
+      await navigator.clipboard.writeText(url);
+      alert("Link copied!");
     }
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
   }
 });
 
 /* -----------------------------
-   EXTERNAL EVENTS
+   MESSAGE HANDLER
 ------------------------------ */
 
 window.addEventListener("message", (event) => {
   const { type, payload } = event.data || {};
 
-  if (type === "FATED_SHOW_RESULT" && payload?.id) {
-    const personality = PERSONALITIES.find((p) => p.id === payload.id);
+  if (type === "FATED_SHOW_QUIZ") showQuiz();
+
+  if (type === "FATED_SHOW_RESULT") {
+    const personality = PERSONALITIES.find((p) => p.id === payload?.id);
     if (!personality) return;
 
     showResults([{ ...personality, score: 1, percent: 100 }]);
-  }
-
-  if (type === "FATED_SHOW_QUIZ") {
-    showQuiz();
   }
 });
