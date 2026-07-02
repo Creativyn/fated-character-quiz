@@ -4,17 +4,58 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
-/* -----------------------------
-   DEBUG (IMPORTANT)
------------------------------- */
-window.QUESTIONS = QUESTIONS;
-window.PERSONALITIES = PERSONALITIES;
-
 console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS.length);
+console.log("QUESTIONS:", QUESTIONS);
 
 /* -----------------------------
-   DOM HELPERS
+   DOM
+------------------------------ */
+
+const quizForm = document.getElementById("quiz");
+const quizSection = document.getElementById("quiz-section");
+const resultsSection = document.getElementById("results-section");
+const validationMessage = document.getElementById("validation-message");
+
+const retakeBtn = document.getElementById("retake-btn");
+const printBtn = document.getElementById("print-btn");
+const shareBtn = document.getElementById("share-btn");
+
+let ro;
+
+/* -----------------------------
+   SAFE RESIZE SYSTEM (GitHub + Wix safe)
+------------------------------ */
+
+function sendHeight() {
+  const height = document.body.scrollHeight;
+
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESIZE",
+      height,
+    },
+    "*",
+  );
+}
+
+function initResize() {
+  if (ro) return;
+
+  ro = new ResizeObserver(() => {
+    requestAnimationFrame(sendHeight);
+  });
+
+  ro.observe(document.body);
+
+  window.addEventListener("load", sendHeight);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(sendHeight);
+  });
+}
+
+/* -----------------------------
+   WAIT FOR DOM
 ------------------------------ */
 
 function waitForElement(selector, timeout = 5000) {
@@ -37,47 +78,32 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 /* -----------------------------
-   WIX RESIZE
+   RESULTS
 ------------------------------ */
 
-function sendHeight() {
+function postResult(top) {
   window.parent.postMessage(
     {
-      type: "FATED_QUIZ_RESIZE",
-      height: document.body.scrollHeight,
+      type: "FATED_QUIZ_RESULT",
+      payload: {
+        id: top.id,
+        name: top.name,
+        percent: top.percent,
+      },
     },
     "*",
   );
-}
-
-function initWixResize() {
-  const ro = new ResizeObserver(() => {
-    requestAnimationFrame(sendHeight);
-  });
-
-  ro.observe(document.body);
-
-  window.addEventListener("load", sendHeight);
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(sendHeight);
-  });
 }
 
 /* -----------------------------
    UI
 ------------------------------ */
 
-const quizForm = document.getElementById("quiz");
-const quizSection = document.getElementById("quiz-section");
-const resultsSection = document.getElementById("results-section");
-const validationMessage = document.getElementById("validation-message");
-
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
 
-  requestAnimationFrame(sendHeight);
+  sendHeight();
 }
 
 function showResults(results) {
@@ -93,19 +119,9 @@ function showResults(results) {
 
   window.__TOP_PERSONALITY__ = top.id;
 
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESULT",
-      payload: {
-        id: top.id,
-        name: top.name,
-        percent: top.percent,
-      },
-    },
-    "*",
-  );
+  postResult(top);
 
-  requestAnimationFrame(sendHeight);
+  sendHeight();
 }
 
 /* -----------------------------
@@ -119,11 +135,9 @@ async function bootApp() {
 
   buildQuiz(QUESTIONS);
 
-  initWixResize();
+  initResize();
 
   showQuiz();
-
-  requestAnimationFrame(sendHeight);
 
   console.log("✅ Boot complete");
 }
@@ -131,61 +145,93 @@ async function bootApp() {
 bootApp();
 
 /* -----------------------------
-   SUBMIT
+   FORM SUBMIT
 ------------------------------ */
 
-quizForm?.addEventListener("submit", (e) => {
-  e.preventDefault();
+if (quizForm) {
+  quizForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  const formData = new FormData(quizForm);
-  const answered = quizForm.querySelectorAll(
-    "input[type='radio']:checked",
-  ).length;
-  if (answered < QUESTIONS.length) {
-    validationMessage.textContent =
-      "Please answer every question before viewing your results.";
-    return;
-  }
+    const formData = new FormData(quizForm);
+    const answered = new Set([...formData.keys()]).size;
 
-  validationMessage.textContent = "";
+    if (answered < QUESTIONS.length) {
+      validationMessage.textContent =
+        "Please answer every question before viewing your results.";
+      return;
+    }
 
-  const results = calculateResults({
-    formData,
-    personalities: PERSONALITIES,
-    questions: QUESTIONS,
+    validationMessage.textContent = "";
+
+    const results = calculateResults({
+      formData,
+      personalities: PERSONALITIES,
+      questions: QUESTIONS,
+    });
+
+    showResults(results);
   });
-
-  showResults(results);
-});
+}
 
 /* -----------------------------
    RETAKE
 ------------------------------ */
 
-document.getElementById("retake-btn")?.addEventListener("click", () => {
+retakeBtn?.addEventListener("click", () => {
   quizForm.reset();
   window.history.replaceState({}, "", window.location.pathname);
   showQuiz();
 });
 
 /* -----------------------------
-   SHARE / PRINT
+   PRINT
 ------------------------------ */
 
-document.getElementById("print-btn")?.addEventListener("click", () => {
-  window.print();
-});
+printBtn?.addEventListener("click", () => window.print());
 
-document.getElementById("share-btn")?.addEventListener("click", async () => {
+/* -----------------------------
+   SHARE
+------------------------------ */
+
+shareBtn?.addEventListener("click", async () => {
   const topId = window.__TOP_PERSONALITY__;
   if (!topId) return;
 
-  const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
+  const shareUrl = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
 
-  if (navigator.share) {
-    await navigator.share({ url, title: "My Result" });
-  } else {
-    await navigator.clipboard.writeText(url);
-    alert("Copied!");
+  const text = document.getElementById("top-result")?.textContent || "";
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "My Fated Character Result",
+        text,
+        url: shareUrl,
+      });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Copied!");
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+/* -----------------------------
+   EXTERNAL EVENTS
+------------------------------ */
+
+window.addEventListener("message", (event) => {
+  const { type, payload } = event.data || {};
+
+  if (type === "FATED_SHOW_RESULT" && payload?.id) {
+    const personality = PERSONALITIES.find((p) => p.id === payload.id);
+    if (!personality) return;
+
+    showResults([{ ...personality, score: 1, percent: 100 }]);
+  }
+
+  if (type === "FATED_SHOW_QUIZ") {
+    showQuiz();
   }
 });
