@@ -16,7 +16,8 @@ export function renderResults(results) {
     const card = document.createElement("div");
     card.className = "result-card";
 
-    const color = p.color || "#60a5fa"; // fallback safe
+    // ✅ set personality color as CSS variable
+    card.style.setProperty("--accent", p.color || "#60a5fa");
 
     card.innerHTML = `
       <div class="result-title">
@@ -25,7 +26,7 @@ export function renderResults(results) {
       </div>
 
       <div class="bar">
-        <div class="bar-fill" style="width:${p.percent}%; background:${color};"></div>
+        <div class="bar-fill" style="width:${p.percent}%"></div>
       </div>
 
       ${
