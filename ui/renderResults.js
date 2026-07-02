@@ -1,34 +1,39 @@
 export function renderResults(results) {
   const container = document.getElementById("results-container");
-  const topText = document.getElementById("top-result");
+  const topResultText = document.getElementById("top-result");
+
+  if (!container || !results?.length) return;
 
   container.innerHTML = "";
 
   const top = results[0];
 
-  if (topText) {
-    topText.textContent = `You are most like ${top.name}`;
+  // Top label text
+  if (topResultText) {
+    topResultText.textContent = `You are most like ${top.name}`;
   }
 
-  window.__TOP_PERSONALITY__ = top.id;
-
-  results.forEach((r, i) => {
+  results.forEach((personality, index) => {
     const card = document.createElement("div");
     card.className = "result-card";
 
-    if (i > 0) card.classList.add("compact");
+    const percent = personality.percent ?? 0;
 
     card.innerHTML = `
       <div class="result-title">
-        <span>${r.name}</span>
-        <span>${r.percent}%</span>
+        <span>${personality.name}</span>
+        <span>${percent}%</span>
       </div>
 
       <div class="bar">
-        <div class="bar-fill" style="width:${r.percent}%"></div>
+        <div class="bar-fill" style="width: ${percent}%"></div>
       </div>
 
-      <p>${r.description || ""}</p>
+      ${
+        index === 0
+          ? `<p class="result-description">${personality.description ?? ""}</p>`
+          : ""
+      }
     `;
 
     container.appendChild(card);
