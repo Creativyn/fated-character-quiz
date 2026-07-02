@@ -18,7 +18,7 @@ body {
     Garamond,
     serif;
   background: #b4aff3;
-  color: #000;
+  color: #e5e7eb;
   line-height: 1.5;
 }
 
@@ -196,7 +196,7 @@ button:focus-visible {
 #results-container {
   display: grid;
   gap: 1rem;
-  color: #394977;
+  background: #394977;
 }
 
 .result-card {
@@ -230,7 +230,7 @@ button:focus-visible {
 }
 
 .result-description {
-  color: #cbd5e1;
+  color: #000;
   line-height: 1.5;
 }
 
