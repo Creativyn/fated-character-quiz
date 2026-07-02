@@ -98,7 +98,7 @@ fieldset {
 ========================= */
 
 .question {
-  background: #394977;
+  background: #566fb8;
   border-radius: 12px;
   padding: 1.25rem 1rem 1rem;
   margin-bottom: 1rem;
@@ -229,7 +229,7 @@ button:focus-visible {
 }
 
 .result-description {
-  color: #cbd5e1;
+  color: #000;
   line-height: 1.5;
 }
 
