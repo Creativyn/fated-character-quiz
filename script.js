@@ -5,7 +5,7 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 /* =========================
-   SAFE DOM HELPERS
+   DOM WAIT
 ========================= */
 
 function waitForElement(selector, timeout = 5000) {
@@ -28,7 +28,7 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 /* =========================
-   GLOBAL STATE
+   STATE
 ========================= */
 
 let quizForm;
@@ -37,30 +37,38 @@ let resultsSection;
 let validationMessage;
 
 /* =========================
-   UNANSWERED SCROLL FIX
+   SCROLL TO UNANSWERED (FIXED)
 ========================= */
 
-function scrollToFirstUnanswered(formData) {
+function scrollToFirstUnanswered() {
   const questions = document.querySelectorAll(".question");
 
   for (let i = 0; i < QUESTIONS.length; i++) {
-    const answered = formData.get(`q${i}`);
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
 
-    if (!answered) {
-      questions[i]?.classList.add("missing");
+    if (!selected) {
+      const el = questions[i];
 
-      questions[i]?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
 
-      return;
+        el.classList.add("missing");
+
+        setTimeout(() => el.classList.remove("missing"), 1200);
+      }
+
+      return true; // found missing
     }
   }
+
+  return false;
 }
 
 /* =========================
-   RESULTS BUTTONS (FIXED)
+   RESULTS BUTTONS
 ========================= */
 
 function initResultButtons() {
@@ -130,7 +138,7 @@ function showResults(results) {
 }
 
 /* =========================
-   QUIZ
+   QUIZ VIEW
 ========================= */
 
 function showQuiz() {
@@ -141,7 +149,7 @@ function showQuiz() {
 }
 
 /* =========================
-   INIT APP
+   BOOT
 ========================= */
 
 async function bootApp() {
@@ -159,18 +167,17 @@ async function bootApp() {
   quizForm?.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const formData = new FormData(quizForm);
-    const answeredCount = new Set([...formData.keys()]).size;
+    const missing = scrollToFirstUnanswered();
 
-    if (answeredCount < QUESTIONS.length) {
+    if (missing) {
       validationMessage.textContent =
         "Please answer every question before viewing results.";
-
-      scrollToFirstUnanswered(formData);
       return;
     }
 
     validationMessage.textContent = "";
+
+    const formData = new FormData(quizForm);
 
     const results = calculateResults({
       formData,
@@ -184,14 +191,10 @@ async function bootApp() {
   console.log("✅ Boot complete");
 }
 
-/* =========================
-   START
-========================= */
-
 bootApp();
 
 /* =========================
-   MESSAGE API (optional Wix/iframe)
+   MESSAGE API
 ========================= */
 
 window.addEventListener("message", (event) => {
