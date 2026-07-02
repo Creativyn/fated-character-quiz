@@ -209,7 +209,7 @@ button:focus-visible {
 #results-section {
   display: flex;
   flex-direction: column;
-  gap: 2rem; /* controls spacing between all blocks */
+  gap: 2rem;
 }
 
 .result-card {
@@ -244,27 +244,14 @@ button:focus-visible {
 }
 
 /* =========================
-   RESULTS PAGE STRUCTURE (IMPORTANT FIX)
-========================= */
-
-.results-page {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; /* controls spacing between results and buttons */
-}
-
-/* =========================
    BUTTONS CONTAINER (STRUCTURAL)
 ========================= */
 
 .results-actions {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 1rem;
-
-  margin: 0; /* IMPORTANT */
-  padding-top: 0.5rem;
+  margin-top: 0;
 }
 
 /* =========================
