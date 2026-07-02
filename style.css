@@ -18,6 +18,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+
   font-family:
     system-ui,
     -apple-system,
@@ -96,6 +97,7 @@ fieldset {
   border-radius: 12px;
   padding: 1.25rem 1rem 1rem;
   margin-bottom: 1rem;
+
   border: 1px solid rgba(255, 255, 255, 0.08);
 
   display: flex;
@@ -104,7 +106,7 @@ fieldset {
 }
 
 /* =========================
-   QUESTION TEXT
+   QUESTION TITLE
 ========================= */
 
 .question-title {
@@ -148,10 +150,9 @@ fieldset {
 }
 
 /* =========================
-   GLOBAL TEXT RULE (KEY FIX)
+   GLOBAL TEXT COLOR FIX
 ========================= */
 
-/* everything inside cards is BLACK unless overridden */
 .question,
 .result-card,
 .question-title,
@@ -163,13 +164,14 @@ fieldset {
 }
 
 /* =========================
-   BUTTONS
+   BUTTONS (GENERAL)
 ========================= */
 
 button {
   padding: 0.75rem 1.25rem;
   border: none;
   border-radius: 10px;
+
   cursor: pointer;
   font-weight: 600;
 
@@ -232,6 +234,29 @@ button:focus-visible {
   width: 0%;
   background: var(--accent);
   transition: width 0.6s ease;
+}
+
+/* =========================
+   RESULTS PAGE STRUCTURE (IMPORTANT FIX)
+========================= */
+
+.results-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* controls spacing between results and buttons */
+}
+
+/* =========================
+   BUTTONS CONTAINER (STRUCTURAL)
+========================= */
+
+.results-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  flex-wrap: wrap;
 }
 
 /* =========================
