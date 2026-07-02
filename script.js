@@ -201,9 +201,7 @@ window.addEventListener("message", (event) => {
   const { type, payload } = event.data || {};
 
   switch (type) {
-    case "FATED_SHOW_RESULT":
-      if (!payload?.id) return;
-
+    case "FATED_SHOW_RESULT": {
       const personality = PERSONALITIES.find((p) => p.id === payload.id);
 
       if (!personality) return;
@@ -215,10 +213,13 @@ window.addEventListener("message", (event) => {
           percent: 100,
         },
       ]);
-      break;
 
-    case "FATED_SHOW_QUIZ":
+      break;
+    }
+
+    case "FATED_SHOW_QUIZ": {
       showQuiz();
       break;
+    }
   }
 });
