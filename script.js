@@ -4,17 +4,20 @@ import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
-console.log("SCRIPT LOADED");
-
-// expose for debugging (fixes your console confusion)
+/* -----------------------------
+   DEBUG (IMPORTANT)
+------------------------------ */
 window.QUESTIONS = QUESTIONS;
-window.buildQuiz = buildQuiz;
+window.PERSONALITIES = PERSONALITIES;
+
+console.log("SCRIPT LOADED");
+console.log("QUESTIONS:", QUESTIONS.length);
 
 /* -----------------------------
-   DOM helpers
+   DOM HELPERS
 ------------------------------ */
 
-function waitForElement(selector, timeout = 8000) {
+function waitForElement(selector, timeout = 5000) {
   return new Promise((resolve, reject) => {
     const start = Date.now();
 
@@ -34,48 +37,47 @@ function waitForElement(selector, timeout = 8000) {
 }
 
 /* -----------------------------
-   Wix resize (SAFE VERSION)
+   WIX RESIZE
 ------------------------------ */
 
-function initWixResize() {
-  const send = () => {
-    window.parent.postMessage(
-      {
-        type: "FATED_QUIZ_RESIZE",
-        height: document.body.scrollHeight,
-      },
-      "*",
-    );
-  };
+function sendHeight() {
+  window.parent.postMessage(
+    {
+      type: "FATED_QUIZ_RESIZE",
+      height: document.body.scrollHeight,
+    },
+    "*",
+  );
+}
 
+function initWixResize() {
   const ro = new ResizeObserver(() => {
-    requestAnimationFrame(send);
+    requestAnimationFrame(sendHeight);
   });
 
   ro.observe(document.body);
 
-  window.addEventListener("load", send);
+  window.addEventListener("load", sendHeight);
 
-  requestAnimationFrame(send);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(sendHeight);
+  });
 }
 
 /* -----------------------------
    UI
 ------------------------------ */
 
-function showQuiz() {
-  document.getElementById("quiz-section")?.classList.remove("hidden");
-  document.getElementById("results-section")?.classList.add("hidden");
+const quizForm = document.getElementById("quiz");
+const quizSection = document.getElementById("quiz-section");
+const resultsSection = document.getElementById("results-section");
+const validationMessage = document.getElementById("validation-message");
 
-  requestAnimationFrame(() => {
-    window.parent.postMessage(
-      {
-        type: "FATED_QUIZ_RESIZE",
-        height: document.body.scrollHeight,
-      },
-      "*",
-    );
-  });
+function showQuiz() {
+  quizSection.classList.remove("hidden");
+  resultsSection.classList.add("hidden");
+
+  requestAnimationFrame(sendHeight);
 }
 
 function showResults(results) {
@@ -84,8 +86,10 @@ function showResults(results) {
 
   renderResults(results);
 
-  document.getElementById("quiz-section")?.classList.add("hidden");
-  document.getElementById("results-section")?.classList.remove("hidden");
+  quizSection.classList.add("hidden");
+  resultsSection.classList.remove("hidden");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
   window.__TOP_PERSONALITY__ = top.id;
 
@@ -101,83 +105,71 @@ function showResults(results) {
     "*",
   );
 
-  requestAnimationFrame(() => {
-    window.parent.postMessage(
-      {
-        type: "FATED_QUIZ_RESIZE",
-        height: document.body.scrollHeight,
-      },
-      "*",
-    );
-  });
+  requestAnimationFrame(sendHeight);
 }
 
 /* -----------------------------
-   INIT
+   BOOT
 ------------------------------ */
 
 async function bootApp() {
   console.log("🚀 Boot starting...");
 
-  try {
-    await waitForElement("#questions-container");
+  await waitForElement("#questions-container");
 
-    const container = document.getElementById("questions-container");
-    console.log("Container found:", container);
+  buildQuiz(QUESTIONS);
 
-    buildQuiz(QUESTIONS);
+  initWixResize();
 
-    initWixResize();
+  showQuiz();
 
-    showQuiz();
+  requestAnimationFrame(sendHeight);
 
-    console.log("✅ Boot complete");
-  } catch (err) {
-    console.error("BOOT FAILED:", err);
-  }
+  console.log("✅ Boot complete");
 }
 
-requestAnimationFrame(bootApp);
+bootApp();
 
 /* -----------------------------
-   FORM
+   SUBMIT
 ------------------------------ */
 
-const quizForm = document.getElementById("quiz");
-const validationMessage = document.getElementById("validation-message");
+quizForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-if (quizForm) {
-  quizForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const formData = new FormData(quizForm);
+  const answered = new Set([...formData.keys()]).size;
 
-    const formData = new FormData(quizForm);
-    const answered = new Set([...formData.keys()]).size;
+  if (answered < QUESTIONS.length) {
+    validationMessage.textContent =
+      "Please answer every question before viewing your results.";
+    return;
+  }
 
-    if (answered < QUESTIONS.length) {
-      validationMessage.textContent =
-        "Please answer every question before viewing your results.";
-      return;
-    }
+  validationMessage.textContent = "";
 
-    const results = calculateResults({
-      formData,
-      personalities: PERSONALITIES,
-      questions: QUESTIONS,
-    });
-
-    showResults(results);
+  const results = calculateResults({
+    formData,
+    personalities: PERSONALITIES,
+    questions: QUESTIONS,
   });
-}
+
+  showResults(results);
+});
 
 /* -----------------------------
-   Buttons
+   RETAKE
 ------------------------------ */
 
 document.getElementById("retake-btn")?.addEventListener("click", () => {
-  quizForm?.reset();
+  quizForm.reset();
   window.history.replaceState({}, "", window.location.pathname);
   showQuiz();
 });
+
+/* -----------------------------
+   SHARE / PRINT
+------------------------------ */
 
 document.getElementById("print-btn")?.addEventListener("click", () => {
   window.print();
@@ -190,7 +182,7 @@ document.getElementById("share-btn")?.addEventListener("click", async () => {
   const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
 
   if (navigator.share) {
-    await navigator.share({ url });
+    await navigator.share({ url, title: "My Result" });
   } else {
     await navigator.clipboard.writeText(url);
     alert("Copied!");
