@@ -5,71 +5,44 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
+console.log("QUESTIONS:", QUESTIONS);
+
+/* -----------------------------
+   DOM
+------------------------------ */
 
 const quizForm = document.getElementById("quiz");
 const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
 const validationMessage = document.getElementById("validation-message");
 
-const retakeBtn = document.getElementById("retake-btn");
-const printBtn = document.getElementById("print-btn");
-const shareBtn = document.getElementById("share-btn");
-
 /* -----------------------------
-   STABLE RESIZE (Wix + GH Pages safe)
+   Helpers
 ------------------------------ */
-function sendHeight() {
-  requestAnimationFrame(() => {
-    const height = document.body.scrollHeight;
-    window.parent.postMessage({ type: "FATED_QUIZ_RESIZE", height }, "*");
+
+function waitForElement(selector, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+
+    const check = () => {
+      const el = document.querySelector(selector);
+      if (el) return resolve(el);
+
+      if (Date.now() - start > timeout) {
+        return reject(`Timeout waiting for ${selector}`);
+      }
+
+      requestAnimationFrame(check);
+    };
+
+    check();
   });
-}
-
-function initResize() {
-  const ro = new ResizeObserver(sendHeight);
-  ro.observe(document.body);
-
-  const mo = new MutationObserver(sendHeight);
-  mo.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-  });
-
-  window.addEventListener("load", sendHeight);
-}
-
-/* -----------------------------
-   BOOT
------------------------------- */
-async function bootApp() {
-  console.log("BOOT START");
-
-  // allow DOM + iframe settle
-  await new Promise((r) => setTimeout(r, 50));
-
-  const container = document.getElementById("questions-container");
-
-  if (!container) {
-    console.error("questions-container missing");
-    return;
-  }
-
-  buildQuiz(QUESTIONS);
-
-  initResize();
-
-  requestAnimationFrame(() => {
-    showQuiz();
-    sendHeight();
-  });
-
-  console.log("BOOT COMPLETE");
 }
 
 /* -----------------------------
    UI
 ------------------------------ */
+
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
@@ -84,96 +57,75 @@ function showResults(results) {
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
-  window.__TOP_PERSONALITY__ = top.id;
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  postResult(top);
-  sendHeight();
-}
-
-function postResult(top) {
-  window.parent.postMessage(
-    {
-      type: "FATED_QUIZ_RESULT",
-      payload: {
-        id: top.id,
-        name: top.name,
-        percent: top.percent,
-      },
-    },
-    "*",
-  );
-}
-
-/* -----------------------------
-   SUBMIT FIX (THIS WAS BREAKING YOU)
------------------------------- */
-if (quizForm) {
-  quizForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const answeredCount = QUESTIONS.filter((_, i) =>
-      quizForm.querySelector(`input[name="q${i}"]:checked`),
-    ).length;
-
-    if (answeredCount < QUESTIONS.length) {
-      validationMessage.textContent =
-        "Please answer every question before viewing your results.";
-
-      const firstMissing = QUESTIONS.findIndex(
-        (_, i) => !quizForm.querySelector(`input[name="q${i}"]:checked`),
-      );
-
-      document
-        .querySelectorAll(".question")
-        [firstMissing]?.scrollIntoView({ behavior: "smooth", block: "center" });
-
-      return;
-    }
-
-    validationMessage.textContent = "";
-
-    const results = calculateResults({
-      formData: new FormData(quizForm),
-      personalities: PERSONALITIES,
-      questions: QUESTIONS,
-    });
-
-    showResults(results);
-  });
-}
-
-/* -----------------------------
-   BUTTONS
------------------------------- */
-retakeBtn?.addEventListener("click", () => {
-  quizForm.reset();
-  window.history.replaceState({}, "", window.location.pathname);
-  showQuiz();
-  sendHeight();
-});
-
-printBtn?.addEventListener("click", () => window.print());
-
-shareBtn?.addEventListener("click", async () => {
-  const topId = window.__TOP_PERSONALITY__;
-  if (!topId) return;
-
-  const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
-
-  if (navigator.share) {
-    await navigator.share({
-      title: "My Fated Character Result",
-      url,
-    });
-  } else {
-    navigator.clipboard?.writeText(url);
-    alert("Copied!");
+  const topResultEl = document.getElementById("top-result");
+  if (topResultEl) {
+    topResultEl.textContent = `You are most like ${top.name}`;
   }
+}
+
+/* -----------------------------
+   Init
+------------------------------ */
+
+async function bootApp() {
+  console.log("BOOT START");
+
+  await waitForElement("#questions-container");
+
+  console.log("QUESTIONS CONTAINER FOUND");
+
+  buildQuiz(QUESTIONS);
+
+  showQuiz();
+
+  console.log("BOOT COMPLETE");
+}
+
+bootApp().catch((err) => console.error("BOOT ERROR:", err));
+
+/* -----------------------------
+   Submit
+------------------------------ */
+
+quizForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(quizForm);
+
+  const answered = new Set([...formData.keys()]).size;
+
+  console.log("ANSWERED:", answered, "/", QUESTIONS.length);
+
+  if (answered < QUESTIONS.length) {
+    validationMessage.textContent =
+      "Please answer every question before viewing results.";
+
+    validationMessage.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    return;
+  }
+
+  validationMessage.textContent = "";
+
+  const results = calculateResults({
+    formData,
+    personalities: PERSONALITIES,
+    questions: QUESTIONS,
+  });
+
+  showResults(results);
 });
 
 /* -----------------------------
-   INIT
+   Retake
 ------------------------------ */
-bootApp();
+
+document.getElementById("retake-btn")?.addEventListener("click", () => {
+  quizForm.reset();
+  showQuiz();
+});
