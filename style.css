@@ -1,26 +1,69 @@
 /* =========================
-   Base
+   RESET + BASE
 ========================= */
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   font-family:
     system-ui,
     -apple-system,
     "EB Garamond",
+    Garamond,
     serif;
   background: #0f172a;
   color: #e5e7eb;
   line-height: 1.5;
 }
 
-html,
-body {
-  overflow-x: hidden;
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: #fff;
+  color: #000;
+  padding: 8px 12px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 10px;
+  background: #2563eb;
+  color: #fff;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.header {
+  text-align: center;
+  padding: 2rem 1rem;
 }
 
 main {
@@ -30,34 +73,25 @@ main {
 }
 
 /* =========================
-   Header
+   FIELDSET RESET (CRITICAL FIX)
 ========================= */
 
-.header {
-  text-align: center;
-  padding: 2rem 1rem;
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }
 
-/* =========================
-   Quiz layout
-========================= */
-
-/* =========================
-   QUESTION BLOCK FIX
-========================= */
-
-.question {
-  background: #111827;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
+legend {
+  margin: 0 0 0.75rem 0;
+  padding: 0;
   width: 100%;
+  font-weight: 600;
 }
 
 /* =========================
-   ANSWER ROW FIX (CRITICAL)
+   QUESTION CARD
 ========================= */
 
 .question {
@@ -70,79 +104,55 @@ main {
   display: flex;
   flex-direction: column;
 }
+
+/* =========================
+   ANSWERS
+========================= */
 
 .answers {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-
   width: 100%;
 }
 
-/* 🔥 THIS IS THE KEY FIX */
 .answer {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
 
-  width: 100%; /* FORCE FULL WIDTH */
-  box-sizing: border-box;
-
+  width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .answer:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* TEXT WRAP FIX */
-.answer span,
-.answer-text {
-  flex: 1;
-  min-width: 0;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.4;
-}
-
-/* RADIO ALIGNMENT */
 .answer input {
   flex-shrink: 0;
   margin-top: 2px;
 }
 
-/* =========================
-   TEXT CONTAINER FIX
-========================= */
-
-.answer span {
-  display: block;
+.answer-text {
   flex: 1;
-  min-width: 0; /* 🔥 prevents overflow bugs */
-  white-space: normal;
+  min-width: 0;
   word-break: break-word;
   line-height: 1.4;
 }
 
 /* =========================
-   RADIO ALIGNMENT FIX
-========================= */
-
-.answer input {
-  flex-shrink: 0;
-  margin-top: 2px; /* aligns with first line of text */
-}
-
-/* =========================
-   Buttons
+   BUTTONS
 ========================= */
 
 .actions,
 .results-actions {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
+  justify-content: center;
   margin: 2rem 0;
 }
 
@@ -160,8 +170,12 @@ button:hover {
   background: #1d4ed8;
 }
 
+button:focus-visible {
+  outline: 3px solid #60a5fa;
+}
+
 /* =========================
-   Results
+   RESULTS
 ========================= */
 
 .hidden {
@@ -209,59 +223,34 @@ button:hover {
 }
 
 .result-description {
-  margin-top: 0.75rem;
   color: #cbd5e1;
   line-height: 1.5;
 }
 
 /* =========================
-   Validation highlight
-========================= */
-
-.question.missing {
-  border: 1px solid #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
-}
-
-/* =========================
-   Footer
+   FOOTER
 ========================= */
 
 .footer {
   text-align: center;
-  padding: 2rem;
+  padding: 2rem 1rem;
   color: #94a3b8;
 }
 
 /* =========================
-   RESULT TEXT CONTRAST FIX
+   PRINT
 ========================= */
 
-.result-card {
-  background: #0b1220;
-  color: #e5e7eb;
-}
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
 
-.result-card * {
-  color: inherit;
-}
-
-/* Ensure description is readable */
-.result-description {
-  color: #cbd5e1;
-}
-
-/* Stronger bar contrast */
-.bar {
-  background: #111827;
-}
-
-.bar-fill {
-  background: #60a5fa;
-}
-
-/* Ensure percentage text doesn't fade */
-.result-title span:last-child {
-  color: #93c5fd;
-  font-weight: 700;
+  .header,
+  .actions,
+  .results-actions,
+  .footer {
+    display: none !important;
+  }
 }
