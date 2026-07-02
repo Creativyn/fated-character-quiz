@@ -177,3 +177,36 @@ button:hover {
   padding: 2rem;
   color: #94a3b8;
 }
+
+/* =========================
+   RESULT TEXT CONTRAST FIX
+========================= */
+
+.result-card {
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+.result-card * {
+  color: inherit;
+}
+
+/* Ensure description is readable */
+.result-description {
+  color: #cbd5e1;
+}
+
+/* Stronger bar contrast */
+.bar {
+  background: #111827;
+}
+
+.bar-fill {
+  background: #60a5fa;
+}
+
+/* Ensure percentage text doesn't fade */
+.result-title span:last-child {
+  color: #93c5fd;
+  font-weight: 700;
+}
