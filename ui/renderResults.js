@@ -1,13 +1,13 @@
 export function renderResults(results) {
   const container = document.getElementById("results-container");
-  const topResult = document.getElementById("top-result");
+  const topText = document.getElementById("top-result");
 
   container.innerHTML = "";
 
   const top = results[0];
 
-  if (topResult) {
-    topResult.textContent = `You are most like ${top.name}`;
+  if (topText) {
+    topText.textContent = `You are most like ${top.name}`;
   }
 
   window.__TOP_PERSONALITY__ = top.id;

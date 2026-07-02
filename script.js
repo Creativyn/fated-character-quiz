@@ -6,17 +6,11 @@ import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
 
-if (!Array.isArray(QUESTIONS)) {
-  throw new Error("QUESTIONS failed to load (check export/import path)");
-}
-
 const quizForm = document.getElementById("quiz");
 const validationMessage = document.getElementById("validation-message");
 
 const quizSection = document.getElementById("quiz-section");
 const resultsSection = document.getElementById("results-section");
-
-const retakeBtn = document.getElementById("retake-btn");
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
@@ -47,17 +41,20 @@ function init() {
   }
 
   buildQuiz(QUESTIONS);
-
   showQuiz();
 }
+
+/* ---------------- SUBMIT ---------------- */
 
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  console.log("SUBMIT FIRED");
-
   const formData = new FormData(quizForm);
-  const answered = new Set([...formData.keys()]).size;
+
+  // FIX: reliable answered count
+  const answered = quizForm.querySelectorAll(
+    "input[type='radio']:checked",
+  ).length;
 
   if (answered < QUESTIONS.length) {
     validationMessage.textContent = "Please answer all questions.";
@@ -75,7 +72,9 @@ quizForm.addEventListener("submit", (e) => {
   showResults(results);
 });
 
-retakeBtn?.addEventListener("click", () => {
+/* ---------------- RETAKE ---------------- */
+
+document.getElementById("retake-btn")?.addEventListener("click", () => {
   quizForm.reset();
   showQuiz();
 });
