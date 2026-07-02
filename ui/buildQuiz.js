@@ -6,10 +6,11 @@ export function buildQuiz(QUESTIONS) {
   container.innerHTML = "";
 
   QUESTIONS.forEach((q, i) => {
-    // SAFE fallback for ALL possible schemas
-    const questionText = q.question || q.text || q.title || `Question ${i + 1}`;
+    // ✅ SUPER SAFE QUESTION PICKUP (this is the real fix)
+    const questionText =
+      q.question ?? q.text ?? q.prompt ?? q.title ?? `Question ${i + 1}`;
 
-    const answers = q.answers || q.options || [];
+    const answers = q.answers ?? q.options ?? [];
 
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
@@ -21,25 +22,24 @@ export function buildQuiz(QUESTIONS) {
     answersWrap.className = "answers";
 
     answers.forEach((a) => {
-      const value = typeof a === "string" ? a : a.value || a.text;
-      const label = typeof a === "string" ? a : a.text || a.label;
+      const value = typeof a === "string" ? a : (a.value ?? a.text ?? a.label);
+      const label = typeof a === "string" ? a : (a.text ?? a.label ?? value);
 
-      const el = document.createElement("label");
-      el.className = "answer";
+      const answerLabel = document.createElement("label");
+      answerLabel.className = "answer";
 
-      el.innerHTML = `
-        <input type="radio" name="q${i}" value="${value}" />
+      answerLabel.innerHTML = `
+        <input type="radio" name="q${i}" value="${value}">
         <span>${label}</span>
       `;
 
-      answersWrap.appendChild(el);
+      answersWrap.appendChild(answerLabel);
     });
 
     fieldset.appendChild(legend);
     fieldset.appendChild(answersWrap);
-
     container.appendChild(fieldset);
   });
 
-  console.log("Quiz rendered:", QUESTIONS.length);
+  console.log("✅ buildQuiz rendered:", QUESTIONS.length);
 }
