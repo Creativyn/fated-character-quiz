@@ -11,8 +11,9 @@ export function buildQuiz(QUESTIONS) {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
-    const legend = document.createElement("legend");
-    legend.textContent = `${i + 1}. ${questionText}`;
+    const title = document.createElement("div");
+    title.className = "question-title";
+    title.textContent = `${i + 1}. ${questionText}`;
 
     const wrap = document.createElement("div");
     wrap.className = "answers";
@@ -31,7 +32,7 @@ export function buildQuiz(QUESTIONS) {
       wrap.appendChild(label);
     });
 
-    fieldset.appendChild(legend);
+    fieldset.appendChild(title);
     fieldset.appendChild(wrap);
     container.appendChild(fieldset);
   });
