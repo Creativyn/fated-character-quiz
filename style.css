@@ -42,41 +42,63 @@ main {
    Quiz layout
 ========================= */
 
+/* =========================
+   QUESTION BLOCK FIX
+========================= */
+
 .question {
   background: #111827;
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
+
+  width: 100%;
 }
 
-.answers {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
+/* =========================
+   ANSWER ROW FIX (CRITICAL)
+========================= */
 
-/* ANSWER ROW FIX */
 .answer {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
+
+  width: 100%;
   padding: 0.6rem 0.75rem;
+
   border-radius: 8px;
   cursor: pointer;
-  width: 100%;
+
+  box-sizing: border-box;
 }
 
+/* hover consistency */
 .answer:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* TEXT WRAPPING FIX */
+/* =========================
+   TEXT CONTAINER FIX
+========================= */
+
 .answer span {
+  display: block;
   flex: 1;
+  min-width: 0; /* 🔥 prevents overflow bugs */
   white-space: normal;
   word-break: break-word;
   line-height: 1.4;
+}
+
+/* =========================
+   RADIO ALIGNMENT FIX
+========================= */
+
+.answer input {
+  flex-shrink: 0;
+  margin-top: 2px; /* aligns with first line of text */
 }
 
 /* =========================
