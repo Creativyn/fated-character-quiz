@@ -1,39 +1,42 @@
 export function buildQuiz(QUESTIONS) {
   const container = document.getElementById("questions-container");
-  if (!container) return;
+
+  if (!container) {
+    console.error("buildQuiz: #questions-container not found");
+    return;
+  }
+
+  if (!Array.isArray(QUESTIONS) || QUESTIONS.length === 0) {
+    console.error("buildQuiz: QUESTIONS is empty or invalid", QUESTIONS);
+    return;
+  }
 
   container.innerHTML = "";
 
   QUESTIONS.forEach((q, i) => {
-    const questionText = q.question ?? q.text ?? `Question ${i + 1}`;
-    const answers = q.answers ?? [];
+    const questionEl = document.createElement("div");
+    questionEl.className = "question";
 
-    const fieldset = document.createElement("fieldset");
-    fieldset.className = "question";
+    const answers = q.answers
+      .map(
+        (a) => `
+        <label class="answer">
+          <input type="radio" name="q${i}" value="${a.value}" />
+          <span>${a.text}</span>
+        </label>
+      `,
+      )
+      .join("");
 
-    const title = document.createElement("div");
-    title.className = "question-title";
-    title.textContent = `${i + 1}. ${questionText}`;
+    questionEl.innerHTML = `
+      <h3>${q.text}</h3>
+      <div class="answers">
+        ${answers}
+      </div>
+    `;
 
-    const wrap = document.createElement("div");
-    wrap.className = "answers";
-
-    answers.forEach((a) => {
-      const value = a.value ?? a.text;
-
-      const label = document.createElement("label");
-      label.className = "answer";
-
-      label.innerHTML = `
-        <input type="radio" name="q${i}" value="${value}">
-        <span class="answer-text">${a.text}</span>
-      `;
-
-      wrap.appendChild(label);
-    });
-
-    fieldset.appendChild(title);
-    fieldset.appendChild(wrap);
-    container.appendChild(fieldset);
+    container.appendChild(questionEl);
   });
+
+  console.log(`buildQuiz: rendered ${QUESTIONS.length} questions`);
 }
