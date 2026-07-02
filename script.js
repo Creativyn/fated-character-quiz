@@ -5,10 +5,7 @@ import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
-
-/* -----------------------------
-   DOM
------------------------------- */
+console.log("QUESTIONS:", QUESTIONS.length);
 
 const quizForm = document.getElementById("quiz");
 const quizSection = document.getElementById("quiz-section");
@@ -18,10 +15,6 @@ const validationMessage = document.getElementById("validation-message");
 const retakeBtn = document.getElementById("retake-btn");
 const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
-
-/* -----------------------------
-   QUIZ FLOW
------------------------------- */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
@@ -38,116 +31,73 @@ function showResults(results) {
   resultsSection.classList.remove("hidden");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
-
-  window.__TOP_PERSONALITY__ = top.id;
 }
 
-/* -----------------------------
-   INIT
------------------------------- */
+async function bootApp() {
+  console.log("Boot starting...");
 
-function bootApp() {
-  console.log("BOOTING...");
+  const container = document.querySelector("#questions-container");
+  if (!container) {
+    console.error("Missing #questions-container");
+    return;
+  }
 
   buildQuiz(QUESTIONS);
+
   showQuiz();
 
-  console.log("READY");
+  console.log("Boot complete");
 }
 
-bootApp();
+quizForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-/* -----------------------------
-   SUBMIT
------------------------------- */
+  const formData = new FormData(quizForm);
 
-if (quizForm) {
-  quizForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const answered = new Set([...formData.keys()]).size;
 
-    const formData = new FormData(quizForm);
-    const answeredCount = new Set([...formData.keys()]).size;
-
-    if (answeredCount < QUESTIONS.length) {
-      validationMessage.textContent =
-        "Please answer every question before viewing your results.";
-      return;
-    }
-
-    validationMessage.textContent = "";
-
-    const results = calculateResults({
-      formData,
-      personalities: PERSONALITIES,
-      questions: QUESTIONS,
-    });
-
-    showResults(results);
-  });
-}
-
-/* -----------------------------
-   RETAKE
------------------------------- */
-
-if (retakeBtn) {
-  retakeBtn.addEventListener("click", () => {
-    quizForm.reset();
-    window.history.replaceState({}, "", window.location.pathname);
-    showQuiz();
-  });
-}
-
-/* -----------------------------
-   PRINT
------------------------------- */
-
-if (printBtn) {
-  printBtn.addEventListener("click", () => window.print());
-}
-
-/* -----------------------------
-   SHARE
------------------------------- */
-
-if (shareBtn) {
-  shareBtn.addEventListener("click", async () => {
-    const topId = window.__TOP_PERSONALITY__;
-    if (!topId) return;
-
-    const shareUrl = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
-
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "My Fated Character Result",
-          url: shareUrl,
-        });
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        alert("Copied!");
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  });
-}
-
-/* -----------------------------
-   ROUTE SUPPORT
------------------------------- */
-
-window.addEventListener("message", (event) => {
-  const { type, payload } = event.data || {};
-
-  if (type === "FATED_SHOW_RESULT") {
-    const personality = PERSONALITIES.find((p) => p.id === payload?.id);
-    if (!personality) return;
-
-    showResults([{ ...personality, percent: 100 }]);
+  if (answered < QUESTIONS.length) {
+    validationMessage.textContent =
+      "Please answer every question before viewing results.";
+    validationMessage.scrollIntoView({ behavior: "smooth" });
+    return;
   }
 
-  if (type === "FATED_SHOW_QUIZ") {
-    showQuiz();
+  validationMessage.textContent = "";
+
+  const results = calculateResults({
+    formData,
+    personalities: PERSONALITIES,
+    questions: QUESTIONS,
+  });
+
+  showResults(results);
+});
+
+retakeBtn?.addEventListener("click", () => {
+  quizForm.reset();
+  window.location.hash = "";
+  showQuiz();
+});
+
+printBtn?.addEventListener("click", () => window.print());
+
+shareBtn?.addEventListener("click", async () => {
+  const topId = window.__TOP_PERSONALITY__;
+  if (!topId) return;
+
+  const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert("Copied!");
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
+
+bootApp();

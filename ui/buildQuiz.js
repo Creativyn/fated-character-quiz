@@ -1,8 +1,12 @@
-export function buildQuiz(QUESTIONS) {
-  console.log("BUILD QUIZ");
+console.log("🔥 buildQuiz loaded");
 
-  const container = document.getElementById("questions-container");
-  if (!container) return;
+export function buildQuiz(QUESTIONS) {
+  const container = document.querySelector("#questions-container");
+
+  if (!container) {
+    console.error("No #questions-container found");
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -11,7 +15,7 @@ export function buildQuiz(QUESTIONS) {
     fieldset.className = "question";
 
     const legend = document.createElement("legend");
-    legend.textContent = q.question;
+    legend.textContent = `${index + 1}. ${q.question}`;
 
     const answersDiv = document.createElement("div");
     answersDiv.className = "answers";
@@ -25,14 +29,20 @@ export function buildQuiz(QUESTIONS) {
       input.name = `q${index}`;
       input.value = answer.value;
 
+      const span = document.createElement("span");
+      span.textContent = answer.text;
+
       label.appendChild(input);
-      label.appendChild(document.createTextNode(answer.text));
+      label.appendChild(span);
 
       answersDiv.appendChild(label);
     });
 
     fieldset.appendChild(legend);
     fieldset.appendChild(answersDiv);
+
     container.appendChild(fieldset);
   });
+
+  console.log("Quiz rendered:", QUESTIONS.length);
 }
