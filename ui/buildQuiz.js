@@ -1,51 +1,39 @@
-console.log("🔥 buildQuiz loaded");
+console.log("🔥 buildQuiz CALLED");
 
 export function buildQuiz(QUESTIONS) {
-  console.log("A. buildQuiz entered");
-
   const container = document.querySelector("#questions-container");
 
+  console.log("Container:", container);
+
   if (!container) {
-    console.error("❌ #questions-container NOT FOUND");
+    console.error("❌ questions-container not found");
     return;
   }
 
   container.innerHTML = "";
 
-  console.log("APPENDING INTO:", container);
-
   QUESTIONS.forEach((q, index) => {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
-    const legend = document.createElement("legend");
-    legend.textContent = q.text || q.question || `Question ${index + 1}`;
+    fieldset.innerHTML = `
+      <legend>${index + 1}. ${q.question}</legend>
+      <div class="answers">
+        ${q.answers
+          .map(
+            (a) => `
+          <label class="answer">
+            <input type="radio" name="q${q.id}" value="${a.value}" />
+            ${a.text}
+          </label>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
 
-    fieldset.appendChild(legend);
-
-    const answers = q.answers || q.options || [];
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "answers";
-
-    answers.forEach((a) => {
-      const label = document.createElement("label");
-      label.className = "answer";
-
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = q.id || `q${index}`;
-      input.value = a.value ?? a;
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(a.text ?? a));
-
-      wrapper.appendChild(label);
-    });
-
-    fieldset.appendChild(wrapper);
     container.appendChild(fieldset);
   });
 
-  console.log("✅ QUESTIONS RENDERED:", container.children.length);
+  console.log("✅ Quiz rendered:", container.children.length);
 }
