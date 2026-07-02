@@ -1,88 +1,29 @@
 export function renderResults(results) {
   const container = document.getElementById("results-container");
-  const topResult = document.getElementById("top-result");
+  const topText = document.getElementById("top-result");
 
-  if (!results || results.length === 0) return;
+  if (!container) return;
 
   container.innerHTML = "";
 
-  const top = results[0];
-  window.__TOP_PERSONALITY__ = top.id;
-
-  topResult.textContent = `You are ${top.heading}`;
-
-  results.forEach((personality, index) => {
+  results.forEach((r, i) => {
     const card = document.createElement("div");
+    card.className = "result-card";
 
-    // 🥇 TOP RESULT (FULL CARD)
-    if (index === 0) {
-      card.className = "result-card";
-
-      const img = document.createElement("img");
-      img.src = personality.image;
-      img.alt = personality.name;
-
-      img.addEventListener("load", requestResize);
-
-      const content = document.createElement("div");
-
-      const title = document.createElement("div");
-      title.className = "result-title";
-
-      const left = document.createElement("span");
-      const right = document.createElement("span");
-
-      left.textContent = personality.name;
-      right.textContent = `${personality.percent}%`;
-
-      title.append(left, right);
-
-      const bar = document.createElement("div");
-      bar.className = "bar";
-
-      const fill = document.createElement("div");
-      fill.className = "bar-fill";
-      fill.style.width = `${personality.percent}%`;
-      fill.style.background = personality.color;
-
-      bar.appendChild(fill);
-
-      const desc = document.createElement("p");
-      desc.textContent = personality.description;
-
-      content.append(title, bar, desc);
-      card.append(img, content);
-      requestAnimationFrame(requestResize);
-    }
-
-    // 📊 OTHER RESULTS (COMPACT)
-    else {
-      card.className = "result-card compact";
-
-      const title = document.createElement("div");
-      title.className = "result-title";
-
-      const left = document.createElement("span");
-      const right = document.createElement("span");
-
-      left.textContent = personality.name;
-      right.textContent = `${personality.percent}%`;
-
-      title.append(left, right);
-
-      const bar = document.createElement("div");
-      bar.className = "bar";
-
-      const fill = document.createElement("div");
-      fill.className = "bar-fill";
-      fill.style.width = `${personality.percent}%`;
-      fill.style.background = personality.color;
-
-      bar.appendChild(fill);
-
-      card.append(title, bar);
-    }
+    card.innerHTML = `
+      <div>
+        <h3>${r.name}</h3>
+        <p>${r.description ?? ""}</p>
+        <div class="bar">
+          <div class="bar-fill" style="width:${r.percent}%"></div>
+        </div>
+      </div>
+    `;
 
     container.appendChild(card);
+
+    if (i === 0 && topText) {
+      topText.textContent = `You are most like ${r.name}`;
+    }
   });
 }

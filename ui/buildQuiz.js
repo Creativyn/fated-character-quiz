@@ -1,15 +1,10 @@
-console.log("🔥 buildQuiz loaded");
+console.log("🔥 buildQuiz CALLED");
 
 export function buildQuiz(QUESTIONS) {
-  console.log("A. buildQuiz entered");
-
   const container = document.getElementById("questions-container");
 
-  console.log("container:", container);
-  console.log("QUESTIONS:", QUESTIONS?.length);
-
   if (!container) {
-    console.error("❌ questions-container not found");
+    console.error("❌ questions-container NOT FOUND");
     return;
   }
 
@@ -22,25 +17,25 @@ export function buildQuiz(QUESTIONS) {
     const legend = document.createElement("legend");
     legend.textContent = q.question;
 
-    fieldset.appendChild(legend);
+    const answers = document.createElement("div");
+    answers.className = "answers";
 
     q.answers.forEach((a) => {
       const label = document.createElement("label");
       label.className = "answer";
 
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = `q${i}`;
-      input.value = a.personality;
+      label.innerHTML = `
+        <input type="radio" name="q${i}" value="${a.value}" />
+        <span>${a.text}</span>
+      `;
 
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(a.text));
-
-      fieldset.appendChild(label);
+      answers.appendChild(label);
     });
 
+    fieldset.appendChild(legend);
+    fieldset.appendChild(answers);
     container.appendChild(fieldset);
   });
 
-  console.log("✅ Quiz rendered:", container.children.length);
+  console.log("Quiz rendered:", QUESTIONS.length);
 }
