@@ -1,16 +1,12 @@
 export function buildQuiz(QUESTIONS) {
   const container = document.getElementById("questions-container");
-
   if (!container) return;
 
   container.innerHTML = "";
 
   QUESTIONS.forEach((q, i) => {
-    // ✅ SUPER SAFE QUESTION PICKUP (this is the real fix)
-    const questionText =
-      q.question ?? q.text ?? q.prompt ?? q.title ?? `Question ${i + 1}`;
-
-    const answers = q.answers ?? q.options ?? [];
+    const questionText = q.question ?? q.text ?? `Question ${i + 1}`;
+    const answers = q.answers ?? [];
 
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
@@ -18,28 +14,25 @@ export function buildQuiz(QUESTIONS) {
     const legend = document.createElement("legend");
     legend.textContent = `${i + 1}. ${questionText}`;
 
-    const answersWrap = document.createElement("div");
-    answersWrap.className = "answers";
+    const wrap = document.createElement("div");
+    wrap.className = "answers";
 
     answers.forEach((a) => {
-      const value = typeof a === "string" ? a : (a.value ?? a.text ?? a.label);
-      const label = typeof a === "string" ? a : (a.text ?? a.label ?? value);
+      const value = a.value ?? a.text;
 
-      const answerLabel = document.createElement("label");
-      answerLabel.className = "answer";
+      const label = document.createElement("label");
+      label.className = "answer";
 
-      answerLabel.innerHTML = `
+      label.innerHTML = `
         <input type="radio" name="q${i}" value="${value}">
-        <span>${label}</span>
+        <span class="answer-text">${a.text}</span>
       `;
 
-      answersWrap.appendChild(answerLabel);
+      wrap.appendChild(label);
     });
 
     fieldset.appendChild(legend);
-    fieldset.appendChild(answersWrap);
+    fieldset.appendChild(wrap);
     container.appendChild(fieldset);
   });
-
-  console.log("✅ buildQuiz rendered:", QUESTIONS.length);
 }
