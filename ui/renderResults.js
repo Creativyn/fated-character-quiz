@@ -1,20 +1,10 @@
-console.log("renderResults loaded");
-
 export function renderResults(results) {
   const container = document.getElementById("results-container");
-  const topText = document.getElementById("top-result");
-
-  if (!container) return;
+  const topResult = document.getElementById("top-result");
 
   container.innerHTML = "";
 
-  const top = results[0];
-
-  if (topText && top) {
-    topText.textContent = `You are most like ${top.name}`;
-  }
-
-  results.forEach((r) => {
+  results.forEach((r, i) => {
     const card = document.createElement("div");
     card.className = "result-card";
 
@@ -22,7 +12,7 @@ export function renderResults(results) {
       <div>
         <div class="result-title">
           <span>${r.name}</span>
-          <span>${Math.round(r.percent)}%</span>
+          <span>${r.percent}%</span>
         </div>
 
         <div class="bar">
@@ -34,7 +24,10 @@ export function renderResults(results) {
     `;
 
     container.appendChild(card);
-  });
 
-  window.__TOP_PERSONALITY__ = results?.[0]?.id;
+    if (i === 0 && topResult) {
+      topResult.textContent = `You are most like ${r.name}`;
+      window.__TOP_PERSONALITY__ = r.id;
+    }
+  });
 }

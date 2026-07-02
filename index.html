@@ -4,58 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fated Character Quiz</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
 
   <body>
-    <a class="skip-link" href="#quiz-section">Skip to quiz</a>
-
     <header class="header">
-      <h1 id="quiz-heading">Fated Character Quiz</h1>
-      <p class="subtitle">Which Fated Character Are You?</p>
+      <h1>Fated Character Quiz</h1>
     </header>
 
-    <main id="main-content" aria-labelledby="quiz-heading">
-      <!-- QUIZ SECTION -->
-      <section id="quiz-section" aria-labelledby="quiz-heading">
-        <form id="quiz" aria-describedby="quiz-instructions validation-message">
-          <p id="quiz-instructions" class="sr-only">
-            Select one answer for each question, then select submit to see which
-            character in <em>Fated: When Love Becomes Destiny</em> you are most
-            like.
-          </p>
-
+    <main>
+      <section id="quiz-section">
+        <form id="quiz">
           <div id="questions-container"></div>
 
-          <div id="validation-message" role="alert" aria-live="polite"></div>
+          <div id="validation-message" role="alert"></div>
 
           <div class="actions">
-            <button type="submit" id="submit-btn">Show My Results</button>
+            <button type="submit">Show Results</button>
           </div>
         </form>
       </section>
 
-      <!-- RESULTS SECTION -->
-      <section
-        id="results-section"
-        class="hidden"
-        aria-labelledby="results-heading"
-      >
+      <section id="results-section" class="hidden">
         <div class="results-header">
-          <h2 id="results-heading" tabindex="-1">Your Results</h2>
+          <h2>Your Results</h2>
           <p id="top-result"></p>
         </div>
 
         <div id="results-container"></div>
 
         <div class="results-actions">
-          <button id="retake-btn" type="button">Retake Quiz</button>
-          <button id="share-btn" type="button">Share Results</button>
+          <button id="retake-btn" type="button">Retake</button>
+          <button id="share-btn" type="button">Share</button>
           <button id="print-btn" type="button">Print</button>
         </div>
       </section>
     </main>
 
-    <script type="module" src="script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

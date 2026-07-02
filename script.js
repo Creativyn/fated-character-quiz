@@ -1,11 +1,10 @@
-import { QUESTIONS } from "./questions.js";
-import { PERSONALITIES } from "./personalities.js";
-import { buildQuiz } from "./buildQuiz.js";
-import { renderResults } from "./renderResults.js";
-import { calculateResults } from "./calculateResults.js";
+import { QUESTIONS } from "./data/questions.js";
+import { PERSONALITIES } from "./config/personalities.js";
+import { buildQuiz } from "./ui/buildQuiz.js";
+import { renderResults } from "./ui/renderResults.js";
+import { calculateResults } from "./logic/calculateResults.js";
 
 console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS?.length);
 
 const quizForm = document.getElementById("quiz");
 const quizSection = document.getElementById("quiz-section");
@@ -15,10 +14,6 @@ const validationMessage = document.getElementById("validation-message");
 const retakeBtn = document.getElementById("retake-btn");
 const printBtn = document.getElementById("print-btn");
 const shareBtn = document.getElementById("share-btn");
-
-/* -----------------------------
-   UI STATE
------------------------------- */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
@@ -34,38 +29,32 @@ function showResults(results) {
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
+  document.getElementById("top-result").textContent =
+    `You are most like ${top.name}`;
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* -----------------------------
-   BOOT
------------------------------- */
-
-function bootApp() {
-  const container = document.querySelector("#questions-container");
-
-  if (!container) {
+function init() {
+  if (!document.getElementById("questions-container")) {
     console.error("Missing #questions-container");
     return;
   }
 
   buildQuiz(QUESTIONS);
 
-  showQuiz();
+  console.log("Quiz rendered:", QUESTIONS.length);
 
-  console.log("BOOT COMPLETE");
+  showQuiz();
 }
 
-quizForm?.addEventListener("submit", (e) => {
+quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(quizForm);
-  const answered = [...formData.keys()];
-  const answeredCount = new Set(answered).size;
+  const answered = new Set([...formData.keys()]).size;
 
-  console.log("Answered:", answeredCount, "/", QUESTIONS.length);
-
-  if (answeredCount < QUESTIONS.length) {
+  if (answered < QUESTIONS.length) {
     validationMessage.textContent = "Please answer all questions.";
     return;
   }
@@ -81,10 +70,6 @@ quizForm?.addEventListener("submit", (e) => {
   showResults(results);
 });
 
-/* -----------------------------
-   BUTTONS
------------------------------- */
-
 retakeBtn?.addEventListener("click", () => {
   quizForm.reset();
   showQuiz();
@@ -94,20 +79,14 @@ printBtn?.addEventListener("click", () => window.print());
 
 shareBtn?.addEventListener("click", async () => {
   const topId = window.__TOP_PERSONALITY__;
-  if (!topId) return;
+  const url = `${location.origin}${location.pathname}#/result/${topId}`;
 
-  const url = `https://creativyn.github.io/fated-character-quiz/#/result/${topId}`;
-
-  try {
-    if (navigator.share) {
-      await navigator.share({ url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      alert("Copied!");
-    }
-  } catch (e) {
-    console.error(e);
+  if (navigator.share) {
+    await navigator.share({ url });
+  } else {
+    navigator.clipboard.writeText(url);
+    alert("Copied!");
   }
 });
 
-bootApp();
+init();
