@@ -1,24 +1,22 @@
 export function buildQuiz(QUESTIONS) {
-  console.log("BUILD QUIZ");
-
   const container = document.getElementById("questions-container");
-
-  if (!container) {
-    console.error("Missing #questions-container");
-    return;
-  }
+  if (!container) return;
 
   container.innerHTML = "";
 
-  QUESTIONS.forEach((q) => {
+  const fragment = document.createDocumentFragment();
+
+  QUESTIONS.forEach((q, index) => {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "question";
 
     const legend = document.createElement("legend");
-    legend.textContent = q.question;
+    legend.textContent = `${index + 1}. ${q.text}`;
+    legend.id = q.id;
+    fieldset.setAttribute("aria-labelledby", q.id);
 
-    const answers = document.createElement("div");
-    answers.className = "answers";
+    const answersWrap = document.createElement("div");
+    answersWrap.className = "answers";
 
     q.answers.forEach((a) => {
       const label = document.createElement("label");
@@ -28,18 +26,18 @@ export function buildQuiz(QUESTIONS) {
       input.type = "radio";
       input.name = q.id;
       input.value = a.value;
+      input.required = true;
 
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(a.text));
+      const span = document.createElement("span");
+      span.textContent = a.text;
 
-      answers.appendChild(label);
+      label.append(input, span);
+      answersWrap.appendChild(label);
     });
 
-    fieldset.appendChild(legend);
-    fieldset.appendChild(answers);
-
-    container.appendChild(fieldset);
+    fieldset.append(legend, answersWrap);
+    fragment.appendChild(fieldset);
   });
 
-  console.log("Rendered:", container.children.length);
+  container.appendChild(fragment);
 }

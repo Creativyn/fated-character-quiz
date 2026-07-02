@@ -1,11 +1,9 @@
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
+
 import { buildQuiz } from "./ui/buildQuiz.js";
 import { renderResults } from "./ui/renderResults.js";
 import { calculateResults } from "./logic/calculateResults.js";
-
-console.log("SCRIPT LOADED");
-console.log("QUESTIONS:", QUESTIONS);
 
 /* -----------------------------
    DOM
@@ -17,61 +15,84 @@ const resultsSection = document.getElementById("results-section");
 const validationMessage = document.getElementById("validation-message");
 
 const retakeBtn = document.getElementById("retake-btn");
+const printBtn = document.getElementById("print-btn");
+const shareBtn = document.getElementById("share-btn");
 
 /* -----------------------------
-   UI STATE
+   Routing
+------------------------------ */
+
+function getRoute() {
+  const match = window.location.hash.match(/^#\/result\/(.+)$/);
+  return match ? match[1] : null;
+}
+
+/* -----------------------------
+   UI Helpers
 ------------------------------ */
 
 function showQuiz() {
   quizSection.classList.remove("hidden");
   resultsSection.classList.add("hidden");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 }
 
 function showResults(results) {
-  const top = results?.[0];
-  if (!top) return;
-
   renderResults(results);
 
   quizSection.classList.add("hidden");
   resultsSection.classList.remove("hidden");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
 
-  const topResult = document.getElementById("top-result");
-  if (topResult) {
-    topResult.textContent = `You are most like ${top.name}`;
+/* -----------------------------
+   Shared URL Support
+------------------------------ */
+
+const forcedResultId = getRoute();
+
+if (forcedResultId) {
+  const personality = PERSONALITIES.find((p) => p.id === forcedResultId);
+
+  if (personality) {
+    showResults([
+      {
+        ...personality,
+        score: 1,
+        percent: 100,
+      },
+    ]);
+  } else {
+    buildQuiz(QUESTIONS);
   }
-}
-
-/* -----------------------------
-   INIT
------------------------------- */
-
-function init() {
-  console.log("INIT");
-
+} else {
   buildQuiz(QUESTIONS);
-
-  showQuiz();
 }
 
-init();
-
 /* -----------------------------
-   SUBMIT
+   Quiz Submission
 ------------------------------ */
 
-quizForm?.addEventListener("submit", (e) => {
+quizForm.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  console.log("FORM SUBMITTED");
 
   const formData = new FormData(quizForm);
 
-  const answered = new Set([...formData.keys()]).size;
+  const answeredCount = new Set([...formData.keys()]).size;
 
-  if (answered < QUESTIONS.length) {
+  if (answeredCount < QUESTIONS.length) {
     validationMessage.textContent =
-      "Please answer every question before viewing results.";
+      "Please answer every question before viewing your results.";
 
     validationMessage.scrollIntoView({
       behavior: "smooth",
@@ -93,10 +114,57 @@ quizForm?.addEventListener("submit", (e) => {
 });
 
 /* -----------------------------
-   RETAKE
+   Retake
 ------------------------------ */
 
-retakeBtn?.addEventListener("click", () => {
+retakeBtn.addEventListener("click", () => {
   quizForm.reset();
+
+  validationMessage.textContent = "";
+
+  window.history.replaceState({}, "", window.location.pathname);
+
   showQuiz();
+});
+
+/* -----------------------------
+   Print
+------------------------------ */
+
+printBtn.addEventListener("click", () => {
+  window.print();
+});
+
+/* -----------------------------
+   Share
+------------------------------ */
+
+shareBtn.addEventListener("click", async () => {
+  const topId = window.__TOP_PERSONALITY__;
+
+  if (!topId) return;
+
+  const shareUrl =
+    `${window.location.origin}` +
+    `${window.location.pathname}` +
+    `#/result/${topId}`;
+
+  const shareText = document.getElementById("top-result").textContent;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "My Fated Character Result",
+        text: shareText,
+        url: shareUrl,
+      });
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Share link copied to your clipboard!");
+    } else {
+      prompt("Copy this link:", shareUrl);
+    }
+  } catch (err) {
+    console.error("Share cancelled or failed:", err);
+  }
 });
