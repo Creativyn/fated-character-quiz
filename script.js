@@ -203,7 +203,6 @@ window.addEventListener("message", (event) => {
   switch (type) {
     case "FATED_SHOW_RESULT": {
       const personality = PERSONALITIES.find((p) => p.id === payload.id);
-
       if (!personality) return;
 
       showResults([
@@ -213,7 +212,6 @@ window.addEventListener("message", (event) => {
           percent: 100,
         },
       ]);
-
       break;
     }
 
