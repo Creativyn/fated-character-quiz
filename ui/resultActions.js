@@ -1,100 +1,55 @@
+import { VNState } from "../vn/state/VNState.js";
 import { generateResultCard } from "../utils/shareCard.js";
 
-/* =========================
-   SAFE RETRIEVAL
-========================= */
-
-function getTopPersonality() {
-  // primary source (new system)
-  if (window.__TOP_PERSONALITY__) {
-    return window.__TOP_PERSONALITY__;
-  }
-
-  // fallback from DOM (extra safety layer)
-  const topText = document.getElementById("top-result")?.textContent;
-  if (!topText) return null;
-
-  return {
-    name: topText,
-  };
-}
-
-/* =========================
-   INIT BUTTONS
-========================= */
-
-export function initResultButtons({ onRetake } = {}) {
+export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
   const retakeBtn = document.getElementById("retake-btn");
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
   const homeBtn = document.getElementById("home-btn");
   const exploreBtn = document.getElementById("explore-btn");
 
-  /* =========================
-     RETAKE
-  ========================= */
+  retakeBtn.onclick = () => onRetake?.();
 
-  retakeBtn?.addEventListener("click", () => {
-    onRetake?.();
-  });
+  printBtn.onclick = () => window.print();
 
-  /* =========================
-     PRINT
-  ========================= */
+  homeBtn.onclick = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      window.location.href = "./";
+    }
+  };
 
-  printBtn?.addEventListener("click", () => {
-    window.print();
-  });
+  exploreBtn.onclick = () => {
+    if (onExplore) {
+      onExplore();
+    } else {
+      window.location.href = "./characters";
+    }
+  };
 
-  /* =========================
-     HOME NAV
-  ========================= */
-
-  homeBtn?.addEventListener("click", () => {
-    // safe for GitHub Pages + local
-    window.location.href = "./";
-  });
-
-  /* =========================
-     EXPLORE NAV
-  ========================= */
-
-  exploreBtn?.addEventListener("click", () => {
-    window.location.href = "./characters";
-  });
-
-  /* =========================
-     SHARE (ROBUST + FALLBACKS)
-  ========================= */
-
-  shareBtn?.addEventListener("click", async () => {
+  shareBtn.onclick = async () => {
     try {
-      const personality = getTopPersonality();
+      const personality = VNState.getTopResult();
 
       if (!personality) {
-        console.warn("Share aborted: no personality found");
+        console.warn("No result available to share.");
         return;
       }
 
       const image = await generateResultCard(personality);
 
-      const url = `${window.location.origin}${window.location.pathname}#/result`;
-
-      // =========================
-      // CASE 1: FULL SHARE SUPPORT
-      // =========================
+      const url = window.location.href;
 
       if (navigator.share) {
-        // image-supported share
         if (image) {
           const blob = await (await fetch(image)).blob();
-          const file = new File([blob], "result.png", {
-            type: "image/png",
-          });
+
+          const file = new File([blob], "result.png", { type: "image/png" });
 
           await navigator.share({
-            title: personality.name || "My Fated Result",
-            text: personality.heading || "",
+            title: personality.name,
+            text: personality.description ?? "",
             url,
             files: [file],
           });
@@ -102,33 +57,24 @@ export function initResultButtons({ onRetake } = {}) {
           return;
         }
 
-        // fallback share (no image)
         await navigator.share({
-          title: personality.name || "My Fated Result",
-          text: personality.heading || "",
+          title: personality.name,
+          text: personality.description ?? "",
           url,
         });
 
         return;
       }
 
-      // =========================
-      // CASE 2: CLIPBOARD FALLBACK
-      // =========================
-
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
-        alert("Link copied to clipboard!");
+        alert("Result link copied to clipboard.");
         return;
       }
-
-      // =========================
-      // CASE 3: LAST RESORT
-      // =========================
 
       prompt("Copy this link:", url);
     } catch (err) {
       console.error("Share failed:", err);
     }
-  });
+  };
 }

@@ -5,25 +5,30 @@ export const QuizScene = {
   async run() {
     const container = document.getElementById("questions-container");
 
-    if (!container) throw new Error("Missing quiz container");
+    if (!container) {
+      throw new Error("Missing questions-container");
+    }
 
     container.innerHTML = "";
 
-    const QUESTIONS = VNState.questions;
+    VNState.questions.forEach((q, index) => {
+      const question = document.createElement("div");
+      question.className = "question";
 
-    QUESTIONS.forEach((q, i) => {
-      const el = document.createElement("div");
-      el.className = "question";
-
-      el.innerHTML = `
+      question.innerHTML = `
         <h3>${q.text}</h3>
         <div class="answers">
           ${q.answers
             .map(
-              (a) => `
+              (answer) => `
             <label class="answer">
-              <input type="radio" name="q${i}" value="${a.value}">
-              <span>${a.text}</span>
+              <input
+                type="radio"
+                name="q${index}"
+                value="${answer.value}"
+                required
+              >
+              <span>${answer.text}</span>
             </label>
           `,
             )
@@ -31,14 +36,14 @@ export const QuizScene = {
         </div>
       `;
 
-      container.appendChild(el);
+      container.appendChild(question);
     });
 
     return new Promise((resolve) => {
       const form = document.getElementById("quiz");
 
-      form.onsubmit = (e) => {
-        e.preventDefault();
+      const submitHandler = (event) => {
+        event.preventDefault();
 
         const formData = new FormData(form);
 
@@ -49,8 +54,13 @@ export const QuizScene = {
         });
 
         VNState.setResults(results);
+
+        form.removeEventListener("submit", submitHandler);
+
         resolve();
       };
+
+      form.addEventListener("submit", submitHandler);
     });
   },
 };
