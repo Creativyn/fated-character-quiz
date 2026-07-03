@@ -6,22 +6,35 @@ import { ResultScene } from "./scenes/ResultScene.js";
 export class VNEngine {
   static async start({ questions, personalities }) {
     try {
-      // Initialize global state
+      // Initialize application state
       VNState.init({
         questions,
         personalities,
       });
 
-      // Run the quiz one question at a time
+      // Sanity checks
+      if (!VNState.questions.length) {
+        throw new Error("VNState contains no questions.");
+      }
+
+      if (!VNState.personalities.length) {
+        throw new Error("VNState contains no personalities.");
+      }
+
+      // Run the quiz. This should not resolve until the user
+      // has answered the final question.
       await QuestionScene.run();
 
-      // Retrieve calculated results
       const results = VNState.getResults();
 
-      // Cinematic reveal
+      if (!results || results.length === 0) {
+        throw new Error("QuestionScene finished without producing results.");
+      }
+
+      // Play the cinematic reveal
       await FateScene.run({ results });
 
-      // Final results screen
+      // Render the completed results screen
       await ResultScene.run({ results });
 
       console.log("VN complete.");

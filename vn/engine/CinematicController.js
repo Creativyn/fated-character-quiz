@@ -22,6 +22,10 @@ export class CinematicController {
     }
   }
 
+  // =========================
+  // TEXT SEQUENCE
+  // =========================
+
   async onText(message) {
     if (!this.overlay || !this.textElement) return;
 
@@ -30,7 +34,6 @@ export class CinematicController {
     this.textElement.textContent = message;
 
     this.textElement.classList.remove("fade-out");
-
     this.textElement.classList.add("fade-in");
 
     if (!this.skipped) {
@@ -42,7 +45,6 @@ export class CinematicController {
     if (!this.textElement) return;
 
     this.textElement.classList.remove("fade-in");
-
     this.textElement.classList.add("fade-out");
 
     if (!this.skipped) {
@@ -52,15 +54,23 @@ export class CinematicController {
     this.textElement.textContent = "";
   }
 
+  // =========================
+  // RENDER RESULTS BASE
+  // =========================
+
   async onRender() {
+    if (!this.context?.results?.length) return;
     renderResults(this.context.results);
   }
+
+  // =========================
+  // CARD REVEALS
+  // =========================
 
   async onRevealCard(index, sound) {
     const cards = this.container.querySelectorAll(".result-card");
 
     const card = cards[index];
-
     if (!card) return;
 
     card.classList.add("revealed");
@@ -68,9 +78,7 @@ export class CinematicController {
     if (sound) {
       try {
         const audio = new Audio(sound);
-
         audio.volume = 0.45;
-
         audio.play().catch(() => {});
       } catch (_) {}
     }
@@ -79,41 +87,48 @@ export class CinematicController {
       await wait(300);
     }
   }
+
   async onRevealAll() {
     const cards = this.container.querySelectorAll(".result-card");
 
+    const delay = this.skipped ? 0 : 140;
+
     cards.forEach((card, index) => {
-      setTimeout(
-        () => {
-          card.classList.add("revealed");
-        },
-        index * (this.skipped ? 0 : 140),
-      );
+      setTimeout(() => {
+        card.classList.add("revealed");
+      }, index * delay);
     });
 
     if (!this.skipped) {
-      await wait(cards.length * 140);
+      await wait(Math.max(cards.length - 1, 0) * delay + 50);
     }
   }
+
+  // =========================
+  // BAR ANIMATION
+  // =========================
 
   async onBars() {
     const bars = this.container.querySelectorAll(".bar-fill");
 
+    const delay = this.skipped ? 0 : 120;
+
     bars.forEach((bar, index) => {
       const target = Number(bar.dataset.target) || 0;
 
-      setTimeout(
-        () => {
-          bar.style.width = `${target}%`;
-        },
-        index * (this.skipped ? 0 : 120),
-      );
+      setTimeout(() => {
+        bar.style.width = `${target}%`;
+      }, index * delay);
     });
 
     if (!this.skipped) {
-      await wait(bars.length * 120 + 350);
+      await wait(Math.max(bars.length - 1, 0) * delay + 400);
     }
   }
+
+  // =========================
+  // THEME
+  // =========================
 
   async onTheme(color) {
     if (!color) return;
@@ -121,19 +136,26 @@ export class CinematicController {
     document.documentElement.style.setProperty("--cinematic-accent", color);
   }
 
+  // =========================
+  // FINAL TEXT
+  // =========================
+
   async onFinalText(message) {
     if (!this.textElement) return;
 
     this.textElement.textContent = message;
 
     this.textElement.classList.remove("fade-out");
-
     this.textElement.classList.add("fade-in");
 
     if (!this.skipped) {
       await wait(900);
     }
   }
+
+  // =========================
+  // CLEAN EXIT
+  // =========================
 
   async onHideOverlay() {
     if (!this.overlay) return;
@@ -154,6 +176,10 @@ export class CinematicController {
     }
   }
 
+  // =========================
+  // SCENE CONTEXT BINDING
+  // =========================
+
   createSceneContext() {
     return {
       ...this.context,
@@ -161,21 +187,13 @@ export class CinematicController {
       isSkipped: () => this.skipped,
 
       onText: this.onText.bind(this),
-
       onTextHide: this.onTextHide.bind(this),
-
       onRender: this.onRender.bind(this),
-
       onRevealCard: this.onRevealCard.bind(this),
-
       onRevealAll: this.onRevealAll.bind(this),
-
       onBars: this.onBars.bind(this),
-
       onTheme: this.onTheme.bind(this),
-
       onFinalText: this.onFinalText.bind(this),
-
       onHideOverlay: this.onHideOverlay.bind(this),
     };
   }

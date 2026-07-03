@@ -5,11 +5,11 @@ const sceneContainer = () => document.getElementById("scene-container");
 const progressBar = () => document.getElementById("quiz-progress");
 const progressText = () => document.getElementById("progress-text");
 
+let resolveScene = null;
+
 function updateProgress() {
   const current = VNState.getCurrentIndex() + 1;
   const total = VNState.getQuestionCount();
-
-  const percent = Math.round((current / total) * 100);
 
   const bar = progressBar();
 
@@ -17,7 +17,6 @@ function updateProgress() {
     bar.max = total;
     bar.value = current;
     bar.setAttribute("aria-valuenow", current);
-
     bar.setAttribute("aria-valuemax", total);
   }
 
@@ -28,53 +27,51 @@ function updateProgress() {
   }
 }
 
-function createChoice(answer, index, selected) {
+function createChoice(answer, selected) {
   return `
     <label class="vn-choice">
-
       <input
         type="radio"
         name="vn-answer"
         value="${answer.value}"
         ${selected ? "checked" : ""}
       >
-
-      <span>
-        ${answer.text}
-      </span>
-
+      <span>${answer.text}</span>
     </label>
   `;
 }
 
 function renderQuestion() {
+  const container = sceneContainer();
+
+  if (!container) {
+    return;
+  }
+
   const question = VNState.getCurrentQuestion();
 
-  if (!question) return;
+  if (!question) {
+    return;
+  }
 
   updateProgress();
 
   const currentIndex = VNState.getCurrentIndex();
+  const selectedAnswer = VNState.getAnswer(currentIndex);
 
-  const previousAnswer = VNState.getAnswer(currentIndex);
-
-  sceneContainer().innerHTML = `
-    <article
-      class="vn-question-card fade-in"
-    >
+  container.innerHTML = `
+    <article class="vn-question-card fade-in">
 
       <h2 class="question-title">
         ${question.text}
       </h2>
 
       <div class="vn-answer-list">
-
         ${question.answers
           .map((answer) =>
-            createChoice(answer, currentIndex, answer.value === previousAnswer),
+            createChoice(answer, answer.value === selectedAnswer),
           )
           .join("")}
-
       </div>
 
       <div class="vn-navigation">
@@ -90,7 +87,7 @@ function renderQuestion() {
         <button
           id="next-question"
           type="button"
-          disabled
+          ${selectedAnswer ? "" : "disabled"}
         >
           ${VNState.hasNext() ? "Next" : "Reveal My Fate"}
         </button>
@@ -99,16 +96,6 @@ function renderQuestion() {
 
     </article>
   `;
-
-  const selectedRadio = sceneContainer().querySelector(
-    'input[type="radio"]:checked',
-  );
-
-  const nextButton = document.getElementById("next-question");
-
-  if (selectedRadio && nextButton) {
-    nextButton.disabled = false;
-  }
 
   hookChoiceEvents();
   hookNavigation();
@@ -123,7 +110,9 @@ function hookChoiceEvents() {
     radio.addEventListener("change", () => {
       VNState.setAnswer(VNState.getCurrentIndex(), radio.value);
 
-      nextButton.disabled = false;
+      if (nextButton) {
+        nextButton.disabled = false;
+      }
     });
   });
 }
@@ -132,47 +121,45 @@ function finishQuiz() {
   const results = calculateResults({
     answers: VNState.getAnswers(),
     personalities: VNState.personalities,
+    questions: VNState.questions,
   });
 
   VNState.setResults(results);
 }
+
 function hookNavigation() {
   const nextButton = document.getElementById("next-question");
-  const prevButton = document.getElementById("previous-question");
+  const previousButton = document.getElementById("previous-question");
+
+  if (previousButton) {
+    previousButton.onclick = () => {
+      VNState.previousQuestion();
+      renderQuestion();
+    };
+  }
 
   if (nextButton) {
     nextButton.onclick = () => {
-      const isLast = !VNState.hasNext();
-
-      if (!isLast) {
+      if (VNState.hasNext()) {
         VNState.nextQuestion();
         renderQuestion();
         return;
       }
 
-      // LAST QUESTION → compute results + move to fate scene
       finishQuiz();
 
-      // import FateScene dynamically to avoid circular deps
-      import("./FateScene.js").then(({ FateScene }) => {
-        const results = VNState.getResults();
-
-        FateScene.run({ results });
-      });
-    };
-  }
-
-  if (prevButton) {
-    prevButton.onclick = () => {
-      VNState.previousQuestion();
-      renderQuestion();
+      if (resolveScene) {
+        const resolve = resolveScene;
+        resolveScene = null;
+        resolve();
+      }
     };
   }
 }
 
 function hookKeyboard() {
-  document.addEventListener("keydown", (e) => {
-    const key = e.key.toLowerCase();
+  document.onkeydown = (event) => {
+    const key = event.key.toLowerCase();
 
     if (key === "arrowright" || key === "enter") {
       document.getElementById("next-question")?.click();
@@ -181,7 +168,7 @@ function hookKeyboard() {
     if (key === "arrowleft") {
       document.getElementById("previous-question")?.click();
     }
-  });
+  };
 }
 
 export const QuestionScene = {
@@ -195,6 +182,11 @@ export const QuestionScene = {
     }
 
     hookKeyboard();
+
     renderQuestion();
+
+    return new Promise((resolve) => {
+      resolveScene = resolve;
+    });
   },
 };
