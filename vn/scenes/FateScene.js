@@ -1,4 +1,4 @@
-import { runScene } from "../engine/SceneRunner.js";
+import { SceneRunner } from "../engine/SceneRunner.js";
 import { fateScene } from "../../fateScenes.js";
 
 export const FateScene = {
@@ -6,12 +6,14 @@ export const FateScene = {
     const overlay = document.getElementById("fate-overlay");
     const container = document.getElementById("results-container");
 
-    return runScene(fateScene, {
+    const runner = new SceneRunner({
       ...context,
       overlay,
       container,
       resultsSection: document.getElementById("results-section"),
       skipToggle: document.getElementById("skip-cinematic"),
     });
+
+    return runner.run(fateScene);
   },
 };
