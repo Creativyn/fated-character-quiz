@@ -1,18 +1,22 @@
 import { SceneRunner } from "../engine/SceneRunner.js";
+import { CinematicController } from "../engine/CinematicController.js";
 import { fateScene } from "../../fateScenes.js";
 
 export const FateScene = {
   async run(context) {
-    const overlay = document.getElementById("fate-overlay");
-    const container = document.getElementById("results-container");
-
-    const runner = new SceneRunner({
+    const controller = new CinematicController({
       ...context,
-      overlay,
-      container,
+
+      overlay: document.getElementById("fate-overlay"),
+
+      container: document.getElementById("results-container"),
+
       resultsSection: document.getElementById("results-section"),
+
       skipToggle: document.getElementById("skip-cinematic"),
     });
+
+    const runner = new SceneRunner(controller.createSceneContext());
 
     return runner.run(fateScene);
   },
