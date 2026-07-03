@@ -1,6 +1,6 @@
 import { renderResults } from "../../ui/renderResults.js";
 import { initResultButtons } from "../../ui/resultActions.js";
-import { VNState } from "./VNState.js";
+import { VNState } from "../state/VNState.js";
 
 export const ResultScene = {
   async run({ results }) {

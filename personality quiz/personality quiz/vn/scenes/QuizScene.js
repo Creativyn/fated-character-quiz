@@ -1,4 +1,4 @@
-import { VNState } from "./VNState.js";
+import { VNState } from "../state/VNState.js";
 import { calculateResults } from "../../logic/calculateResults.js";
 
 export const QuizScene = {
