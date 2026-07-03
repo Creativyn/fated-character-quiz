@@ -1,7 +1,7 @@
 import { QuizScene } from "./scenes/QuizScene.js";
 import { FateScene } from "./scenes/FateScene.js";
 import { ResultScene } from "./scenes/ResultScene.js";
-import { VNState } from "./VNState.js";
+import { VNState } from "../VNState.js";
 
 export class VNEngine {
   static async start({ questions, personalities }) {

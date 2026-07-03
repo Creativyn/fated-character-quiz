@@ -1,5 +1,5 @@
 import { runScene } from "../engine/SceneRunner.js";
-import { fateScene } from "../scene/fateScenes.js";
+import { fateScene } from "../../fateScenes.js";
 
 export const FateScene = {
   async run(context) {
