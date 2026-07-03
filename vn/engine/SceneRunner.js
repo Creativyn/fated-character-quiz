@@ -7,73 +7,88 @@ export class SceneRunner {
 
   async run(scene = []) {
     for (const step of scene) {
-      switch (step.type) {
-        case "text":
-          if (typeof this.context.onText === "function") {
-            await this.context.onText(step.value);
-          }
-          break;
-
-        case "textHide":
-          if (typeof this.context.onTextHide === "function") {
-            await this.context.onTextHide();
-          }
-          break;
-
-        case "wait":
-          await sleep(step.ms ?? 0);
-          break;
-
-        case "render":
-          if (typeof this.context.onRender === "function") {
-            await this.context.onRender(this.context);
-          }
-          break;
-
-        case "revealCard":
-          if (typeof this.context.onRevealCard === "function") {
-            await this.context.onRevealCard(step.index, step.sound);
-          }
-          break;
-
-        case "revealAll":
-          if (typeof this.context.onRevealAll === "function") {
-            await this.context.onRevealAll();
-          }
-          break;
-
-        case "bars":
-          if (typeof this.context.onBars === "function") {
-            await this.context.onBars();
-          }
-          break;
-
-        case "theme":
-          if (typeof this.context.onTheme === "function") {
-            await this.context.onTheme(step.color);
-          }
-          break;
-
-        case "finalText":
-          if (typeof this.context.onFinalText === "function") {
-            await this.context.onFinalText(step.value);
-          }
-          break;
-
-        case "hideOverlay":
-          if (typeof this.context.onHideOverlay === "function") {
+      try {
+        // allow skip check before every step
+        if (this.context.isSkipped) {
+          // fast-forward behavior
+          if (step.type === "hideOverlay" && this.context.onHideOverlay) {
             await this.context.onHideOverlay();
           }
-          break;
+          continue;
+        }
 
-        case "action":
-          if (typeof step.run === "function") {
-            await step.run(this.context);
-          }
-          break;
+        switch (step.type) {
+          case "text":
+            if (this.context.onText) {
+              await Promise.resolve(this.context.onText(step.value));
+            }
+            break;
 
-        default:
-          console.warn("Unknown VN step:", step.type);
+          case "textHide":
+            if (this.context.onTextHide) {
+              await Promise.resolve(this.context.onTextHide());
+            }
+            break;
+
+          case "wait":
+            await sleep(step.ms ?? 0);
+            break;
+
+          case "render":
+            if (this.context.onRender) {
+              await Promise.resolve(this.context.onRender(this.context));
+            }
+            break;
+
+          case "revealCard":
+            if (this.context.onRevealCard) {
+              await Promise.resolve(
+                this.context.onRevealCard(step.index, step.sound),
+              );
+            }
+            break;
+
+          case "revealAll":
+            if (this.context.onRevealAll) {
+              await Promise.resolve(this.context.onRevealAll());
+            }
+            break;
+
+          case "bars":
+            if (this.context.onBars) {
+              await Promise.resolve(this.context.onBars());
+            }
+            break;
+
+          case "theme":
+            if (this.context.onTheme) {
+              await Promise.resolve(this.context.onTheme(step.color));
+            }
+            break;
+
+          case "finalText":
+            if (this.context.onFinalText) {
+              await Promise.resolve(this.context.onFinalText(step.value));
+            }
+            break;
+
+          case "hideOverlay":
+            if (this.context.onHideOverlay) {
+              await Promise.resolve(this.context.onHideOverlay());
+            }
+            break;
+
+          case "action":
+            if (step.run) {
+              await step.run(this.context);
+            }
+            break;
+
+          default:
+            console.warn("Unknown VN step:", step.type);
+        }
+      } catch (err) {
+        console.error("Scene step failed:", step, err);
       }
     }
   }

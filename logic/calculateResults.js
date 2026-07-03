@@ -1,34 +1,39 @@
-export function calculateResults({ formData, personalities, questions }) {
-  const scores = Object.fromEntries(personalities.map((p) => [p.id, 0]));
+export function calculateResults({ answers, personalities }) {
+  // Initialize score table
+  const scores = Object.fromEntries(
+    personalities.map((personality) => [personality.id, 0]),
+  );
 
   let answeredCount = 0;
 
-  for (let i = 0; i < questions.length; i++) {
-    const value = formData.get(`q${i}`);
-
-    if (!value) continue;
+  // Count each selected personality
+  answers.forEach((value) => {
+    if (!value) return;
 
     if (value in scores) {
-      scores[value] += 1;
-      answeredCount += 1;
+      scores[value]++;
+      answeredCount++;
     }
-  }
+  });
 
-  const results = personalities.map((p) => {
-    const score = scores[p.id] ?? 0;
-
-    const percent =
-      answeredCount > 0 ? Math.round((score / answeredCount) * 100) : 0;
+  // Build results
+  const results = personalities.map((personality) => {
+    const score = scores[personality.id] ?? 0;
 
     return {
-      ...p,
+      ...personality,
       score,
-      percent,
+      percent:
+        answeredCount === 0 ? 0 : Math.round((score / answeredCount) * 100),
     };
   });
 
+  // Highest score first
   results.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
     return a.name.localeCompare(b.name);
   });
 

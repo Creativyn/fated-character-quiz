@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Fated Character Quiz</title>
 
     <link rel="stylesheet" href="./style.css" />
@@ -13,48 +14,79 @@
       <h1>Fated Character Quiz</h1>
     </header>
 
-    <main id="main-content">
-      <!-- =========================
-           QUIZ SCREEN
-      ========================== -->
-      <section id="quiz-section" class="app-screen active">
-        <form id="quiz">
-          <div id="questions-container"></div>
+    <main id="app">
+      <!-- ==========================
+         QUIZ SCREEN
+    =========================== -->
 
-          <div id="validation-message" role="alert"></div>
+      <section
+        id="quiz-section"
+        class="app-screen active"
+        aria-labelledby="quiz-title"
+      >
+        <h2 id="quiz-title" class="sr-only">Personality Quiz</h2>
 
-          <div class="actions">
-            <button type="submit">Show Results</button>
+        <!-- Progress -->
+
+        <div class="progress-wrapper">
+          <label class="progress-label" for="quiz-progress"> Progress </label>
+
+          <progress id="quiz-progress" value="0" max="100" aria-live="polite">
+            0%
+          </progress>
+
+          <div id="progress-text" class="progress-text" aria-live="polite">
+            Question 1 of 1
           </div>
-        </form>
+        </div>
+
+        <!-- Scene Container -->
+
+        <section id="scene-container" aria-live="polite"></section>
       </section>
 
-      <!-- =========================
-           RESULTS SCREEN
-      ========================== -->
-      <section id="results-section" class="app-screen">
-        <!-- CINEMATIC OVERLAY -->
-        <div id="fate-overlay" class="fate-overlay hidden">
+      <!-- ==========================
+         RESULTS SCREEN
+    =========================== -->
+
+      <section
+        id="results-section"
+        class="app-screen"
+        aria-labelledby="results-title"
+      >
+        <h2 id="results-title" class="sr-only">Quiz Results</h2>
+
+        <!-- Cinematic Overlay -->
+
+        <div id="fate-overlay" class="fate-overlay hidden" aria-live="polite">
           <div class="fate-text"></div>
         </div>
 
-        <!-- HEADER / CONTROLS -->
+        <!-- Skip -->
+
         <div class="results-header">
           <label class="skip-toggle">
             <input type="checkbox" id="skip-cinematic" />
+
             Skip cinematic reveal
           </label>
         </div>
 
-        <!-- RESULTS OUTPUT -->
+        <!-- Results -->
+
         <div id="results-container"></div>
 
-        <!-- ACTION BUTTONS -->
+        <!-- Buttons -->
+
         <div class="results-actions">
           <button id="home-btn" type="button">Return to Quizzes</button>
+
           <button id="explore-btn" type="button">Explore Characters</button>
+
           <button id="retake-btn" type="button">Retake Quiz</button>
+
           <button id="share-btn" type="button">Share</button>
+
           <button id="print-btn" type="button">Print</button>
         </div>
       </section>

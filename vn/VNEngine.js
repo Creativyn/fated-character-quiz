@@ -1,26 +1,32 @@
-import { QuizScene } from "./scenes/QuizScene.js";
+import { VNState } from "./VNState.js";
+import { QuestionScene } from "./scenes/QuestionScene.js";
 import { FateScene } from "./scenes/FateScene.js";
 import { ResultScene } from "./scenes/ResultScene.js";
-import { VNState } from "./VNState.js";
 
 export class VNEngine {
   static async start({ questions, personalities }) {
     try {
-      VNState.init({ questions, personalities });
+      // Initialize global state
+      VNState.init({
+        questions,
+        personalities,
+      });
 
-      await QuizScene.run();
+      // Run the quiz one question at a time
+      await QuestionScene.run();
 
+      // Retrieve calculated results
       const results = VNState.getResults();
 
+      // Cinematic reveal
       await FateScene.run({ results });
 
+      // Final results screen
       await ResultScene.run({ results });
+
+      console.log("VN complete.");
     } catch (err) {
       console.error("VNEngine crashed:", err);
-
-      // HARD FALLBACK
-      const { renderResults } = await import("../ui/renderResults.js");
-      renderResults(VNState.getResults());
     }
   }
 }
