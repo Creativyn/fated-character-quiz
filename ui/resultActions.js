@@ -1,4 +1,4 @@
-import { VNState } from "../vn/state/VNState.js";
+import { VNState } from "./VNState.js";
 import { generateResultCard } from "../utils/shareCard.js";
 
 export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
