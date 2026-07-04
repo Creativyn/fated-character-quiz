@@ -1,7 +1,8 @@
 export const fateScene = [
-  // =========================
-  // INTRO
-  // =========================
+  /* =========================
+     PHASE 1
+     INTRO
+  ========================= */
 
   {
     type: "text",
@@ -10,7 +11,7 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 1000,
+    ms: 1200,
   },
 
   {
@@ -20,7 +21,7 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 1000,
+    ms: 1100,
   },
 
   {
@@ -30,16 +31,17 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 1000,
+    ms: 900,
   },
 
   {
     type: "textHide",
   },
 
-  // =========================
-  // BUILD RESULTS
-  // =========================
+  /* =========================
+     PHASE 2
+     BUILD RESULTS
+  ========================= */
 
   {
     type: "render",
@@ -47,17 +49,17 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 300,
+    ms: 500,
   },
 
-  // =========================
-  // REVEAL TOP RESULT
-  // =========================
+  /* =========================
+     PHASE 3
+     MAIN REVEAL
+  ========================= */
 
   {
     type: "revealCard",
     index: 0,
-    sound: "./assets/sounds/reveal-soft.mp3",
   },
 
   {
@@ -65,9 +67,10 @@ export const fateScene = [
     ms: 350,
   },
 
-  // =========================
-  // REVEAL REMAINING CARDS
-  // =========================
+  /* =========================
+     PHASE 4
+     REMAINING CARDS
+  ========================= */
 
   {
     type: "revealAll",
@@ -75,12 +78,13 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 450,
+    ms: 400,
   },
 
-  // =========================
-  // ANIMATE BARS
-  // =========================
+  /* =========================
+     PHASE 5
+     PERCENT BARS
+  ========================= */
 
   {
     type: "bars",
@@ -91,18 +95,20 @@ export const fateScene = [
     ms: 700,
   },
 
-  // =========================
-  // APPLY THEME
-  // =========================
+  /* =========================
+     PHASE 6
+     CHARACTER THEME
+  ========================= */
 
   {
     type: "theme",
-    color: "#60a5fa",
+    color: "var(--accent)",
   },
 
-  // =========================
-  // FINAL MESSAGE
-  // =========================
+  /* =========================
+     PHASE 7
+     FINAL MESSAGE
+  ========================= */
 
   {
     type: "finalText",
@@ -111,12 +117,13 @@ export const fateScene = [
 
   {
     type: "wait",
-    ms: 1200,
+    ms: 1400,
   },
 
-  // =========================
-  // FINISH
-  // =========================
+  /* =========================
+     PHASE 8
+     CLEAN EXIT
+  ========================= */
 
   {
     type: "hideOverlay",

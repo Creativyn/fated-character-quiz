@@ -1,3 +1,10 @@
+export const DEFAULT_SOUND_THEME = {
+  ambient: "./assets/sounds/ambient-soft.mp3",
+  reveal: "./assets/sounds/reveal-soft.mp3",
+  tick: "./assets/sounds/tick-soft.mp3",
+  final: "./assets/sounds/fate-lock.mp3",
+};
+
 export const SOUND_THEMES = {
   prometheia: {
     ambient: "./assets/sounds/ambient-warm.mp3",
@@ -21,7 +28,7 @@ export const SOUND_THEMES = {
   },
 
   hoep: {
-    ambient: "./assets/sounds/ambient-bass.mp3", // deep hum
+    ambient: "./assets/sounds/ambient-bass.mp3",
     reveal: "./assets/sounds/reveal-heavy.mp3",
     tick: "./assets/sounds/tick-deep.mp3",
     final: "./assets/sounds/fate-lock-low.mp3",
@@ -69,3 +76,16 @@ export const SOUND_THEMES = {
     final: "./assets/sounds/fate-lock-heavy.mp3",
   },
 };
+
+export function getSoundTheme(personality) {
+  if (!personality) {
+    return DEFAULT_SOUND_THEME;
+  }
+
+  return (
+    SOUND_THEMES[personality.id] ??
+    SOUND_THEMES[personality.slug] ??
+    SOUND_THEMES[personality.key] ??
+    DEFAULT_SOUND_THEME
+  );
+}

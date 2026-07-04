@@ -14,7 +14,9 @@
   --text: #000;
   --accent: #60a5fa;
 
-  --overlay: rgba(10, 10, 20, 0.88);
+  --overlay-bg: rgba(6, 10, 22, 0.88);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.16);
 }
 
 html,
@@ -22,7 +24,6 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-
   overflow-x: hidden;
 
   background: var(--bg);
@@ -34,28 +35,8 @@ body {
     "EB Garamond",
     Garamond,
     serif;
-}
 
-/* ==========================================================
-   APP LAYOUT
-========================================================== */
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-main {
-  width: min(900px, 94vw);
-
-  margin: 0 auto;
-
-  padding: 2rem 1rem 4rem;
+  line-height: 1.5;
 }
 
 /* ==========================================================
@@ -64,10 +45,142 @@ main {
 
 .app-screen {
   display: none;
+  min-height: 100vh;
 }
 
 .app-screen.active {
   display: block;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.header {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ==========================================================
+   QUESTIONS
+========================================================== */
+
+.question {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.question.missing {
+  border: 2px solid #b22222;
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.answer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  padding: 0.65rem 0.8rem;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.answer:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(4px);
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.actions,
+.results-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+
+  padding: 0.8rem 1.3rem;
+
+  cursor: pointer;
+
+  background: var(--card);
+  color: var(--text);
+
+  font-weight: 600;
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* ==========================================================
+   RESULTS
+========================================================== */
+
+#results-container {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.result-card {
+  background: var(--card);
+
+  border-radius: 14px;
+
+  padding: 1rem;
+
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+.result-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 0.75rem;
+
+  font-weight: 700;
+}
+
+.result-description {
+  margin-top: 0.85rem;
+  line-height: 1.55;
 }
 
 /* ==========================================================
@@ -80,259 +193,44 @@ main {
 
 .progress-label {
   display: block;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
 #quiz-progress {
   width: 100%;
-  height: 18px;
+  height: 14px;
 }
 
 .progress-text {
   margin-top: 0.5rem;
-  text-align: right;
+  text-align: center;
   font-size: 0.95rem;
 }
 
 /* ==========================================================
-   QUESTION CARD
-========================================================== */
-
-.vn-question-card {
-  background: var(--card);
-
-  border-radius: 14px;
-
-  padding: 1.5rem;
-
-  color: var(--text);
-
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-}
-
-.question-title {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-
-  line-height: 1.4;
-}
-
-/* ==========================================================
-   ANSWERS
-========================================================== */
-
-.vn-answer-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.vn-choice {
-  display: flex;
-  align-items: center;
-
-  gap: 0.8rem;
-
-  padding: 0.9rem 1rem;
-
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  background: rgba(255, 255, 255, 0.15);
-
-  transition:
-    background 0.25s,
-    transform 0.25s;
-}
-
-.vn-choice:hover {
-  background: rgba(255, 255, 255, 0.28);
-  transform: translateY(-2px);
-}
-
-.vn-choice input {
-  flex-shrink: 0;
-}
-
-.vn-choice span {
-  flex: 1;
-}
-
-/* ==========================================================
-   NAVIGATION
-========================================================== */
-
-.vn-navigation {
-  display: flex;
-
-  justify-content: space-between;
-
-  gap: 1rem;
-
-  margin-top: 2rem;
-}
-
-.vn-navigation button {
-  flex: 1;
-}
-
-/* ==========================================================
-   BUTTONS
-========================================================== */
-
-button {
-  appearance: none;
-
-  border: none;
-  border-radius: 10px;
-
-  padding: 0.85rem 1.25rem;
-
-  font-size: 1rem;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  background: var(--card);
-  color: var(--text);
-
-  transition:
-    transform 0.2s,
-    filter 0.2s,
-    opacity 0.2s;
-}
-
-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-/* ==========================================================
-   RESULTS HEADER
-========================================================== */
-
-.results-header {
-  display: flex;
-  justify-content: flex-end;
-
-  margin-bottom: 1rem;
-}
-
-.skip-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  font-size: 0.95rem;
-}
-
-/* ==========================================================
-   RESULTS CONTAINER
-========================================================== */
-
-#results-container {
-  display: grid;
-  gap: 1rem;
-
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-/* ==========================================================
-   RESULT CARD
-========================================================== */
-
-.result-card {
-  background: var(--card);
-
-  border-radius: 14px;
-
-  padding: 1.25rem;
-
-  border-left: 6px solid var(--accent);
-
-  opacity: 1;
-  transform: translateY(0);
-
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-}
-
-.result-title {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 1rem;
-
-  margin-bottom: 0.75rem;
-
-  font-weight: 700;
-
-  font-size: 1.05rem;
-}
-
-.result-description {
-  margin-top: 1rem;
-
-  line-height: 1.55;
-}
-
-/* ==========================================================
-   PERCENTAGE BAR
+   RESULT BARS
 ========================================================== */
 
 .bar {
   width: 100%;
   height: 12px;
 
-  border-radius: 999px;
-
   overflow: hidden;
 
-  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .bar-fill {
   width: 0%;
+
   height: 100%;
 
   background: var(--accent);
 
-  transition: width 0.8s ease;
-}
-
-/* ==========================================================
-   RESULTS ACTIONS
-========================================================== */
-
-.results-actions {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  justify-content: center;
-
-  gap: 1rem;
-
-  margin-top: 2rem;
-}
-
-/* ==========================================================
-   TOP RESULT
-========================================================== */
-
-.result-card:first-child {
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.18);
+  transition: width 0.9s ease;
 }
 
 /* ==========================================================
@@ -347,89 +245,146 @@ button:disabled {
   align-items: center;
   justify-content: center;
 
-  padding: 2rem;
-
-  background: var(--overlay);
-
-  color: #fff;
-
-  text-align: center;
+  background: var(--overlay-bg);
 
   z-index: 9999;
+
+  padding: 2rem;
 }
-
-.fate-text {
-  max-width: 720px;
-
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  font-weight: 700;
-  line-height: 1.35;
-
-  opacity: 0;
-  transform: scale(0.96);
-
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-}
-
-/* ==========================================================
-   CINEMATIC MODE
-========================================================== */
-
-body.cinematic-mode .result-card {
-  opacity: 0;
-  transform: translateY(24px);
-  pointer-events: none;
-}
-
-body.cinematic-mode .result-card.reveal {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* ==========================================================
-   FADE HELPERS
-========================================================== */
-
-.fade-in {
-  animation: fadeIn 0.45s ease forwards;
-}
-
-.fade-out {
-  animation: fadeOut 0.35s ease forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-/* ==========================================================
-   UTILITIES
-========================================================== */
 
 .hidden {
   display: none !important;
 }
+
+.fate-overlay-content {
+  width: min(92vw, 720px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 2rem;
+
+  text-align: center;
+}
+
+.fate-text {
+  min-height: 4rem;
+
+  color: white;
+
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+
+  font-weight: 600;
+
+  letter-spacing: 0.03em;
+
+  opacity: 0;
+
+  transform: translateY(10px) scale(0.98);
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.35),
+    0 0 28px rgba(255, 255, 255, 0.15);
+}
+
+.fate-text.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ==========================================================
+   OVERLAY CONTROL PANEL
+========================================================== */
+
+.overlay-controls {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.9rem;
+
+  padding: 1.25rem 1.6rem;
+
+  border-radius: 16px;
+
+  background: var(--glass);
+
+  backdrop-filter: blur(10px);
+
+  border: 1px solid var(--glass-border);
+
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+}
+
+.overlay-toggle {
+  display: flex;
+  align-items: center;
+
+  gap: 0.7rem;
+
+  color: white;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  font-size: 0.98rem;
+}
+
+.overlay-toggle input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: var(--accent);
+
+  cursor: pointer;
+}
+
+/* ==========================================================
+   CINEMATIC REVEAL ANIMATION
+========================================================== */
+
+.cinematic-mode .result-card {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  pointer-events: none;
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.cinematic-mode .result-card.reveal {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ==========================================================
+   RESULTS SCREEN TRANSITIONS
+========================================================== */
+
+#results-section {
+  animation: resultsFade 0.45s ease;
+}
+
+@keyframes resultsFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
 
 .sr-only {
   position: absolute;
@@ -437,8 +392,8 @@ body.cinematic-mode .result-card.reveal {
   width: 1px;
   height: 1px;
 
-  padding: 0;
   margin: -1px;
+  padding: 0;
 
   overflow: hidden;
 
@@ -450,21 +405,39 @@ body.cinematic-mode .result-card.reveal {
 }
 
 /* ==========================================================
-   RESPONSIVE
+   MOBILE
 ========================================================== */
 
-@media (max-width: 700px) {
-  .vn-navigation {
+@media (max-width: 640px) {
+  main {
+    padding: 1rem;
+  }
+
+  .fate-overlay {
+    padding: 1rem;
+  }
+
+  .fate-overlay-content {
+    gap: 1.5rem;
+  }
+
+  .overlay-controls {
+    width: 100%;
+  }
+
+  .results-actions,
+  .actions {
     flex-direction: column;
   }
 
-  .results-actions {
-    flex-direction: column;
+  button {
+    width: 100%;
   }
 
   .result-title {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.35rem;
   }
 }
 
@@ -478,5 +451,17 @@ body.cinematic-mode .result-card.reveal {
   *::after {
     animation: none !important;
     transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .fate-text {
+    opacity: 1;
+    transform: none;
+  }
+
+  .result-card,
+  .result-card.reveal {
+    opacity: 1;
+    transform: none;
   }
 }
