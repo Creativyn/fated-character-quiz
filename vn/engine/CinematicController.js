@@ -1,6 +1,6 @@
 import { renderResults } from "../../ui/renderResults.js";
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export class CinematicController {
   constructor(context) {
@@ -22,58 +22,42 @@ export class CinematicController {
     }
   }
 
-  // =========================
-  // TEXT SEQUENCE
-  // =========================
-
   async onText(message) {
     if (!this.overlay || !this.textElement) return;
 
-    this.overlay.classList.remove("hidden");
+    document.body.classList.add("cinematic-mode");
 
+    this.overlay.classList.remove("hidden");
     this.textElement.textContent = message;
 
-    this.textElement.classList.remove("fade-out");
-    this.textElement.classList.add("fade-in");
+    this.textElement.style.opacity = "1";
+    this.textElement.style.transform = "scale(1)";
 
-    if (!this.skipped) {
-      await wait(800);
-    }
+    if (!this.skipped) await wait(800);
   }
 
   async onTextHide() {
     if (!this.textElement) return;
 
-    this.textElement.classList.remove("fade-in");
-    this.textElement.classList.add("fade-out");
+    this.textElement.style.opacity = "0";
+    this.textElement.style.transform = "scale(0.98)";
 
-    if (!this.skipped) {
-      await wait(350);
-    }
+    if (!this.skipped) await wait(350);
 
     this.textElement.textContent = "";
   }
 
-  // =========================
-  // RENDER RESULTS BASE
-  // =========================
-
   async onRender() {
-    if (!this.context?.results?.length) return;
     renderResults(this.context.results);
   }
 
-  // =========================
-  // CARD REVEALS
-  // =========================
-
   async onRevealCard(index, sound) {
     const cards = this.container.querySelectorAll(".result-card");
-
     const card = cards[index];
     if (!card) return;
 
-    card.classList.add("revealed");
+    // FIX: match CSS expectation
+    card.classList.add("reveal");
 
     if (sound) {
       try {
@@ -83,107 +67,74 @@ export class CinematicController {
       } catch (_) {}
     }
 
-    if (!this.skipped) {
-      await wait(300);
-    }
+    if (!this.skipped) await wait(300);
   }
 
   async onRevealAll() {
     const cards = this.container.querySelectorAll(".result-card");
 
-    const delay = this.skipped ? 0 : 140;
-
-    cards.forEach((card, index) => {
-      setTimeout(() => {
-        card.classList.add("revealed");
-      }, index * delay);
+    cards.forEach((card, i) => {
+      setTimeout(
+        () => {
+          card.classList.add("reveal");
+        },
+        i * (this.skipped ? 0 : 140),
+      );
     });
 
     if (!this.skipped) {
-      await wait(Math.max(cards.length - 1, 0) * delay + 50);
+      await wait(cards.length * 140);
     }
   }
-
-  // =========================
-  // BAR ANIMATION
-  // =========================
 
   async onBars() {
     const bars = this.container.querySelectorAll(".bar-fill");
 
-    const delay = this.skipped ? 0 : 120;
+    bars.forEach((bar, i) => {
+      const target = Number(bar.dataset.target || 0);
 
-    bars.forEach((bar, index) => {
-      const target = Number(bar.dataset.target) || 0;
-
-      setTimeout(() => {
-        bar.style.width = `${target}%`;
-      }, index * delay);
+      setTimeout(
+        () => {
+          bar.style.width = `${target}%`;
+        },
+        i * (this.skipped ? 0 : 120),
+      );
     });
 
     if (!this.skipped) {
-      await wait(Math.max(bars.length - 1, 0) * delay + 400);
+      await wait(bars.length * 120 + 350);
     }
   }
 
-  // =========================
-  // THEME
-  // =========================
-
   async onTheme(color) {
-    if (!color) return;
-
-    document.documentElement.style.setProperty("--cinematic-accent", color);
+    document.documentElement.style.setProperty("--accent", color);
   }
-
-  // =========================
-  // FINAL TEXT
-  // =========================
 
   async onFinalText(message) {
     if (!this.textElement) return;
 
     this.textElement.textContent = message;
+    this.textElement.style.opacity = "1";
+    this.textElement.style.transform = "scale(1)";
 
-    this.textElement.classList.remove("fade-out");
-    this.textElement.classList.add("fade-in");
-
-    if (!this.skipped) {
-      await wait(900);
-    }
+    if (!this.skipped) await wait(900);
   }
-
-  // =========================
-  // CLEAN EXIT
-  // =========================
 
   async onHideOverlay() {
     if (!this.overlay) return;
 
-    this.overlay.classList.add("fade-out");
-
-    if (!this.skipped) {
-      await wait(350);
-    }
-
     this.overlay.classList.add("hidden");
-    this.overlay.classList.remove("fade-out");
+    document.body.classList.remove("cinematic-mode");
 
     if (this.textElement) {
       this.textElement.textContent = "";
-      this.textElement.classList.remove("fade-in");
-      this.textElement.classList.remove("fade-out");
+      this.textElement.style.opacity = "0";
     }
   }
-
-  // =========================
-  // SCENE CONTEXT BINDING
-  // =========================
 
   createSceneContext() {
     return {
       ...this.context,
-
       isSkipped: () => this.skipped,
 
       onText: this.onText.bind(this),
