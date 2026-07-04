@@ -19,5 +19,5 @@ export async function generateResultCard(personality) {
   ctx.fillText(personality.name, 80, 400);
 
   // export
-  return canvas.toDataURL("image/png");
+  return canvas.toDataURL("portrait/png");
 }

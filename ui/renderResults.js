@@ -13,42 +13,87 @@ export function renderResults(results) {
 
   container.innerHTML = "";
 
-  results.forEach((personality) => {
+  const top = results[0];
+
+  if (top) {
+    const hero = document.createElement("section");
+    hero.className = "result-hero";
+    hero.style.setProperty("--accent", top.accent || top.color || "#60a5fa");
+
+    hero.innerHTML = `
+      ${
+        top.portrait
+          ? `
+            <img
+              class="result-hero-portrait"
+              src="${top.portrait}"
+              alt="${top.name}"
+            />
+          `
+          : `
+            <div
+              class="result-hero-portrait placeholder"
+              aria-hidden="true"
+            ></div>
+          `
+      }
+
+      <div class="result-hero-copy">
+        <p class="result-kicker">You are most like...</p>
+
+        <h2 class="result-hero-name">${top.name}</h2>
+
+        ${
+          top.heading ? `<p class="result-hero-heading">${top.heading}</p>` : ""
+        }
+
+        ${top.quote ? `<p class="result-hero-quote">“${top.quote}”</p>` : ""}
+      </div>
+    `;
+
+    container.appendChild(hero);
+  }
+
+  results.forEach((personality, index) => {
     const card = document.createElement("article");
     card.className = "result-card";
 
-    const accent = personality.color || "#60a5fa";
+    if (index === 0) {
+      card.classList.add("top-result-card");
+    }
+
+    const accent = personality.accent || personality.color || "#60a5fa";
+
     card.style.setProperty("--accent", accent);
 
-    const title = document.createElement("h3");
-    title.className = "result-title";
-    title.textContent = personality.name;
+    const percent = personality.percent ?? 0;
 
-    const description = document.createElement("p");
-    description.className = "result-description";
-    description.textContent = personality.description || "";
+    card.innerHTML = `
+      <div class="result-title">
+        <span>${personality.name}</span>
+        <span>${percent}%</span>
+      </div>
 
-    const bar = document.createElement("div");
-    bar.className = "bar";
+      ${
+        personality.heading
+          ? `<p class="result-card-heading">${personality.heading}</p>`
+          : ""
+      }
 
-    const fill = document.createElement("div");
-    fill.className = "bar-fill";
+      <div class="bar">
+        <div
+          class="bar-fill"
+          data-target="${percent}"
+          style="width:0%; background:${accent};"
+        ></div>
+      </div>
 
-    fill.dataset.target = String(personality.percent ?? 0);
-
-    fill.style.width = "0%";
-    fill.style.background = accent;
-
-    bar.appendChild(fill);
-
-    const percent = document.createElement("div");
-    percent.className = "result-percent";
-    percent.textContent = `${personality.percent ?? 0}%`;
-
-    card.appendChild(title);
-    card.appendChild(description);
-    card.appendChild(bar);
-    card.appendChild(percent);
+      ${
+        index === 0 && personality.description
+          ? `<p class="result-description">${personality.description}</p>`
+          : ""
+      }
+    `;
 
     container.appendChild(card);
   });

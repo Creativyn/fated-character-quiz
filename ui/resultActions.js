@@ -43,7 +43,7 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
 
       const personality = results[0];
 
-      const image = await generateResultCard(personality);
+      const portrait = await generateResultCard(personality);
 
       const url = window.location.href;
 
@@ -54,15 +54,15 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
           url,
         };
 
-        if (image) {
+        if (portrait) {
           try {
-            const blob = await (await fetch(image)).blob();
+            const blob = await (await fetch(portrait)).blob();
 
             data.files = [
-              new File([blob], "result.png", { type: "image/png" }),
+              new File([blob], "result.png", { type: "portrait/png" }),
             ];
           } catch (_) {
-            // Ignore image failures and share text instead.
+            // Ignore portrait failures and share text instead.
           }
         }
 

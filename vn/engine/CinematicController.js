@@ -20,12 +20,12 @@ export class CinematicController {
     this.overlay = context.overlay;
     this.container = context.container;
     this.resultsSection = context.resultsSection;
-
     this.skipToggle = context.skipToggle;
 
     this.textElement = this.overlay?.querySelector(".fate-text");
 
     this.skipped = false;
+    this._ambientStarted = false;
 
     document.body.classList.remove("cinematic-mode");
 
@@ -48,6 +48,8 @@ export class CinematicController {
     }
 
     if (this.skipToggle) {
+      this.skipToggle.checked = false;
+
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
       });
@@ -59,9 +61,7 @@ export class CinematicController {
   }
 
   async onText(message) {
-    if (!this.overlay || !this.textElement) {
-      return;
-    }
+    if (!this.overlay || !this.textElement) return;
 
     document.body.classList.add("cinematic-mode");
 
@@ -75,7 +75,6 @@ export class CinematicController {
     this.textElement.style.opacity = "1";
     this.textElement.style.color = "#ffffff";
 
-    // Start ambient the first time text appears.
     if (!this._ambientStarted) {
       this._ambientStarted = true;
       playAmbient(this.topResult);
@@ -98,42 +97,51 @@ export class CinematicController {
   }
 
   async onRender() {
-    if (!this.context.results) {
-      return;
-    }
+    if (!this.context.results?.length) return;
 
     renderResults(this.context.results);
+
+    this.container
+      .querySelectorAll(".result-hero, .result-card")
+      .forEach((el) => {
+        el.classList.remove("reveal");
+      });
   }
 
   async onRevealCard(index) {
-    const cards = this.container.querySelectorAll(".result-card");
+    const top = this.topResult;
 
+    const hero = this.container.querySelector(".result-hero");
+    const cards = this.container.querySelectorAll(".result-card");
     const card = cards[index];
 
-    if (!card) return;
+    playReveal(top);
 
-    playReveal(this.topResult);
+    if (hero) {
+      hero.classList.add("reveal");
+    }
 
-    card.classList.add("reveal");
+    if (card) {
+      card.classList.add("reveal");
+    }
 
     if (!this.skipped) {
-      await wait(250);
+      await wait(500);
     }
   }
 
   async onRevealAll() {
     const cards = this.container.querySelectorAll(".result-card");
 
-    cards.forEach((card, i) => {
+    cards.forEach((card, index) => {
       setTimeout(
         () => {
-          if (i > 0) {
+          if (index > 0) {
             playTick(this.topResult);
+            card.classList.add("reveal");
           }
-
-          card.classList.add("reveal");
         },
-        i * (this.skipped ? 0 : 140),
+        index * (this.skipped ? 0 : 140),
       );
     });
 
@@ -145,16 +153,15 @@ export class CinematicController {
   async onBars() {
     const bars = this.container.querySelectorAll(".bar-fill");
 
-    bars.forEach((bar, i) => {
+    bars.forEach((bar, index) => {
       const target = Number(bar.dataset.target || 0);
 
       setTimeout(
         () => {
           playTick(this.topResult);
-
           bar.style.width = `${target}%`;
         },
-        i * (this.skipped ? 0 : 100),
+        index * (this.skipped ? 0 : 100),
       );
     });
 
