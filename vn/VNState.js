@@ -6,11 +6,7 @@ export const VNState = {
 
   answers: [],
 
-  results: null,
-
-  /* =========================
-     INIT
-  ========================= */
+  results: [],
 
   init({ questions, personalities }) {
     this.questions = Array.isArray(questions) ? questions : [];
@@ -18,7 +14,7 @@ export const VNState = {
 
     this.currentQuestion = 0;
     this.answers = [];
-    this.results = null;
+    this.results = [];
   },
 
   /* =========================
@@ -66,7 +62,7 @@ export const VNState = {
   },
 
   getAnswer(index) {
-    return this.answers[index];
+    return this.answers[index] ?? null;
   },
 
   getAnswers() {
@@ -82,11 +78,11 @@ export const VNState = {
   },
 
   getResults() {
-    return this.results ?? [];
+    return [...this.results];
   },
 
   getTopResult() {
-    return this.results?.[0] ?? null;
+    return this.results.length ? this.results[0] : null;
   },
 
   /* =========================
@@ -96,19 +92,6 @@ export const VNState = {
   reset() {
     this.currentQuestion = 0;
     this.answers = [];
-    this.results = null;
-  },
-
-  /* =========================
-     DEBUG HELPERS (SAFE)
-  ========================= */
-
-  debug() {
-    return {
-      questions: this.questions.length,
-      personalities: this.personalities.length,
-      answers: this.answers.length,
-      hasResults: !!this.results,
-    };
+    this.results = [];
   },
 };

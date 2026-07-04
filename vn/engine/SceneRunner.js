@@ -8,87 +8,78 @@ export class SceneRunner {
   async run(scene = []) {
     for (const step of scene) {
       try {
-        // allow skip check before every step
-        if (this.context.isSkipped) {
-          // fast-forward behavior
-          if (step.type === "hideOverlay" && this.context.onHideOverlay) {
-            await this.context.onHideOverlay();
-          }
-          continue;
-        }
-
         switch (step.type) {
           case "text":
             if (this.context.onText) {
-              await Promise.resolve(this.context.onText(step.value));
+              await this.context.onText(step.value);
             }
             break;
 
           case "textHide":
             if (this.context.onTextHide) {
-              await Promise.resolve(this.context.onTextHide());
+              await this.context.onTextHide();
             }
             break;
 
           case "wait":
-            await sleep(step.ms ?? 0);
+            if (!this.context.isSkipped?.()) {
+              await sleep(step.ms ?? 0);
+            }
             break;
 
           case "render":
             if (this.context.onRender) {
-              await Promise.resolve(this.context.onRender(this.context));
+              await this.context.onRender();
             }
             break;
 
           case "revealCard":
             if (this.context.onRevealCard) {
-              await Promise.resolve(
-                this.context.onRevealCard(step.index, step.sound),
-              );
+              await this.context.onRevealCard(step.index, step.sound);
             }
             break;
 
           case "revealAll":
             if (this.context.onRevealAll) {
-              await Promise.resolve(this.context.onRevealAll());
+              await this.context.onRevealAll();
             }
             break;
 
           case "bars":
             if (this.context.onBars) {
-              await Promise.resolve(this.context.onBars());
+              await this.context.onBars();
             }
             break;
 
           case "theme":
             if (this.context.onTheme) {
-              await Promise.resolve(this.context.onTheme(step.color));
+              await this.context.onTheme(step.color);
             }
             break;
 
           case "finalText":
             if (this.context.onFinalText) {
-              await Promise.resolve(this.context.onFinalText(step.value));
+              await this.context.onFinalText(step.value);
             }
             break;
 
           case "hideOverlay":
             if (this.context.onHideOverlay) {
-              await Promise.resolve(this.context.onHideOverlay());
+              await this.context.onHideOverlay();
             }
             break;
 
           case "action":
-            if (step.run) {
+            if (typeof step.run === "function") {
               await step.run(this.context);
             }
             break;
 
           default:
-            console.warn("Unknown VN step:", step.type);
+            console.warn("Unknown scene step:", step.type);
         }
       } catch (err) {
-        console.error("Scene step failed:", step, err);
+        console.error("SceneRunner step failed:", step, err);
       }
     }
   }

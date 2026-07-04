@@ -8,87 +8,67 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
   const homeBtn = document.getElementById("home-btn");
   const exploreBtn = document.getElementById("explore-btn");
 
-  /* =========================
-     BASIC BUTTONS
-  ========================= */
+  retakeBtn?.addEventListener("click", () => {
+    onRetake?.();
+  });
 
-  retakeBtn.onclick = () => onRetake?.();
+  printBtn?.addEventListener("click", () => {
+    window.print();
+  });
 
-  printBtn.onclick = () => window.print();
+  homeBtn?.addEventListener("click", () => {
+    if (onHome) {
+      onHome();
+    } else {
+      window.location.href = "./";
+    }
+  });
 
-  homeBtn.onclick = () => {
-    if (onHome) onHome();
-    else window.location.href = "./";
-  };
+  exploreBtn?.addEventListener("click", () => {
+    if (onExplore) {
+      onExplore();
+    } else {
+      window.location.href = "./characters";
+    }
+  });
 
-  exploreBtn.onclick = () => {
-    if (onExplore) onExplore();
-    else window.location.href = "./characters";
-  };
-
-  /* =========================
-     SAFE SHARE (FIXED)
-  ========================= */
-
-  shareBtn.onclick = async () => {
+  shareBtn?.addEventListener("click", async () => {
     try {
-      // PRIMARY SOURCE: VNState
-      let personality = VNState.getTopResult?.();
+      const results = VNState.getResults();
 
-      // FALLBACK: DOM extraction (IMPORTANT SAFETY NET)
-      if (!personality) {
-        const firstCard = document.querySelector(".result-card");
-
-        if (firstCard) {
-          personality = {
-            name:
-              firstCard.querySelector(".result-title span")?.textContent ??
-              "Result",
-            description: "",
-          };
-        }
-      }
-
-      if (!personality) {
-        console.warn("No result available to share.");
+      if (!results || results.length === 0) {
+        console.warn("No results available to share.");
         return;
       }
+
+      const personality = results[0];
 
       const image = await generateResultCard(personality);
 
       const url = window.location.href;
 
-      /* =========================
-         WEB SHARE API
-      ========================= */
-
       if (navigator.share) {
-        if (image) {
-          const blob = await (await fetch(image)).blob();
-          const file = new File([blob], "result.png", { type: "image/png" });
-
-          await navigator.share({
-            title: personality.name,
-            text: personality.description ?? "",
-            url,
-            files: [file],
-          });
-
-          return;
-        }
-
-        await navigator.share({
+        const data = {
           title: personality.name,
           text: personality.description ?? "",
           url,
-        });
+        };
 
+        if (image) {
+          try {
+            const blob = await (await fetch(image)).blob();
+
+            data.files = [
+              new File([blob], "result.png", { type: "image/png" }),
+            ];
+          } catch (_) {
+            // Ignore image failures and share text instead.
+          }
+        }
+
+        await navigator.share(data);
         return;
       }
-
-      /* =========================
-         CLIPBOARD FALLBACK
-      ========================= */
 
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
@@ -100,5 +80,5 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
     } catch (err) {
       console.error("Share failed:", err);
     }
-  };
+  });
 }

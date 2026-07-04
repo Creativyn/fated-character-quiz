@@ -1,33 +1,58 @@
 export const fateScene = [
-  /* =========================
-     PHASE 1: INTRO
-  ========================= */
+  // =========================
+  // INTRO
+  // =========================
 
   {
     type: "text",
     value: "Analyzing your fate...",
   },
 
-  { type: "wait", ms: 1200 },
+  {
+    type: "wait",
+    ms: 1000,
+  },
 
   {
     type: "text",
-    value: "Matching similar personalities...",
+    value: "Searching for your closest match...",
   },
 
-  { type: "wait", ms: 1200 },
+  {
+    type: "wait",
+    ms: 1000,
+  },
 
-  { type: "textHide" },
+  {
+    type: "text",
+    value: "Your destiny is becoming clear...",
+  },
 
-  /* =========================
-     PHASE 2: RENDER BASE UI
-  ========================= */
+  {
+    type: "wait",
+    ms: 1000,
+  },
 
-  { type: "wait", ms: 600 },
+  {
+    type: "textHide",
+  },
 
-  /* =========================
-     PHASE 3: REVEAL MAIN CARD
-  ========================= */
+  // =========================
+  // BUILD RESULTS
+  // =========================
+
+  {
+    type: "render",
+  },
+
+  {
+    type: "wait",
+    ms: 300,
+  },
+
+  // =========================
+  // REVEAL TOP RESULT
+  // =========================
 
   {
     type: "revealCard",
@@ -35,53 +60,65 @@ export const fateScene = [
     sound: "./assets/sounds/reveal-soft.mp3",
   },
 
-  { type: "wait", ms: 400 },
+  {
+    type: "wait",
+    ms: 350,
+  },
 
-  /* =========================
-     PHASE 4: STAGGER REMAINING CARDS
-     (IMPORTANT: smoother than instant bars)
-  ========================= */
+  // =========================
+  // REVEAL REMAINING CARDS
+  // =========================
 
   {
     type: "revealAll",
   },
 
-  { type: "wait", ms: 500 },
+  {
+    type: "wait",
+    ms: 450,
+  },
 
-  /* =========================
-     PHASE 5: BAR ANIMATION
-  ========================= */
+  // =========================
+  // ANIMATE BARS
+  // =========================
 
   {
     type: "bars",
   },
 
-  /* CRITICAL FIX: allow bars to finish */
-  { type: "wait", ms: 900 },
+  {
+    type: "wait",
+    ms: 700,
+  },
 
-  /* =========================
-     PHASE 6: THEME (FIXED)
-  ========================= */
+  // =========================
+  // APPLY THEME
+  // =========================
 
   {
     type: "theme",
-    color: "var(--accent)", // or replace with dynamic personality color if available
+    color: "#60a5fa",
   },
 
-  /* =========================
-     PHASE 7: FINAL MOMENT
-  ========================= */
+  // =========================
+  // FINAL MESSAGE
+  // =========================
 
   {
     type: "finalText",
-    value: "Your fate has been revealed!",
+    value: "Your fate has been revealed.",
   },
 
-  { type: "wait", ms: 1200 },
+  {
+    type: "wait",
+    ms: 1200,
+  },
 
-  /* =========================
-     PHASE 8: CLEAN EXIT
-  ========================= */
+  // =========================
+  // FINISH
+  // =========================
 
-  { type: "hideOverlay" },
+  {
+    type: "hideOverlay",
+  },
 ];

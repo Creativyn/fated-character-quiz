@@ -7,10 +7,6 @@ const progressText = () => document.getElementById("progress-text");
 
 let resolveScene = null;
 
-/* =========================
-   Progress
-========================= */
-
 function updateProgress() {
   const current = VNState.getCurrentIndex() + 1;
   const total = VNState.getQuestionCount();
@@ -24,37 +20,26 @@ function updateProgress() {
     bar.setAttribute("aria-valuemax", total);
   }
 
-  const text = progressText();
+  const label = progressText();
 
-  if (text) {
-    text.textContent = `Question ${current} of ${total}`;
+  if (label) {
+    label.textContent = `Question ${current} of ${total}`;
   }
 }
-
-/* =========================
-   Choice HTML
-========================= */
 
 function createChoice(answer, selected) {
   return `
     <label class="vn-choice">
-
       <input
         type="radio"
         name="vn-answer"
         value="${answer.value}"
         ${selected ? "checked" : ""}
       >
-
       <span>${answer.text}</span>
-
     </label>
   `;
 }
-
-/* =========================
-   Render
-========================= */
 
 function renderQuestion() {
   const container = sceneContainer();
@@ -71,8 +56,8 @@ function renderQuestion() {
 
   updateProgress();
 
-  const index = VNState.getCurrentIndex();
-  const selected = VNState.getAnswer(index);
+  const currentIndex = VNState.getCurrentIndex();
+  const selectedAnswer = VNState.getAnswer(currentIndex);
 
   container.innerHTML = `
     <article class="vn-question-card fade-in">
@@ -82,11 +67,11 @@ function renderQuestion() {
       </h2>
 
       <div class="vn-answer-list">
-
         ${question.answers
-          .map((answer) => createChoice(answer, answer.value === selected))
+          .map((answer) =>
+            createChoice(answer, answer.value === selectedAnswer),
+          )
           .join("")}
-
       </div>
 
       <div class="vn-navigation">
@@ -102,7 +87,7 @@ function renderQuestion() {
         <button
           id="next-question"
           type="button"
-          ${selected ? "" : "disabled"}
+          ${selectedAnswer ? "" : "disabled"}
         >
           ${VNState.hasNext() ? "Next" : "Reveal My Fate"}
         </button>
@@ -115,10 +100,6 @@ function renderQuestion() {
   hookChoiceEvents();
   hookNavigation();
 }
-
-/* =========================
-   Choice Events
-========================= */
 
 function hookChoiceEvents() {
   const radios = sceneContainer().querySelectorAll('input[name="vn-answer"]');
@@ -136,10 +117,6 @@ function hookChoiceEvents() {
   });
 }
 
-/* =========================
-   Finish Quiz
-========================= */
-
 function finishQuiz() {
   const results = calculateResults({
     answers: VNState.getAnswers(),
@@ -148,10 +125,6 @@ function finishQuiz() {
 
   VNState.setResults(results);
 }
-
-/* =========================
-   Navigation
-========================= */
 
 function hookNavigation() {
   const nextButton = document.getElementById("next-question");
@@ -183,10 +156,6 @@ function hookNavigation() {
   }
 }
 
-/* =========================
-   Keyboard
-========================= */
-
 function hookKeyboard() {
   document.onkeydown = (event) => {
     const key = event.key.toLowerCase();
@@ -200,10 +169,6 @@ function hookKeyboard() {
     }
   };
 }
-
-/* =========================
-   Scene
-========================= */
 
 export const QuestionScene = {
   async run() {

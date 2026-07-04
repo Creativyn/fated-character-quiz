@@ -1,72 +1,54 @@
 export function renderResults(results) {
   const container = document.getElementById("results-container");
-  const topResultText = document.getElementById("top-result");
 
   if (!container) {
-    throw new Error("Missing #results-container");
+    console.warn("renderResults: missing results-container");
+    return;
   }
 
   if (!Array.isArray(results) || results.length === 0) {
-    throw new Error("renderResults received no results");
+    console.warn("renderResults: no results supplied");
+    return;
   }
 
   container.innerHTML = "";
 
-  const top = results[0];
-
-  if (topResultText) {
-    topResultText.textContent = `You are most like ${top.name}`;
-  }
-
-  results.forEach((personality, index) => {
-    const percent = Number(personality.percent ?? 0);
-
+  results.forEach((personality) => {
     const card = document.createElement("article");
     card.className = "result-card";
 
-    // Hidden until the cinematic reveals it.
-    card.style.opacity = "0";
-    card.style.transform = "translateY(12px)";
+    const accent = personality.color || "#60a5fa";
+    card.style.setProperty("--accent", accent);
 
-    // Character accent colour
-    card.style.setProperty("--accent", personality.color || "var(--accent)");
+    const title = document.createElement("h3");
+    title.className = "result-title";
+    title.textContent = personality.name;
 
-    card.innerHTML = `
-      <div class="result-title">
+    const description = document.createElement("p");
+    description.className = "result-description";
+    description.textContent = personality.description || "";
 
-        <span class="result-name">
-          ${personality.name}
-        </span>
+    const bar = document.createElement("div");
+    bar.className = "bar";
 
-        <span class="result-percent">
-          ${percent}%
-        </span>
+    const fill = document.createElement("div");
+    fill.className = "bar-fill";
 
-      </div>
+    fill.dataset.target = String(personality.percent ?? 0);
 
-      <div class="bar">
+    fill.style.width = "0%";
+    fill.style.background = accent;
 
-        <div
-          class="bar-fill"
-          data-target="${percent}"
-          style="
-            width:0%;
-            background:${personality.color || "var(--accent)"};
-          "
-        ></div>
+    bar.appendChild(fill);
 
-      </div>
+    const percent = document.createElement("div");
+    percent.className = "result-percent";
+    percent.textContent = `${personality.percent ?? 0}%`;
 
-      ${
-        index === 0 && personality.description
-          ? `
-            <p class="result-description">
-              ${personality.description}
-            </p>
-          `
-          : ""
-      }
-    `;
+    card.appendChild(title);
+    card.appendChild(description);
+    card.appendChild(bar);
+    card.appendChild(percent);
 
     container.appendChild(card);
   });
