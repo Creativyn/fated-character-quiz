@@ -1,0 +1,482 @@
+/* ==========================================================
+   RESET
+========================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #b4aff3;
+  --card: #566fb8;
+  --text: #000;
+  --accent: #60a5fa;
+
+  --overlay: rgba(10, 10, 20, 0.88);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+
+  overflow-x: hidden;
+
+  background: var(--bg);
+  color: var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    "EB Garamond",
+    Garamond,
+    serif;
+}
+
+/* ==========================================================
+   APP LAYOUT
+========================================================== */
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+main {
+  width: min(900px, 94vw);
+
+  margin: 0 auto;
+
+  padding: 2rem 1rem 4rem;
+}
+
+/* ==========================================================
+   SCREEN SYSTEM
+========================================================== */
+
+.app-screen {
+  display: none;
+}
+
+.app-screen.active {
+  display: block;
+}
+
+/* ==========================================================
+   PROGRESS
+========================================================== */
+
+.progress-wrapper {
+  margin-bottom: 2rem;
+}
+
+.progress-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+#quiz-progress {
+  width: 100%;
+  height: 18px;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  text-align: right;
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   QUESTION CARD
+========================================================== */
+
+.vn-question-card {
+  background: var(--card);
+
+  border-radius: 14px;
+
+  padding: 1.5rem;
+
+  color: var(--text);
+
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+.question-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+
+  line-height: 1.4;
+}
+
+/* ==========================================================
+   ANSWERS
+========================================================== */
+
+.vn-answer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.vn-choice {
+  display: flex;
+  align-items: center;
+
+  gap: 0.8rem;
+
+  padding: 0.9rem 1rem;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  transition:
+    background 0.25s,
+    transform 0.25s;
+}
+
+.vn-choice:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+}
+
+.vn-choice input {
+  flex-shrink: 0;
+}
+
+.vn-choice span {
+  flex: 1;
+}
+
+/* ==========================================================
+   NAVIGATION
+========================================================== */
+
+.vn-navigation {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
+.vn-navigation button {
+  flex: 1;
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+button {
+  appearance: none;
+
+  border: none;
+  border-radius: 10px;
+
+  padding: 0.85rem 1.25rem;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  background: var(--card);
+  color: var(--text);
+
+  transition:
+    transform 0.2s,
+    filter 0.2s,
+    opacity 0.2s;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   RESULTS HEADER
+========================================================== */
+
+.results-header {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-bottom: 1rem;
+}
+
+.skip-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   RESULTS CONTAINER
+========================================================== */
+
+#results-container {
+  display: grid;
+  gap: 1rem;
+
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ==========================================================
+   RESULT CARD
+========================================================== */
+
+.result-card {
+  background: var(--card);
+
+  border-radius: 14px;
+
+  padding: 1.25rem;
+
+  border-left: 6px solid var(--accent);
+
+  opacity: 1;
+  transform: translateY(0);
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.result-title {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 0.75rem;
+
+  font-weight: 700;
+
+  font-size: 1.05rem;
+}
+
+.result-description {
+  margin-top: 1rem;
+
+  line-height: 1.55;
+}
+
+/* ==========================================================
+   PERCENTAGE BAR
+========================================================== */
+
+.bar {
+  width: 100%;
+  height: 12px;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.bar-fill {
+  width: 0%;
+  height: 100%;
+
+  background: var(--accent);
+
+  transition: width 0.8s ease;
+}
+
+/* ==========================================================
+   RESULTS ACTIONS
+========================================================== */
+
+.results-actions {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  justify-content: center;
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
+/* ==========================================================
+   TOP RESULT
+========================================================== */
+
+.result-card:first-child {
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.18);
+}
+
+/* ==========================================================
+   CINEMATIC OVERLAY
+========================================================== */
+
+.fate-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background: var(--overlay);
+
+  color: #fff;
+
+  text-align: center;
+
+  z-index: 9999;
+}
+
+.fate-text {
+  max-width: 720px;
+
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.35;
+
+  opacity: 0;
+  transform: scale(0.96);
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+/* ==========================================================
+   CINEMATIC MODE
+========================================================== */
+
+body.cinematic-mode .result-card {
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+}
+
+body.cinematic-mode .result-card.reveal {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ==========================================================
+   FADE HELPERS
+========================================================== */
+
+.fade-in {
+  animation: fadeIn 0.45s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.35s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* ==========================================================
+   UTILITIES
+========================================================== */
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip: rect(0, 0, 0, 0);
+
+  white-space: nowrap;
+
+  border: 0;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 700px) {
+  .vn-navigation {
+    flex-direction: column;
+  }
+
+  .results-actions {
+    flex-direction: column;
+  }
+
+  .result-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
