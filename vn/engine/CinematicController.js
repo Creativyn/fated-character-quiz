@@ -11,15 +11,13 @@ export class CinematicController {
     this.resultsSection = context.resultsSection;
     this.skipToggle = context.skipToggle;
 
-    this.textElement = this.overlay?.querySelector(".fate-text") ?? null;
+    this.textElement = this.overlay?.querySelector(".fate-text");
 
     this.skipped = false;
 
     document.body.classList.remove("cinematic-mode");
 
     if (this.skipToggle) {
-      this.skipToggle.checked = false;
-
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
       });
@@ -27,7 +25,12 @@ export class CinematicController {
   }
 
   async onText(message) {
+    console.log("[Cinematic] onText:", message);
+    console.log("[Cinematic] overlay:", this.overlay);
+    console.log("[Cinematic] text:", this.textElement);
+
     if (!this.overlay || !this.textElement) {
+      console.warn("[Cinematic] Missing overlay or fate-text.");
       return;
     }
 
@@ -38,28 +41,31 @@ export class CinematicController {
     this.textElement.textContent = message;
     this.textElement.classList.add("show");
 
+    // Force visibility in case another rule overrides it.
+    this.textElement.style.display = "block";
+    this.textElement.style.visibility = "visible";
+    this.textElement.style.opacity = "1";
+    this.textElement.style.color = "#ffffff";
+
     if (!this.skipped) {
       await wait(900);
     }
   }
 
   async onTextHide() {
-    if (!this.textElement) {
-      return;
-    }
+    if (!this.textElement) return;
 
     this.textElement.classList.remove("show");
+    this.textElement.textContent = "";
 
     if (!this.skipped) {
       await wait(300);
     }
-
-    this.textElement.textContent = "";
   }
 
   async onRender() {
-    if (!this.context.results?.length) {
-      console.warn("No results available to render.");
+    if (!this.context.results) {
+      console.warn("[Cinematic] Missing results.");
       return;
     }
 
@@ -68,15 +74,13 @@ export class CinematicController {
 
   async onRevealCard(index, sound) {
     const cards = this.container.querySelectorAll(".result-card");
-
     const card = cards[index];
 
-    if (!card) {
-      return;
-    }
+    if (!card) return;
 
     card.classList.add("reveal");
 
+    // Ignore missing audio instead of throwing.
     if (sound) {
       try {
         const audio = new Audio(sound);
@@ -86,80 +90,80 @@ export class CinematicController {
     }
 
     if (!this.skipped) {
-      await wait(300);
+      await wait(250);
     }
   }
 
   async onRevealAll() {
     const cards = this.container.querySelectorAll(".result-card");
 
-    cards.forEach((card, index) => {
+    cards.forEach((card, i) => {
       setTimeout(
         () => {
           card.classList.add("reveal");
         },
-        this.skipped ? 0 : index * 140,
+        i * (this.skipped ? 0 : 120),
       );
     });
 
     if (!this.skipped) {
-      await wait(cards.length * 140 + 200);
+      await wait(cards.length * 120 + 200);
     }
   }
 
   async onBars() {
     const bars = this.container.querySelectorAll(".bar-fill");
 
-    bars.forEach((bar, index) => {
-      const target = Number(bar.dataset.target) || 0;
+    bars.forEach((bar, i) => {
+      const target = Number(bar.dataset.target || 0);
 
       setTimeout(
         () => {
           bar.style.width = `${target}%`;
         },
-        this.skipped ? 0 : index * 120,
+        i * (this.skipped ? 0 : 100),
       );
     });
 
     if (!this.skipped) {
-      await wait(bars.length * 120 + 300);
+      await wait(bars.length * 100 + 250);
     }
   }
 
-  // ===== Part 2 starts here =====
   async onTheme(color) {
-    if (!color) {
-      return;
-    }
+    if (!color) return;
 
     document.documentElement.style.setProperty("--accent", color);
   }
 
   async onFinalText(message) {
-    if (!this.textElement) {
-      return;
-    }
+    console.log("[Cinematic] finalText:", message);
+
+    if (!this.textElement) return;
 
     this.textElement.textContent = message;
     this.textElement.classList.add("show");
 
+    this.textElement.style.display = "block";
+    this.textElement.style.visibility = "visible";
+    this.textElement.style.opacity = "1";
+    this.textElement.style.color = "#ffffff";
+
     if (!this.skipped) {
-      await wait(1000);
+      await wait(900);
     }
   }
 
   async onHideOverlay() {
-    if (!this.overlay) {
-      return;
-    }
+    if (!this.overlay) return;
 
     this.overlay.classList.add("hidden");
 
     document.body.classList.remove("cinematic-mode");
 
     if (this.textElement) {
-      this.textElement.textContent = "";
       this.textElement.classList.remove("show");
+      this.textElement.textContent = "";
     }
   }
 
