@@ -8,29 +8,46 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
   const homeBtn = document.getElementById("home-btn");
   const exploreBtn = document.getElementById("explore-btn");
 
+  /* =========================
+     BASIC BUTTONS
+  ========================= */
+
   retakeBtn.onclick = () => onRetake?.();
 
   printBtn.onclick = () => window.print();
 
   homeBtn.onclick = () => {
-    if (onHome) {
-      onHome();
-    } else {
-      window.location.href = "./";
-    }
+    if (onHome) onHome();
+    else window.location.href = "./";
   };
 
   exploreBtn.onclick = () => {
-    if (onExplore) {
-      onExplore();
-    } else {
-      window.location.href = "./characters";
-    }
+    if (onExplore) onExplore();
+    else window.location.href = "./characters";
   };
+
+  /* =========================
+     SAFE SHARE (FIXED)
+  ========================= */
 
   shareBtn.onclick = async () => {
     try {
-      const personality = VNState.getTopResult();
+      // PRIMARY SOURCE: VNState
+      let personality = VNState.getTopResult?.();
+
+      // FALLBACK: DOM extraction (IMPORTANT SAFETY NET)
+      if (!personality) {
+        const firstCard = document.querySelector(".result-card");
+
+        if (firstCard) {
+          personality = {
+            name:
+              firstCard.querySelector(".result-title span")?.textContent ??
+              "Result",
+            description: "",
+          };
+        }
+      }
 
       if (!personality) {
         console.warn("No result available to share.");
@@ -41,10 +58,13 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
 
       const url = window.location.href;
 
+      /* =========================
+         WEB SHARE API
+      ========================= */
+
       if (navigator.share) {
         if (image) {
           const blob = await (await fetch(image)).blob();
-
           const file = new File([blob], "result.png", { type: "image/png" });
 
           await navigator.share({
@@ -65,6 +85,10 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
 
         return;
       }
+
+      /* =========================
+         CLIPBOARD FALLBACK
+      ========================= */
 
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
