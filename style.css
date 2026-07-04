@@ -613,3 +613,58 @@ button:hover {
     align-items: center;
   }
 }
+
+/* ==========================================================
+   QUIZ CARD RESTORE
+========================================================== */
+
+.vn-question-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14);
+}
+
+.vn-answer-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.vn-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.vn-choice:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateX(4px);
+}
+
+.vn-choice input {
+  flex-shrink: 0;
+}
+
+.vn-choice span {
+  flex: 1;
+}
+
+.vn-navigation {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.vn-navigation button {
+  min-width: 110px;
+}
