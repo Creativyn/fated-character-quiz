@@ -1,207 +1,105 @@
-import { VNState } from "../VNState.js";
-import { calculateResults } from "../../logic/calculateResults.js";
+export const VNState = {
+  // Quiz data
+  questions: [],
+  personalities: [],
 
-const sceneContainer = () => document.getElementById("scene-container");
+  // Current position
+  currentQuestion: 0,
 
-const progressBar = () => document.getElementById("quiz-progress");
+  // One answer per question
+  answers: [],
 
-const progressText = () => document.getElementById("progress-text");
+  // Calculated results
+  results: [],
 
-let resolveScene = null;
+  /**
+   * Initialize a new quiz session
+   */
+  init({ questions, personalities }) {
+    this.questions = [...questions];
+    this.personalities = [...personalities];
 
-function updateProgress() {
-  const current = VNState.getCurrentIndex() + 1;
-  const total = VNState.getQuestionCount();
+    this.currentQuestion = 0;
+    this.answers = new Array(this.questions.length).fill(null);
+    this.results = [];
+  },
 
-  const bar = progressBar();
+  /**
+   * Current question object
+   */
+  getCurrentQuestion() {
+    return this.questions[this.currentQuestion] ?? null;
+  },
 
-  if (bar) {
-    bar.max = total;
-    bar.value = current;
-    bar.setAttribute("aria-valuenow", current);
-    bar.setAttribute("aria-valuemax", total);
-  }
+  /**
+   * Total number of questions
+   */
+  getQuestionCount() {
+    return this.questions.length;
+  },
 
-  const label = progressText();
+  /**
+   * Current question index
+   */
+  getCurrentIndex() {
+    return this.currentQuestion;
+  },
 
-  if (label) {
-    label.textContent = `Question ${current} of ${total}`;
-  }
-}
+  /**
+   * Navigation
+   */
+  hasPrevious() {
+    return this.currentQuestion > 0;
+  },
 
-function createChoice(answer, selected) {
-  return `
-    <label class="vn-choice">
+  hasNext() {
+    return this.currentQuestion < this.questions.length - 1;
+  },
 
-      <input
-        type="radio"
-        name="vn-answer"
-        value="${answer.value}"
-        ${selected ? "checked" : ""}
-      >
-
-      <span>${answer.text}</span>
-
-    </label>
-  `;
-}
-
-function renderQuestion() {
-  const question = VNState.getCurrentQuestion();
-
-  if (!question) {
-    return;
-  }
-
-  updateProgress();
-
-  const currentIndex = VNState.getCurrentIndex();
-
-  const selected = VNState.getAnswer(currentIndex);
-
-  sceneContainer().innerHTML = `
-    <article class="vn-question-card fade-in">
-
-      <h2 class="question-title">
-        ${question.text}
-      </h2>
-
-      <div class="vn-answer-list">
-
-        ${question.answers
-          .map((answer) => createChoice(answer, answer.value === selected))
-          .join("")}
-
-      </div>
-
-      <div class="vn-navigation">
-
-        <button
-          id="previous-question"
-          type="button"
-          ${VNState.hasPrevious() ? "" : "disabled"}
-        >
-          Previous
-        </button>
-
-        <button
-          id="next-question"
-          type="button"
-          disabled
-        >
-          ${VNState.hasNext() ? "Next" : "Reveal My Fate"}
-        </button>
-
-      </div>
-
-    </article>
-  `;
-
-  const checked = sceneContainer().querySelector("input:checked");
-
-  const next = document.getElementById("next-question");
-
-  if (checked && next) {
-    next.disabled = false;
-  }
-
-  hookChoiceEvents();
-  hookNavigation();
-}
-
-function hookChoiceEvents() {
-  const radios = sceneContainer().querySelectorAll('input[name="vn-answer"]');
-
-  const next = document.getElementById("next-question");
-
-  radios.forEach((radio) => {
-    radio.addEventListener("change", () => {
-      VNState.setAnswer(VNState.getCurrentIndex(), radio.value);
-
-      if (next) {
-        next.disabled = false;
-      }
-    });
-  });
-}
-
-function hookNavigation() {
-  const next = document.getElementById("next-question");
-
-  const prev = document.getElementById("previous-question");
-
-  if (next) {
-    next.onclick = () => {
-      const isLast = !VNState.hasNext();
-
-      // NOT LAST QUESTION → move forward
-      if (!isLast) {
-        VNState.nextQuestion();
-        renderQuestion();
-        return;
-      }
-
-      // LAST QUESTION → finish quiz properly
-      finishQuiz();
-
-      // resolve engine ONLY here
-      if (resolveScene) {
-        resolveScene();
-      }
-    };
-  }
-
-  if (prev) {
-    prev.onclick = () => {
-      VNState.previousQuestion();
-      renderQuestion();
-    };
-  }
-}
-
-function hookKeyboard() {
-  document.onkeydown = (e) => {
-    const key = e.key.toLowerCase();
-
-    if (key === "arrowright" || key === "enter") {
-      document.getElementById("next-question")?.click();
+  nextQuestion() {
+    if (this.hasNext()) {
+      this.currentQuestion++;
     }
+  },
 
-    if (key === "arrowleft") {
-      document.getElementById("previous-question")?.click();
+  previousQuestion() {
+    if (this.hasPrevious()) {
+      this.currentQuestion--;
     }
-  };
-}
+  },
 
-function finishQuiz() {
-  const results = calculateResults({
-    answers: VNState.getAnswers(),
-    personalities: VNState.personalities,
-    questions: VNState.questions,
-  });
+  /**
+   * Answers
+   */
+  setAnswer(index, value) {
+    this.answers[index] = value;
+  },
 
-  VNState.setResults(results);
-}
+  getAnswer(index) {
+    return this.answers[index] ?? null;
+  },
 
-/* =========================
-   MAIN ENTRY POINT
-========================= */
+  getAnswers() {
+    return [...this.answers];
+  },
 
-export const QuestionScene = {
-  async run() {
-    VNState.currentQuestion = 0;
+  /**
+   * Results
+   */
+  setResults(results) {
+    this.results = [...results];
+  },
 
-    const container = sceneContainer();
+  getResults() {
+    return [...this.results];
+  },
 
-    if (!container) {
-      throw new Error("Missing scene-container");
-    }
-
-    hookKeyboard();
-    renderQuestion();
-
-    return new Promise((resolve) => {
-      resolveScene = resolve;
-    });
+  /**
+   * Reset current playthrough
+   */
+  reset() {
+    this.currentQuestion = 0;
+    this.answers = new Array(this.questions.length).fill(null);
+    this.results = [];
   },
 };
