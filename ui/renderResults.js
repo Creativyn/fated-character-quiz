@@ -2,12 +2,14 @@ export function renderResults(results) {
   const container = document.getElementById("results-container");
   const topResultText = document.getElementById("top-result");
 
-  if (!container || !Array.isArray(results) || results.length === 0) {
-    console.warn("renderResults: invalid results or missing container");
-    return;
+  if (!container) {
+    throw new Error("Missing #results-container");
   }
 
-  // clear previous render safely (important for cinematic reruns)
+  if (!Array.isArray(results) || results.length === 0) {
+    throw new Error("renderResults received no results");
+  }
+
   container.innerHTML = "";
 
   const top = results[0];
@@ -16,51 +18,55 @@ export function renderResults(results) {
     topResultText.textContent = `You are most like ${top.name}`;
   }
 
-  results.forEach((p, i) => {
-    const percent = typeof p.percent === "number" ? p.percent : 0;
+  results.forEach((personality, index) => {
+    const percent = Number(personality.percent ?? 0);
 
-    const card = document.createElement("div");
+    const card = document.createElement("article");
     card.className = "result-card";
 
-    // personality-driven styling (safe fallback included)
-    card.style.setProperty("--accent", p.color || "#60a5fa");
+    // Hidden until the cinematic reveals it.
+    card.style.opacity = "0";
+    card.style.transform = "translateY(12px)";
 
-    const bar = document.createElement("div");
-    bar.className = "bar";
+    // Character accent colour
+    card.style.setProperty("--accent", personality.color || "var(--accent)");
 
-    const fill = document.createElement("div");
-    fill.className = "bar-fill";
+    card.innerHTML = `
+      <div class="result-title">
 
-    // IMPORTANT: cinematic engine expects 0 baseline
-    fill.style.width = "0%";
+        <span class="result-name">
+          ${personality.name}
+        </span>
 
-    // store final target for animation engine
-    fill.dataset.target = String(percent);
+        <span class="result-percent">
+          ${percent}%
+        </span>
 
-    bar.appendChild(fill);
+      </div>
 
-    const title = document.createElement("div");
-    title.className = "result-title";
+      <div class="bar">
 
-    const name = document.createElement("span");
-    name.textContent = p.name || "Unknown";
+        <div
+          class="bar-fill"
+          data-target="${percent}"
+          style="
+            width:0%;
+            background:${personality.color || "var(--accent)"};
+          "
+        ></div>
 
-    const score = document.createElement("span");
-    score.textContent = `${percent}%`;
+      </div>
 
-    title.appendChild(name);
-    title.appendChild(score);
-
-    card.appendChild(title);
-    card.appendChild(bar);
-
-    // only top result gets description (keeps cinematic focus clean)
-    if (i === 0 && p.description) {
-      const desc = document.createElement("p");
-      desc.className = "result-description";
-      desc.textContent = p.description;
-      card.appendChild(desc);
-    }
+      ${
+        index === 0 && personality.description
+          ? `
+            <p class="result-description">
+              ${personality.description}
+            </p>
+          `
+          : ""
+      }
+    `;
 
     container.appendChild(card);
   });

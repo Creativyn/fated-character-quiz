@@ -6,38 +6,32 @@ import { ResultScene } from "./scenes/ResultScene.js";
 export class VNEngine {
   static async start({ questions, personalities }) {
     try {
-      // Initialize application state
-      VNState.init({
-        questions,
-        personalities,
-      });
+      VNState.init({ questions, personalities });
 
-      // Sanity checks
       if (!VNState.questions.length) {
-        throw new Error("VNState contains no questions.");
+        throw new Error("No questions loaded");
       }
 
       if (!VNState.personalities.length) {
-        throw new Error("VNState contains no personalities.");
+        throw new Error("No personalities loaded");
       }
 
-      // Run the quiz. This should not resolve until the user
-      // has answered the final question.
+      // 🔥 WAIT until QuestionScene resolves (THIS was broken before)
       await QuestionScene.run();
 
       const results = VNState.getResults();
 
-      if (!results || results.length === 0) {
-        throw new Error("QuestionScene finished without producing results.");
+      if (!results?.length) {
+        throw new Error("No results generated after quiz");
       }
 
-      // Play the cinematic reveal
+      // 🔥 IMPORTANT: ensure results screen is ready BEFORE cinematic starts
       await FateScene.run({ results });
 
-      // Render the completed results screen
+      // 🔥 Final static results screen
       await ResultScene.run({ results });
 
-      console.log("VN complete.");
+      console.log("VN complete");
     } catch (err) {
       console.error("VNEngine crashed:", err);
     }

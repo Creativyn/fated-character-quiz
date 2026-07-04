@@ -15,7 +15,24 @@ export class CinematicController {
 
     this.skipped = false;
 
+    /* -------------------------
+       HARD RESET (CRITICAL FIX)
+    ------------------------- */
+    document.body.classList.remove("cinematic-mode");
+
+    if (this.overlay) {
+      this.overlay.classList.add("hidden");
+    }
+
+    if (this.textElement) {
+      this.textElement.classList.remove("fade-in", "fade-out");
+      this.textElement.style.opacity = "";
+      this.textElement.style.transform = "";
+    }
+
     if (this.skipToggle) {
+      this.skipToggle.checked = false;
+
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
       });
@@ -26,48 +43,50 @@ export class CinematicController {
     if (!this.overlay || !this.textElement) return;
 
     document.body.classList.add("cinematic-mode");
-
     this.overlay.classList.remove("hidden");
+
+    /* let CSS handle animation instead of forcing styles */
     this.textElement.textContent = message;
 
-    this.textElement.style.opacity = "1";
-    this.textElement.style.transform = "scale(1)";
+    this.textElement.classList.remove("fade-out");
+    this.textElement.classList.add("fade-in");
 
-    if (!this.skipped) await wait(800);
+    if (!this.skipped) await wait(900);
   }
 
   async onTextHide() {
     if (!this.textElement) return;
 
-    this.textElement.style.opacity = "0";
-    this.textElement.style.transform = "scale(0.98)";
+    this.textElement.classList.remove("fade-in");
+    this.textElement.classList.add("fade-out");
 
-    if (!this.skipped) await wait(350);
+    if (!this.skipped) await wait(300);
 
     this.textElement.textContent = "";
   }
 
   async onRender() {
+    if (!this.context.results) return;
     renderResults(this.context.results);
   }
 
   async onRevealCard(index, sound) {
     const cards = this.container.querySelectorAll(".result-card");
     const card = cards[index];
+
     if (!card) return;
 
-    // FIX: match CSS expectation
     card.classList.add("reveal");
 
     if (sound) {
       try {
         const audio = new Audio(sound);
-        audio.volume = 0.45;
+        audio.volume = 0.4;
         audio.play().catch(() => {});
-      } catch (_) {}
+      } catch {}
     }
 
-    if (!this.skipped) await wait(300);
+    if (!this.skipped) await wait(250);
   }
 
   async onRevealAll() {
@@ -78,12 +97,12 @@ export class CinematicController {
         () => {
           card.classList.add("reveal");
         },
-        i * (this.skipped ? 0 : 140),
+        i * (this.skipped ? 0 : 120),
       );
     });
 
     if (!this.skipped) {
-      await wait(cards.length * 140);
+      await wait(cards.length * 120 + 250);
     }
   }
 
@@ -97,16 +116,17 @@ export class CinematicController {
         () => {
           bar.style.width = `${target}%`;
         },
-        i * (this.skipped ? 0 : 120),
+        i * (this.skipped ? 0 : 100),
       );
     });
 
     if (!this.skipped) {
-      await wait(bars.length * 120 + 350);
+      await wait(bars.length * 100 + 250);
     }
   }
 
   async onTheme(color) {
+    if (!color) return;
     document.documentElement.style.setProperty("--accent", color);
   }
 
@@ -114,8 +134,9 @@ export class CinematicController {
     if (!this.textElement) return;
 
     this.textElement.textContent = message;
-    this.textElement.style.opacity = "1";
-    this.textElement.style.transform = "scale(1)";
+
+    this.textElement.classList.remove("fade-out");
+    this.textElement.classList.add("fade-in");
 
     if (!this.skipped) await wait(900);
   }
@@ -128,13 +149,14 @@ export class CinematicController {
 
     if (this.textElement) {
       this.textElement.textContent = "";
-      this.textElement.style.opacity = "0";
+      this.textElement.classList.remove("fade-in", "fade-out");
     }
   }
 
   createSceneContext() {
     return {
       ...this.context,
+
       isSkipped: () => this.skipped,
 
       onText: this.onText.bind(this),
