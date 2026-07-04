@@ -23,8 +23,6 @@ export const fateScene = [
      PHASE 2: RENDER BASE UI
   ========================= */
 
-  { type: "render" },
-
   { type: "wait", ms: 600 },
 
   /* =========================
