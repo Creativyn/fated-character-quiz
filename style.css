@@ -53,7 +53,7 @@ body {
 }
 
 /* ==========================================================
-   HEADER
+   HEADER / LAYOUT
 ========================================================== */
 
 .header {
@@ -68,35 +68,59 @@ main {
 }
 
 /* ==========================================================
-   QUESTIONS
+   PROGRESS
 ========================================================== */
 
-.question {
+.progress-wrapper {
+  margin-bottom: 2rem;
+}
+
+.progress-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+#quiz-progress {
+  width: 100%;
+  height: 14px;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   QUIZ
+========================================================== */
+
+.vn-question-card {
   background: var(--card);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14);
 }
 
-.question.missing {
-  border: 2px solid #b22222;
+.question-title {
+  margin-top: 0;
 }
 
-.answers {
-  display: flex;
-  flex-direction: column;
+.vn-answer-list {
+  display: grid;
   gap: 0.75rem;
 }
 
-.answer {
+.vn-choice {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 
-  padding: 0.65rem 0.8rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
 
-  border-radius: 8px;
-
+  background: rgba(255, 255, 255, 0.18);
   cursor: pointer;
 
   transition:
@@ -104,9 +128,27 @@ main {
     transform 0.2s ease;
 }
 
-.answer:hover {
-  background: rgba(255, 255, 255, 0.12);
+.vn-choice:hover {
+  background: rgba(255, 255, 255, 0.32);
   transform: translateX(4px);
+}
+
+.vn-choice input {
+  flex-shrink: 0;
+}
+
+.vn-choice span {
+  flex: 1;
+}
+
+.vn-navigation {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.vn-navigation button {
+  min-width: 110px;
 }
 
 /* ==========================================================
@@ -146,6 +188,11 @@ button:hover {
   filter: brightness(1.08);
 }
 
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* ==========================================================
    RESULTS
 ========================================================== */
@@ -163,8 +210,9 @@ button:hover {
 
   padding: 1rem;
 
-  opacity: 1;
+  border-right: 6px solid var(--accent);
 
+  opacity: 1;
   transform: translateY(0);
 }
 
@@ -178,34 +226,19 @@ button:hover {
   font-weight: 700;
 }
 
+.result-card-heading {
+  margin: 0 0 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 .result-description {
   margin-top: 0.85rem;
   line-height: 1.55;
 }
 
-/* ==========================================================
-   PROGRESS
-========================================================== */
-
-.progress-wrapper {
-  margin-bottom: 2rem;
-}
-
-.progress-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-#quiz-progress {
-  width: 100%;
-  height: 14px;
-}
-
-.progress-text {
-  margin-top: 0.5rem;
-  text-align: center;
-  font-size: 0.95rem;
+.top-result-card {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 50%);
 }
 
 /* ==========================================================
@@ -225,7 +258,6 @@ button:hover {
 
 .bar-fill {
   width: 0%;
-
   height: 100%;
 
   background: var(--accent);
@@ -234,240 +266,7 @@ button:hover {
 }
 
 /* ==========================================================
-   CINEMATIC OVERLAY
-========================================================== */
-
-.fate-overlay {
-  position: fixed;
-  inset: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: var(--overlay-bg);
-
-  z-index: 9999;
-
-  padding: 2rem;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.fate-overlay-content {
-  width: min(92vw, 720px);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: 2rem;
-
-  text-align: center;
-}
-
-.fate-text {
-  min-height: 4rem;
-
-  color: white;
-
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-
-  font-weight: 600;
-
-  letter-spacing: 0.03em;
-
-  opacity: 0;
-
-  transform: translateY(10px) scale(0.98);
-
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-
-  text-shadow:
-    0 0 14px rgba(255, 255, 255, 0.35),
-    0 0 28px rgba(255, 255, 255, 0.15);
-}
-
-.fate-text.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* ==========================================================
-   OVERLAY CONTROL PANEL
-========================================================== */
-
-.overlay-controls {
-  display: flex;
-  flex-direction: column;
-
-  gap: 0.9rem;
-
-  padding: 1.25rem 1.6rem;
-
-  border-radius: 16px;
-
-  background: var(--glass);
-
-  backdrop-filter: blur(10px);
-
-  border: 1px solid var(--glass-border);
-
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
-}
-
-.overlay-toggle {
-  display: flex;
-  align-items: center;
-
-  gap: 0.7rem;
-
-  color: white;
-
-  cursor: pointer;
-
-  user-select: none;
-
-  font-size: 0.98rem;
-}
-
-.overlay-toggle input {
-  width: 18px;
-  height: 18px;
-
-  accent-color: var(--accent);
-
-  cursor: pointer;
-}
-
-/* ==========================================================
-   CINEMATIC REVEAL ANIMATION
-========================================================== */
-
-.cinematic-mode .result-card {
-  opacity: 0;
-  transform: translateY(18px) scale(0.98);
-  pointer-events: none;
-
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-}
-
-.cinematic-mode .result-card.reveal {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
-}
-
-/* ==========================================================
-   RESULTS SCREEN TRANSITIONS
-========================================================== */
-
-#results-section {
-  animation: resultsFade 0.45s ease;
-}
-
-@keyframes resultsFade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-/* ==========================================================
-   ACCESSIBILITY
-========================================================== */
-
-.sr-only {
-  position: absolute;
-
-  width: 1px;
-  height: 1px;
-
-  margin: -1px;
-  padding: 0;
-
-  overflow: hidden;
-
-  clip: rect(0, 0, 0, 0);
-
-  white-space: nowrap;
-
-  border: 0;
-}
-
-/* ==========================================================
-   MOBILE
-========================================================== */
-
-@media (max-width: 640px) {
-  main {
-    padding: 1rem;
-  }
-
-  .fate-overlay {
-    padding: 1rem;
-  }
-
-  .fate-overlay-content {
-    gap: 1.5rem;
-  }
-
-  .overlay-controls {
-    width: 100%;
-  }
-
-  .results-actions,
-  .actions {
-    flex-direction: column;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .result-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.35rem;
-  }
-}
-
-/* ==========================================================
-   REDUCED MOTION
-========================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-
-  .fate-text {
-    opacity: 1;
-    transform: none;
-  }
-
-  .result-card,
-  .result-card.reveal {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* ==========================================================
-   HERO RESULT REVEAL
+   HERO RESULT
 ========================================================== */
 
 .result-hero {
@@ -587,18 +386,333 @@ button:hover {
 }
 
 /* ==========================================================
-   TOP RESULT EMPHASIS
+   CINEMATIC OVERLAY
 ========================================================== */
 
-.top-result-card {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 50%);
+.fate-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--overlay-bg);
+
+  z-index: 9999;
+
+  padding: 2rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.fate-overlay-content {
+  width: min(92vw, 760px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 2rem;
+
+  text-align: center;
+}
+
+.fate-text {
+  min-height: 4rem;
+
+  color: white;
+
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+
+  font-weight: 600;
+
+  letter-spacing: 0.03em;
+
+  opacity: 0;
+
+  transform: translateY(10px) scale(0.98);
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.35),
+    0 0 28px rgba(255, 255, 255, 0.15);
+}
+
+.fate-text.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* ==========================================================
-   HERO MOBILE
+   IDENTITY REVEAL
+========================================================== */
+
+.identity-reveal {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+
+  max-width: 760px;
+}
+
+.identity-kicker {
+  margin: 0;
+
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  opacity: 0.82;
+}
+
+.identity-name {
+  margin: 0;
+
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 1;
+
+  color: #fff;
+
+  text-shadow:
+    0 0 18px rgba(255, 255, 255, 0.45),
+    0 0 42px color-mix(in srgb, var(--accent), transparent 45%);
+}
+
+.identity-heading {
+  margin: 0;
+
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 700;
+
+  color: var(--accent);
+}
+
+.identity-quote {
+  max-width: 680px;
+
+  margin: 0.5rem 0 0;
+
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-style: italic;
+  line-height: 1.55;
+
+  opacity: 0.94;
+}
+
+.identity-portrait {
+  width: min(260px, 54vw);
+  aspect-ratio: 1 / 1;
+
+  margin-top: 1rem;
+
+  object-fit: cover;
+
+  border-radius: 22px;
+
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent), white 35%),
+    color-mix(in srgb, var(--accent), black 28%)
+  );
+
+  box-shadow:
+    0 0 0 5px rgba(255, 255, 255, 0.25),
+    0 0 40px color-mix(in srgb, var(--accent), transparent 20%),
+    0 16px 42px rgba(0, 0, 0, 0.4);
+
+  animation: portraitReveal 0.9s ease forwards;
+}
+
+.identity-portrait-placeholder {
+  position: relative;
+}
+
+.identity-portrait-placeholder::after {
+  content: "Portrait coming soon";
+
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+@keyframes portraitReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================
+   OVERLAY CONTROL PANEL
+========================================================== */
+
+.overlay-controls {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.9rem;
+
+  padding: 1.25rem 1.6rem;
+
+  border-radius: 16px;
+
+  background: var(--glass);
+
+  backdrop-filter: blur(10px);
+
+  border: 1px solid var(--glass-border);
+
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+}
+
+.overlay-toggle {
+  display: flex;
+  align-items: center;
+
+  gap: 0.7rem;
+
+  color: white;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  font-size: 0.98rem;
+}
+
+.overlay-toggle input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: var(--accent);
+
+  cursor: pointer;
+}
+
+/* ==========================================================
+   CINEMATIC REVEAL ANIMATION
+========================================================== */
+
+.cinematic-mode .result-hero,
+.cinematic-mode .result-card {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  pointer-events: none;
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.cinematic-mode .result-hero.reveal,
+.cinematic-mode .result-card.reveal {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ==========================================================
+   RESULTS SCREEN TRANSITIONS
+========================================================== */
+
+#results-section {
+  animation: resultsFade 0.45s ease;
+}
+
+@keyframes resultsFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
+
+.sr-only {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  margin: -1px;
+  padding: 0;
+
+  overflow: hidden;
+
+  clip: rect(0, 0, 0, 0);
+
+  white-space: nowrap;
+
+  border: 0;
+}
+
+/* ==========================================================
+   MOBILE
 ========================================================== */
 
 @media (max-width: 640px) {
+  main {
+    padding: 1rem;
+  }
+
+  .fate-overlay {
+    padding: 1rem;
+  }
+
+  .fate-overlay-content {
+    gap: 1.5rem;
+  }
+
+  .overlay-controls {
+    width: 100%;
+  }
+
+  .results-actions,
+  .actions {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .vn-navigation {
+    flex-direction: column;
+  }
+
+  .result-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
   .result-hero {
     grid-template-columns: 1fr;
     text-align: center;
@@ -615,56 +729,24 @@ button:hover {
 }
 
 /* ==========================================================
-   QUIZ CARD RESTORE
+   REDUCED MOTION
 ========================================================== */
 
-.vn-question-card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14);
-}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 
-.vn-answer-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.vn-choice {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-
-  padding: 0.75rem 0.9rem;
-  border-radius: 10px;
-
-  background: rgba(255, 255, 255, 0.18);
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
-}
-
-.vn-choice:hover {
-  background: rgba(255, 255, 255, 0.32);
-  transform: translateX(4px);
-}
-
-.vn-choice input {
-  flex-shrink: 0;
-}
-
-.vn-choice span {
-  flex: 1;
-}
-
-.vn-navigation {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.vn-navigation button {
-  min-width: 110px;
+  .fate-text,
+  .result-hero,
+  .result-card,
+  .result-card.reveal,
+  .result-hero.reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

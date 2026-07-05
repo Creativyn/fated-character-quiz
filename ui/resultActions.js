@@ -59,7 +59,7 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
             const blob = await (await fetch(portrait)).blob();
 
             data.files = [
-              new File([blob], "result.png", { type: "portrait/png" }),
+              new File([blob], "result.png", { type: "image/png" }),
             ];
           } catch (_) {
             // Ignore portrait failures and share text instead.

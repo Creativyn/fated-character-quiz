@@ -10,15 +10,11 @@ export class SceneRunner {
       try {
         switch (step.type) {
           case "text":
-            if (this.context.onText) {
-              await this.context.onText(step.value);
-            }
+            await this.context.onText?.(step.value);
             break;
 
           case "textHide":
-            if (this.context.onTextHide) {
-              await this.context.onTextHide();
-            }
+            await this.context.onTextHide?.();
             break;
 
           case "wait":
@@ -28,45 +24,35 @@ export class SceneRunner {
             break;
 
           case "render":
-            if (this.context.onRender) {
-              await this.context.onRender();
-            }
+            await this.context.onRender?.();
+            break;
+
+          case "revealIdentity":
+            await this.context.onRevealIdentity?.();
             break;
 
           case "revealCard":
-            if (this.context.onRevealCard) {
-              await this.context.onRevealCard(step.index, step.sound);
-            }
+            await this.context.onRevealCard?.(step.index, step.sound);
             break;
 
           case "revealAll":
-            if (this.context.onRevealAll) {
-              await this.context.onRevealAll();
-            }
+            await this.context.onRevealAll?.();
             break;
 
           case "bars":
-            if (this.context.onBars) {
-              await this.context.onBars();
-            }
+            await this.context.onBars?.();
             break;
 
           case "theme":
-            if (this.context.onTheme) {
-              await this.context.onTheme(step.color);
-            }
+            await this.context.onTheme?.(step.color);
             break;
 
           case "finalText":
-            if (this.context.onFinalText) {
-              await this.context.onFinalText(step.value);
-            }
+            await this.context.onFinalText?.(step.value);
             break;
 
           case "hideOverlay":
-            if (this.context.onHideOverlay) {
-              await this.context.onHideOverlay();
-            }
+            await this.context.onHideOverlay?.();
             break;
 
           case "action":

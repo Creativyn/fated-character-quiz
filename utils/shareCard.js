@@ -5,19 +5,117 @@ export async function generateResultCard(personality) {
   canvas.width = 1080;
   canvas.height = 1080;
 
-  // background
-  ctx.fillStyle = "#111827";
+  /* Background */
+
+  ctx.fillStyle = personality.color || "#111827";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // title
+  /* Accent stripe */
+
+  ctx.fillStyle = personality.accent || "#ffffff";
+  ctx.fillRect(0, 0, 30, canvas.height);
+
+  /* Portrait */
+
+  if (personality.portrait) {
+    try {
+      const img = await loadImage(personality.portrait);
+
+      const size = 340;
+
+      ctx.save();
+
+      ctx.beginPath();
+      ctx.roundRect(80, 120, size, size, 28);
+      ctx.clip();
+
+      ctx.drawImage(img, 80, 120, size, size);
+
+      ctx.restore();
+    } catch (_) {
+      // portrait unavailable
+    }
+  }
+
+  /* Heading */
+
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 64px sans-serif";
-  ctx.fillText("My Fated Result", 80, 200);
+  ctx.font = "42px serif";
 
-  // personality
-  ctx.font = "bold 80px sans-serif";
-  ctx.fillText(personality.name, 80, 400);
+  ctx.fillText("You are most like...", 470, 180);
 
-  // export
-  return canvas.toDataURL("portrait/png");
+  /* Character Name */
+
+  ctx.font = "bold 74px serif";
+
+  ctx.fillText(personality.name, 470, 280);
+
+  /* Subtitle */
+
+  if (personality.heading) {
+    ctx.font = "40px serif";
+
+    ctx.fillStyle = personality.accent || "#ffffff";
+
+    ctx.fillText(personality.heading, 470, 340);
+  }
+
+  /* Quote */
+
+  if (personality.quote) {
+    ctx.fillStyle = "#ffffff";
+
+    ctx.font = "italic 34px serif";
+
+    wrapText(ctx, `"${personality.quote}"`, 470, 420, 500, 46);
+  }
+
+  /* Description */
+
+  ctx.fillStyle = "#ffffff";
+
+  ctx.font = "30px serif";
+
+  wrapText(ctx, personality.description, 80, 560, 920, 40);
+
+  return canvas.toDataURL("image/png");
+}
+
+/* ========================= */
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+
+    img.src = src;
+  });
+}
+
+/* ========================= */
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+
+  let line = "";
+
+  for (const word of words) {
+    const test = line + word + " ";
+
+    if (ctx.measureText(test).width > maxWidth && line.length) {
+      ctx.fillText(line, x, y);
+
+      line = word + " ";
+
+      y += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+
+  if (line) {
+    ctx.fillText(line, x, y);
+  }
 }

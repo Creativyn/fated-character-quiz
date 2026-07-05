@@ -6,7 +6,7 @@ export const PERSONALITIES = [
   {
     id: "prometheia",
     name: "Prometheia Alystarus",
-    heading: "The Foxy Defender",
+    heading: "The Foxy Trickster",
     quote: "Every impossible path has a hidden way through.",
     color: "#27AE60",
     accent: "#7DCEA0",
@@ -17,7 +17,7 @@ export const PERSONALITIES = [
   {
     id: "fait",
     name: "Faitus Majesticus",
-    heading: "The Enigmatic Protector",
+    heading: "The Charming Taskmaster",
     quote: "Love is safest when guarded by strength and mystery.",
     color: "#455A64",
     accent: "#90A4AE",
@@ -28,7 +28,7 @@ export const PERSONALITIES = [
   {
     id: "faeth",
     name: "Faeth Majesticus",
-    heading: "The Gentle Mystic",
+    heading: "The Innocent Believer",
     quote: "Even the softest song can carry someone through the dark.",
     color: "#9ea8ad",
     accent: "#c8d6dd",
@@ -39,7 +39,7 @@ export const PERSONALITIES = [
   {
     id: "hoep",
     name: "Hoep Majesticus",
-    heading: "The Mountain Guardian",
+    heading: "The Steady Guardian",
     quote: "Strength is not only power. It is the promise to endure.",
     color: "#8E44AD",
     accent: "#C39BD3",
@@ -50,7 +50,7 @@ export const PERSONALITIES = [
   {
     id: "luv",
     name: "Luv",
-    heading: "The Heart of Warmth",
+    heading: "The Sympathetic Heart",
     quote: "A tender heart can be the strongest refuge of all.",
     color: "#E91E63",
     accent: "#f880a8",
@@ -61,7 +61,7 @@ export const PERSONALITIES = [
   {
     id: "manus",
     name: "Manus Alystarus",
-    heading: "The Steadfast Homesteader",
+    heading: "The Loyal Friend",
     quote: "A simple life can still ask for a courageous heart.",
     color: "#724407",
     accent: "#aa7f46",
@@ -72,7 +72,7 @@ export const PERSONALITIES = [
   {
     id: "amandas",
     name: "Amandas",
-    heading: "The Moonlit Devotee",
+    heading: "The Devoted Lover",
     quote: "Devotion can make even the quietest soul shine.",
     color: "#00ACC1",
     accent: "#4DD0E1",
@@ -83,7 +83,7 @@ export const PERSONALITIES = [
   {
     id: "endeavor",
     name: "Endeavor",
-    heading: "The Community Light",
+    heading: "The Community Leader",
     quote: "Dreams grow stronger when they are shared.",
     color: "#2980B9",
     accent: "#85C1E9",
@@ -94,7 +94,7 @@ export const PERSONALITIES = [
   {
     id: "justene",
     name: "Justene Triumfes",
-    heading: "The Radiant Performer",
+    heading: "The Trailblazing Firecracker",
     quote: "The brightest spotlight is the one that helps you find yourself.",
     color: "#e535a1",
     accent: "#e469b5",

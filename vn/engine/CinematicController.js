@@ -64,16 +64,11 @@ export class CinematicController {
     if (!this.overlay || !this.textElement) return;
 
     document.body.classList.add("cinematic-mode");
-
     this.overlay.classList.remove("hidden");
 
+    this.textElement.innerHTML = "";
     this.textElement.textContent = message;
     this.textElement.classList.add("show");
-
-    this.textElement.style.display = "block";
-    this.textElement.style.visibility = "visible";
-    this.textElement.style.opacity = "1";
-    this.textElement.style.color = "#ffffff";
 
     if (!this._ambientStarted) {
       this._ambientStarted = true;
@@ -89,11 +84,12 @@ export class CinematicController {
     if (!this.textElement) return;
 
     this.textElement.classList.remove("show");
-    this.textElement.textContent = "";
 
     if (!this.skipped) {
       await wait(300);
     }
+
+    this.textElement.innerHTML = "";
   }
 
   async onRender() {
@@ -108,6 +104,56 @@ export class CinematicController {
       });
   }
 
+  async onRevealIdentity() {
+    const top = this.topResult;
+
+    if (!this.textElement || !top) return;
+
+    this.textElement.classList.remove("show");
+    this.textElement.innerHTML = "";
+
+    if (!this.skipped) {
+      await wait(250);
+    }
+
+    this.textElement.innerHTML = `
+      <div class="identity-reveal">
+        <p class="identity-kicker">You are most like...</p>
+
+        <h2 class="identity-name">${top.name}</h2>
+
+        ${top.heading ? `<p class="identity-heading">${top.heading}</p>` : ""}
+
+        ${top.quote ? `<p class="identity-quote">“${top.quote}”</p>` : ""}
+
+        ${
+          top.portrait
+            ? `
+              <img
+                class="identity-portrait"
+                src="${top.portrait}"
+                alt="${top.name}"
+              />
+            `
+            : `
+              <div
+                class="identity-portrait identity-portrait-placeholder"
+                aria-hidden="true"
+              ></div>
+            `
+        }
+      </div>
+    `;
+
+    this.textElement.classList.add("show");
+
+    playFinal(top);
+
+    if (!this.skipped) {
+      await wait(1800);
+    }
+  }
+
   async onRevealCard(index) {
     const top = this.topResult;
 
@@ -117,13 +163,8 @@ export class CinematicController {
 
     playReveal(top);
 
-    if (hero) {
-      hero.classList.add("reveal");
-    }
-
-    if (card) {
-      card.classList.add("reveal");
-    }
+    hero?.classList.add("reveal");
+    card?.classList.add("reveal");
 
     if (!this.skipped) {
       await wait(500);
@@ -194,15 +235,13 @@ export class CinematicController {
       stopAmbient();
     }
 
-    if (this.overlay) {
-      this.overlay.classList.add("hidden");
-    }
+    this.overlay?.classList.add("hidden");
 
     document.body.classList.remove("cinematic-mode");
 
     if (this.textElement) {
       this.textElement.classList.remove("show");
-      this.textElement.textContent = "";
+      this.textElement.innerHTML = "";
     }
   }
 
@@ -215,6 +254,7 @@ export class CinematicController {
       onText: this.onText.bind(this),
       onTextHide: this.onTextHide.bind(this),
       onRender: this.onRender.bind(this),
+      onRevealIdentity: this.onRevealIdentity.bind(this),
       onRevealCard: this.onRevealCard.bind(this),
       onRevealAll: this.onRevealAll.bind(this),
       onBars: this.onBars.bind(this),
