@@ -20,6 +20,12 @@ import {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Controls the cinematic reveal sequence,
+ * including overlay messaging, audio,
+ * result animations, and user preferences.
+ */
+
 export class CinematicController {
   constructor(context) {
     this.context = context;

@@ -6,6 +6,11 @@ import {
   setSkipCinematicPreference,
 } from "./utils/preferenceManager.js";
 
+/**
+ * Controls the quiz screen,
+ * including the cinematic reveal
+ */
+
 function bindQuizPreferences() {
   const skipToggle = document.getElementById("skip-cinematic");
 

@@ -20,7 +20,7 @@ export const PERSONALITIES = [
     heading: "The Charming Taskmaster",
     quote: "Love is safest when guarded by strength and mystery.",
     color: "#455A64",
-    accent: "#90A4AE",
+    accent: "#71818a",
     portrait: "images/creator.webp",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
@@ -42,7 +42,7 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote: "Strength is not only power. It is the promise to endure.",
     color: "#8E44AD",
-    accent: "#C39BD3",
+    accent: "#b46fcf",
     portrait: "images/guardian.webp",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
@@ -53,7 +53,7 @@ export const PERSONALITIES = [
     heading: "The Sympathetic Heart",
     quote: "A tender heart can be the strongest refuge of all.",
     color: "#E91E63",
-    accent: "#f880a8",
+    accent: "#e44b7e",
     portrait: "images/adventurer.webp",
     description:
       "Big and Beautiful. You are filled with love to the bursting. Your empathy literally drives you to tears when sensing someone’s heartache. You enjoy making people happy with your home-baked goodies and mugs of hot cocoa. Your home is as cozy, warm, and welcoming as you are. You share a special relationship with your secret diary and enjoy all the sweet banter between you. You are undoubtedly the most compassionate and loving person in the universe. Need a hug?",
@@ -64,7 +64,7 @@ export const PERSONALITIES = [
     heading: "The Loyal Friend",
     quote: "A simple life can still ask for a courageous heart.",
     color: "#724407",
-    accent: "#aa7f46",
+    accent: "#776042",
     portrait: "images/helper.webp",
     description:
       "Dedicated to the land, you wish for a helpmate that will work alongside you. Though extremely loyal to family and close friends, you are not particularly social. More of a plain wrap kind of person. When it comes to problems, you are an avoider. Simple and charmingly direct, you hope to lead a modest life unburdened by the unexpected. But life does not always work out that way. Is staying in your comfort zone more important than a true love that demands sacrifices to win and keep?",
@@ -95,7 +95,7 @@ export const PERSONALITIES = [
     id: "justene",
     name: "Justene Triumfes",
     heading: "The Trailblazing Firecracker",
-    quote: "The brightest spotlight is the one that helps you find yourself.",
+    quote: "Fait sucks!",
     color: "#e535a1",
     accent: "#e469b5",
     portrait: "images/entertainer.webp",

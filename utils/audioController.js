@@ -6,6 +6,11 @@ import { getSoundPreference, setSoundPreference } from "./preferenceManager.js";
 let ambientAudio = null;
 let soundEnabled = true;
 
+/**
+ * Controls the sound,
+ * including the audio for each personality,
+ */
+
 export async function initializeAudio() {
   const shouldMute = await shouldMuteAudio();
 

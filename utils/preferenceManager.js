@@ -3,6 +3,10 @@ const KEYS = {
   skipCinematic: "fatedQuiz.skipCinematic",
 };
 
+/**
+ * Controls persistence
+ */
+
 export function getBooleanPreference(key, fallback = false) {
   const value = localStorage.getItem(key);
 
