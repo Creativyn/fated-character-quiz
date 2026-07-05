@@ -15,6 +15,8 @@ import {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const SKIP_PREF_KEY = "fatedQuiz.skipCinematic";
+
 export class CinematicController {
   constructor(context) {
     this.context = context;
@@ -26,12 +28,20 @@ export class CinematicController {
 
     this.textElement = this.overlay?.querySelector(".fate-text");
 
-    this.skipped = false;
+    this.skipped = localStorage.getItem(SKIP_PREF_KEY) === "true";
     this._ambientStarted = false;
 
     document.body.classList.remove("cinematic-mode");
 
-    initializeAudio();
+    this.ready = this.setupPreferences();
+  }
+
+  get topResult() {
+    return this.context.results?.[0] ?? null;
+  }
+
+  async setupPreferences() {
+    await initializeAudio();
 
     const soundToggle = document.getElementById("sound-toggle");
 
@@ -49,25 +59,19 @@ export class CinematicController {
       });
     }
 
-    const skipPref = localStorage.getItem("fatedQuiz.skipCinematic");
-
     if (this.skipToggle) {
-      this.skipped = skipPref === "true";
       this.skipToggle.checked = this.skipped;
 
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
-
-        localStorage.setItem("fatedQuiz.skipCinematic", String(this.skipped));
+        localStorage.setItem(SKIP_PREF_KEY, String(this.skipped));
       });
     }
   }
 
-  get topResult() {
-    return this.context.results?.[0] ?? null;
-  }
-
   async onText(message) {
+    await this.ready;
+
     if (!this.overlay || !this.textElement) return;
 
     document.body.classList.add("cinematic-mode");
@@ -164,7 +168,7 @@ export class CinematicController {
 
     if (top.quote && quoteElement) {
       await typewriter(quoteElement, `“${top.quote}”`, {
-        speed: 30,
+        speed: 35,
         skip: this.skipped,
       });
     }
@@ -239,26 +243,12 @@ export class CinematicController {
     document.documentElement.style.setProperty("--accent", color);
   }
 
-  async onFinalText(message) {
-    if (!this.textElement) return;
-
-    playFinal(this.topResult);
-
-    this.textElement.textContent = message;
-    this.textElement.classList.add("show");
-
-    if (!this.skipped) {
-      await wait(900);
-    }
-  }
-
   async onHideOverlay() {
     if (isSoundEnabled()) {
       stopAmbient();
     }
 
     this.overlay?.classList.add("hidden");
-
     document.body.classList.remove("cinematic-mode");
 
     if (this.textElement) {
@@ -297,7 +287,6 @@ export class CinematicController {
       onRevealAll: this.onRevealAll.bind(this),
       onBars: this.onBars.bind(this),
       onTheme: this.onTheme.bind(this),
-      onFinalText: this.onFinalText.bind(this),
       onHideOverlay: this.onHideOverlay.bind(this),
     };
   }
