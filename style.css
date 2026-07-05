@@ -806,3 +806,38 @@ button:disabled {
       0 16px 42px rgba(0, 0, 0, 0.4);
   }
 }
+
+/* ==========================================================
+   QUIZ PREFERENCES
+========================================================== */
+
+.quiz-preferences {
+  display: flex;
+  justify-content: center;
+
+  margin: 1rem 0 2rem;
+}
+
+.quiz-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  padding: 0.8rem 1.2rem;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  backdrop-filter: blur(8px);
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.quiz-toggle input {
+  accent-color: var(--accent);
+}

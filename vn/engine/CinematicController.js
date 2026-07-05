@@ -13,9 +13,12 @@ import {
   stopAmbient,
 } from "../../utils/audioController.js";
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import {
+  getSkipCinematicPreference,
+  setSkipCinematicPreference,
+} from "../../utils/preferenceManager.js";
 
-const SKIP_PREF_KEY = "fatedQuiz.skipCinematic";
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class CinematicController {
   constructor(context) {
@@ -28,7 +31,7 @@ export class CinematicController {
 
     this.textElement = this.overlay?.querySelector(".fate-text");
 
-    this.skipped = localStorage.getItem(SKIP_PREF_KEY) === "true";
+    this.skipped = getSkipCinematicPreference(false);
     this._ambientStarted = false;
 
     document.body.classList.remove("cinematic-mode");
@@ -64,7 +67,7 @@ export class CinematicController {
 
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
-        localStorage.setItem(SKIP_PREF_KEY, String(this.skipped));
+        setSkipCinematicPreference(this.skipped);
       });
     }
   }

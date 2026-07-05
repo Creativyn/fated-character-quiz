@@ -15,9 +15,9 @@
     </header>
 
     <main id="app">
-      <!-- ==========================
+      <!-- =====================================================
            QUIZ SCREEN
-      =========================== -->
+      ====================================================== -->
 
       <section
         id="quiz-section"
@@ -40,14 +40,24 @@
           </div>
         </div>
 
-        <!-- Question Scene -->
+        <!-- Quiz Preferences -->
+
+        <div class="quiz-preferences">
+          <label class="quiz-toggle">
+            <input type="checkbox" id="skip-cinematic" />
+
+            <span>Skip cinematic reveal</span>
+          </label>
+        </div>
+
+        <!-- VN Scene -->
 
         <section id="scene-container" aria-live="polite"></section>
       </section>
 
-      <!-- ==========================
-           RESULTS SCREEN
-      =========================== -->
+      <!-- =====================================================
+           RESULTS
+      ====================================================== -->
 
       <section
         id="results-section"
@@ -56,9 +66,7 @@
       >
         <h2 id="results-title" class="sr-only">Quiz Results</h2>
 
-        <!-- ==========================
-             CINEMATIC OVERLAY
-        =========================== -->
+        <!-- Cinematic Overlay -->
 
         <div id="fate-overlay" class="fate-overlay hidden" aria-live="polite">
           <div class="fate-overlay-content">
@@ -66,15 +74,9 @@
 
             <div class="overlay-controls">
               <label class="overlay-toggle">
-                <input type="checkbox" id="skip-cinematic" />
-
-                <span> Skip cinematic reveal </span>
-              </label>
-
-              <label class="overlay-toggle">
                 <input type="checkbox" id="sound-toggle" checked />
 
-                <span> 🔊 Sound </span>
+                <span>🔊 Sound</span>
               </label>
             </div>
           </div>
@@ -84,7 +86,7 @@
 
         <div id="results-container"></div>
 
-        <!-- Result Buttons -->
+        <!-- Buttons -->
 
         <div class="results-actions">
           <button id="home-btn" type="button">Return to Quizzes</button>

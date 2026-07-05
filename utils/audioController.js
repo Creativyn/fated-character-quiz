@@ -1,23 +1,17 @@
 import { getSoundTheme } from "../config/soundThemes.js";
 import { playLayeredSound, fadeOutSound, stopSound } from "./soundManager.js";
 import { shouldMuteAudio } from "./deviceAudio.js";
-
-const SOUND_PREF_KEY = "fatedQuiz.soundEnabled";
+import { getSoundPreference, setSoundPreference } from "./preferenceManager.js";
 
 let ambientAudio = null;
 let soundEnabled = true;
 
 export async function initializeAudio() {
-  const saved = localStorage.getItem(SOUND_PREF_KEY);
+  const shouldMute = await shouldMuteAudio();
 
-  if (saved !== null) {
-    soundEnabled = saved === "true";
-    return;
-  }
+  soundEnabled = getSoundPreference(!shouldMute);
 
-  soundEnabled = !(await shouldMuteAudio());
-
-  localStorage.setItem(SOUND_PREF_KEY, String(soundEnabled));
+  setSoundPreference(soundEnabled);
 }
 
 export function isSoundEnabled() {
@@ -26,7 +20,7 @@ export function isSoundEnabled() {
 
 export function setSoundEnabled(enabled) {
   soundEnabled = Boolean(enabled);
-  localStorage.setItem(SOUND_PREF_KEY, String(soundEnabled));
+  setSoundPreference(soundEnabled);
 
   if (!soundEnabled) {
     stopAmbient();
