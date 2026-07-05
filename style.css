@@ -750,3 +750,15 @@ button:disabled {
     transform: none;
   }
 }
+
+/* ==========================================================
+   QUIZ NAVIGATION CENTERING
+========================================================== */
+
+.vn-navigation {
+  justify-content: center;
+}
+
+.vn-navigation button {
+  flex: 0 0 auto;
+}
