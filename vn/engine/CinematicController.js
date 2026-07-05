@@ -31,7 +31,9 @@ export class CinematicController {
 
     this.textElement = this.overlay?.querySelector(".fate-text");
 
-    this.skipped = getSkipCinematicPreference(false);
+    this.skipped =
+      this.skipToggle?.checked ?? getSkipCinematicPreference(false);
+
     this._ambientStarted = false;
 
     document.body.classList.remove("cinematic-mode");
@@ -63,7 +65,7 @@ export class CinematicController {
     }
 
     if (this.skipToggle) {
-      this.skipToggle.checked = this.skipped;
+      this.skipped = this.skipToggle.checked;
 
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;

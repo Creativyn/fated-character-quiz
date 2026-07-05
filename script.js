@@ -1,8 +1,26 @@
 import { QUESTIONS } from "./data/questions.js";
 import { PERSONALITIES } from "./config/personalities.js";
 import { VNEngine } from "./vn/VNEngine.js";
+import {
+  getSkipCinematicPreference,
+  setSkipCinematicPreference,
+} from "./utils/preferenceManager.js";
+
+function bindQuizPreferences() {
+  const skipToggle = document.getElementById("skip-cinematic");
+
+  if (!skipToggle) return;
+
+  skipToggle.checked = getSkipCinematicPreference(false);
+
+  skipToggle.addEventListener("change", () => {
+    setSkipCinematicPreference(skipToggle.checked);
+  });
+}
 
 async function bootApp() {
+  bindQuizPreferences();
+
   await VNEngine.start({
     questions: QUESTIONS,
     personalities: PERSONALITIES,
