@@ -20,7 +20,7 @@ export const PERSONALITIES = [
     heading: "The Charming Taskmaster",
     quote: "Love is safest when guarded by strength and mystery.",
     color: "#455A64",
-    accent: "#98b4bd",
+    accent: "#556166",
     portrait: "images/creator.webp",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
@@ -42,7 +42,7 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote: "Strength is not only power. It is the promise to endure.",
     color: "#8E44AD",
-    accent: "#7933b3",
+    accent: "#803db6",
     portrait: "images/guardian.webp",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
