@@ -22,6 +22,7 @@ export const FateScene = {
     // Show the results screen so the cards exist behind the overlay.
     quizSection?.classList.remove("active");
     resultsSection?.classList.add("active");
+    document.querySelector(".quiz-preferences")?.classList.add("hidden");
 
     // Start fresh.
     container.innerHTML = "";

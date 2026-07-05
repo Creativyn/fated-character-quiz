@@ -42,7 +42,7 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote: "Strength is not only power. It is the promise to endure.",
     color: "#8E44AD",
-    accent: "#b46fcf",
+    accent: "#9e6db3",
     portrait: "images/guardian.webp",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
@@ -63,7 +63,7 @@ export const PERSONALITIES = [
     name: "Manus Alystarus",
     heading: "The Loyal Friend",
     quote: "A simple life can still ask for a courageous heart.",
-    color: "#724407",
+    color: "#523817",
     accent: "#776042",
     portrait: "images/helper.webp",
     description:
