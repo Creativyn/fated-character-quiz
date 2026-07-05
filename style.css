@@ -26,7 +26,11 @@ body {
   min-height: 100%;
   overflow-x: hidden;
 
-  background: var(--bg);
+  background: radial-gradient(
+    circle at top,
+    color-mix(in srgb, var(--result-theme, var(--bg)), white 70%),
+    var(--bg) 55%
+  );
   color: var(--text);
 
   font-family:
@@ -761,4 +765,44 @@ button:disabled {
 
 .vn-navigation button {
   flex: 0 0 auto;
+}
+
+.identity-quote::after {
+  content: "";
+  display: inline-block;
+  width: 0.55ch;
+}
+
+/* ==========================================================
+   PORTRAIT REVEAL PULSE
+========================================================== */
+
+.identity-portrait.pulse,
+.result-hero-portrait.pulse {
+  animation:
+    portraitReveal 0.9s ease forwards,
+    portraitPulse 0.9s ease 0.15s ease-out;
+}
+
+@keyframes portraitPulse {
+  0% {
+    box-shadow:
+      0 0 0 5px rgba(255, 255, 255, 0.25),
+      0 0 28px color-mix(in srgb, var(--accent), transparent 35%),
+      0 16px 42px rgba(0, 0, 0, 0.4);
+  }
+
+  55% {
+    box-shadow:
+      0 0 0 7px rgba(255, 255, 255, 0.38),
+      0 0 70px color-mix(in srgb, var(--accent), transparent 5%),
+      0 18px 48px rgba(0, 0, 0, 0.44);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 5px rgba(255, 255, 255, 0.25),
+      0 0 40px color-mix(in srgb, var(--accent), transparent 20%),
+      0 16px 42px rgba(0, 0, 0, 0.4);
+  }
 }

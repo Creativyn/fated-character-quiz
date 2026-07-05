@@ -2,12 +2,22 @@ import { getSoundTheme } from "../config/soundThemes.js";
 import { playLayeredSound, fadeOutSound, stopSound } from "./soundManager.js";
 import { shouldMuteAudio } from "./deviceAudio.js";
 
-let ambientAudio = null;
+const SOUND_PREF_KEY = "fatedQuiz.soundEnabled";
 
+let ambientAudio = null;
 let soundEnabled = true;
 
 export async function initializeAudio() {
+  const saved = localStorage.getItem(SOUND_PREF_KEY);
+
+  if (saved !== null) {
+    soundEnabled = saved === "true";
+    return;
+  }
+
   soundEnabled = !(await shouldMuteAudio());
+
+  localStorage.setItem(SOUND_PREF_KEY, String(soundEnabled));
 }
 
 export function isSoundEnabled() {
@@ -15,9 +25,10 @@ export function isSoundEnabled() {
 }
 
 export function setSoundEnabled(enabled) {
-  soundEnabled = enabled;
+  soundEnabled = Boolean(enabled);
+  localStorage.setItem(SOUND_PREF_KEY, String(soundEnabled));
 
-  if (!enabled) {
+  if (!soundEnabled) {
     stopAmbient();
   }
 }
@@ -46,11 +57,13 @@ export function playAmbient(personality) {
 export function stopAmbient() {
   if (!ambientAudio) return;
 
-  fadeOutSound(ambientAudio, 800);
+  const current = ambientAudio;
+  ambientAudio = null;
+
+  fadeOutSound(current, 800);
 
   setTimeout(() => {
-    stopSound(ambientAudio);
-    ambientAudio = null;
+    stopSound(current);
   }, 850);
 }
 

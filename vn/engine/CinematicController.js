@@ -1,4 +1,6 @@
 import { renderResults } from "../../ui/renderResults.js";
+import { typewriter } from "../effects/typewriter.js";
+import { crossfadeText } from "../effects/crossfadeText.js";
 
 import {
   initializeAudio,
@@ -47,11 +49,16 @@ export class CinematicController {
       });
     }
 
+    const skipPref = localStorage.getItem("fatedQuiz.skipCinematic");
+
     if (this.skipToggle) {
-      this.skipToggle.checked = false;
+      this.skipped = skipPref === "true";
+      this.skipToggle.checked = this.skipped;
 
       this.skipToggle.addEventListener("change", () => {
         this.skipped = this.skipToggle.checked;
+
+        localStorage.setItem("fatedQuiz.skipCinematic", String(this.skipped));
       });
     }
   }
@@ -66,17 +73,18 @@ export class CinematicController {
     document.body.classList.add("cinematic-mode");
     this.overlay.classList.remove("hidden");
 
-    this.textElement.innerHTML = "";
-    this.textElement.textContent = message;
-    this.textElement.classList.add("show");
-
     if (!this._ambientStarted) {
       this._ambientStarted = true;
       playAmbient(this.topResult);
     }
 
+    await crossfadeText(this.textElement, message, {
+      skip: this.skipped,
+      fadeMs: 300,
+    });
+
     if (!this.skipped) {
-      await wait(900);
+      await wait(650);
     }
   }
 
@@ -96,6 +104,7 @@ export class CinematicController {
     if (!this.context.results?.length) return;
 
     renderResults(this.context.results);
+    this.applyResultTheme();
 
     this.container
       .querySelectorAll(".result-hero, .result-card")
@@ -124,7 +133,7 @@ export class CinematicController {
 
         ${top.heading ? `<p class="identity-heading">${top.heading}</p>` : ""}
 
-        ${top.quote ? `<p class="identity-quote">“${top.quote}”</p>` : ""}
+        ${top.quote ? `<p class="identity-quote"></p>` : ""}
 
         ${
           top.portrait
@@ -145,12 +154,25 @@ export class CinematicController {
       </div>
     `;
 
+    const quoteElement = this.textElement.querySelector(".identity-quote");
+    const portraitElement =
+      this.textElement.querySelector(".identity-portrait");
+
     this.textElement.classList.add("show");
 
     playFinal(top);
 
+    if (top.quote && quoteElement) {
+      await typewriter(quoteElement, `“${top.quote}”`, {
+        speed: 30,
+        skip: this.skipped,
+      });
+    }
+
+    portraitElement?.classList.add("pulse");
+
     if (!this.skipped) {
-      await wait(1800);
+      await wait(900);
     }
   }
 
@@ -243,6 +265,22 @@ export class CinematicController {
       this.textElement.classList.remove("show");
       this.textElement.innerHTML = "";
     }
+  }
+
+  applyResultTheme() {
+    const top = this.topResult;
+
+    if (!top) return;
+
+    document.documentElement.style.setProperty(
+      "--accent",
+      top.accent || top.color || "#60a5fa",
+    );
+
+    document.documentElement.style.setProperty(
+      "--result-theme",
+      top.color || "#566fb8",
+    );
   }
 
   createSceneContext() {
