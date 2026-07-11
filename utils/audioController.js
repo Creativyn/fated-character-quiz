@@ -1,21 +1,17 @@
 import { getSoundTheme } from "../config/soundThemes.js";
+
 import { playLayeredSound, fadeOutSound, stopSound } from "./soundManager.js";
+
 import { shouldMuteAudio } from "./deviceAudio.js";
+
 import { getSoundPreference, setSoundPreference } from "./preferenceManager.js";
 
-let currentMusic = null;
-let currentMusicType = null;
-let currentCharacter = null;
+let currentAudio = null;
+let requestedMusic = null;
 let soundEnabled = true;
 
-const DEFAULT_FADE_OUT_MS = 800;
+const DEFAULT_FADE_MS = 900;
 
-/**
- * Initializes the saved sound preference.
- *
- * Audio may still require a user interaction before the browser
- * allows playback.
- */
 export async function initializeAudio() {
   const shouldMute = await shouldMuteAudio();
 
@@ -28,161 +24,175 @@ export function isSoundEnabled() {
 }
 
 /**
- * Enables or disables all background music.
+ * Enables or disables music.
+ *
+ * Muting stops the audible track but preserves requestedMusic,
+ * allowing the correct track to resume when unmuted.
  */
 export function setSoundEnabled(enabled) {
   soundEnabled = Boolean(enabled);
   setSoundPreference(soundEnabled);
 
   if (!soundEnabled) {
-    stopCurrentMusic();
-  }
-}
-
-function theme(personality) {
-  return getSoundTheme(personality);
-}
-
-/**
- * Stops the current music immediately.
- */
-export function stopCurrentMusic() {
-  if (!currentMusic) {
-    currentMusicType = null;
-    currentCharacter = null;
+    stopAudibleMusic();
     return;
   }
 
-  const audio = currentMusic;
+  resumeCurrentMusic();
+}
 
-  currentMusic = null;
-  currentMusicType = null;
-  currentCharacter = null;
+function stopAudibleMusic() {
+  if (!currentAudio) return;
+
+  const audio = currentAudio;
+  currentAudio = null;
 
   stopSound(audio);
 }
 
-/**
- * Fades out the current music, then stops it.
- */
-export function fadeOutCurrentMusic(durationMs = DEFAULT_FADE_OUT_MS) {
+function createDescriptor({
+  type,
+  src,
+  volume,
+  loop = true,
+  fadeIn = 900,
+  characterId = null,
+}) {
+  return {
+    type,
+    src,
+    volume,
+    loop,
+    fadeIn,
+    characterId,
+  };
+}
+
+function startRequestedMusic() {
+  if (!soundEnabled || !requestedMusic?.src) {
+    return null;
+  }
+
+  stopAudibleMusic();
+
+  currentAudio = playLayeredSound({
+    src: requestedMusic.src,
+    volume: requestedMusic.volume,
+    loop: requestedMusic.loop,
+    fadeIn: requestedMusic.fadeIn,
+  });
+
+  return currentAudio;
+}
+
+function requestMusic(descriptor) {
+  if (!descriptor?.src) return null;
+
+  requestedMusic = descriptor;
+
+  if (!soundEnabled) {
+    return null;
+  }
+
+  return startRequestedMusic();
+}
+
+export function resumeCurrentMusic() {
+  if (!soundEnabled || !requestedMusic?.src) {
+    return null;
+  }
+
+  if (currentAudio) {
+    return currentAudio;
+  }
+
+  return startRequestedMusic();
+}
+
+export function stopCurrentMusic({ clearRequestedMusic = true } = {}) {
+  stopAudibleMusic();
+
+  if (clearRequestedMusic) {
+    requestedMusic = null;
+  }
+}
+
+export function fadeOutCurrentMusic(
+  durationMs = DEFAULT_FADE_MS,
+  { clearRequestedMusic = true } = {},
+) {
   return new Promise((resolve) => {
-    if (!currentMusic) {
-      currentMusicType = null;
-      currentCharacter = null;
+    if (!currentAudio) {
+      if (clearRequestedMusic) {
+        requestedMusic = null;
+      }
+
       resolve();
       return;
     }
 
-    const audio = currentMusic;
+    const outgoingAudio = currentAudio;
+    currentAudio = null;
 
-    /*
-     * Clear the active reference immediately so another track can
-     * safely begin after this promise resolves.
-     */
-    currentMusic = null;
-    currentMusicType = null;
-    currentCharacter = null;
+    if (clearRequestedMusic) {
+      requestedMusic = null;
+    }
 
-    fadeOutSound(audio, durationMs);
+    fadeOutSound(outgoingAudio, durationMs);
 
     window.setTimeout(() => {
-      stopSound(audio);
+      stopSound(outgoingAudio);
       resolve();
     }, durationMs + 50);
   });
 }
 
 /**
- * Internal helper for starting a music track.
+ * Crossfades from the currently audible track to a new descriptor.
  */
-function startMusic({ src, volume, loop, fadeIn, type, characterId = null }) {
-  if (!soundEnabled || !src) return null;
+function crossfadeTo(descriptor, durationMs = DEFAULT_FADE_MS) {
+  if (!descriptor?.src) return null;
 
-  stopCurrentMusic();
+  requestedMusic = {
+    ...descriptor,
+    fadeIn: durationMs,
+  };
 
-  currentMusic = playLayeredSound({
-    src,
-    volume,
-    loop,
-    fadeIn,
-  });
-
-  currentMusicType = type;
-  currentCharacter = characterId;
-
-  return currentMusic;
-}
-
-/**
- * Plays the looping World of Fated quiz ambience.
- *
- * This expects a world or quiz entry in soundThemes.js.
- */
-export function playQuizMusic() {
-  if (!soundEnabled) return null;
-
-  const sounds = getSoundTheme("world");
-
-  if (!sounds?.quiz) {
-    console.warn("No quiz music configured at soundThemes.world.quiz.");
+  if (!soundEnabled) {
+    stopAudibleMusic();
     return null;
   }
 
-  if (currentMusic && currentMusicType === "quiz") {
-    return currentMusic;
+  const outgoingAudio = currentAudio;
+
+  const incomingAudio = playLayeredSound({
+    src: descriptor.src,
+    volume: descriptor.volume,
+    loop: descriptor.loop,
+    fadeIn: durationMs,
+  });
+
+  currentAudio = incomingAudio;
+
+  if (outgoingAudio && outgoingAudio !== incomingAudio) {
+    fadeOutSound(outgoingAudio, durationMs);
+
+    window.setTimeout(() => {
+      stopSound(outgoingAudio);
+    }, durationMs + 50);
   }
 
-  return startMusic({
-    src: sounds.quiz,
-    volume: 0.3,
-    loop: true,
-    fadeIn: 1200,
-    type: "quiz",
-  });
+  return incomingAudio;
 }
 
-/**
- * Plays the dedicated fate-cinematic ambience.
- *
- * It may be longer than the cinematic. CinematicController fades it
- * out when the sequence ends.
- */
-export function playCinematicMusic() {
-  if (!soundEnabled) return null;
-
-  const sounds = getSoundTheme("world");
-
-  if (!sounds?.cinematic) {
-    console.warn(
-      "No cinematic music configured at " + "soundThemes.world.cinematic.",
-    );
-    return null;
-  }
-
-  if (currentMusic && currentMusicType === "cinematic") {
-    return currentMusic;
-  }
-
-  return startMusic({
-    src: sounds.cinematic,
-    volume: 0.38,
-    loop: true,
-    fadeIn: 900,
-    type: "cinematic",
-  });
+function getWorldMusic() {
+  return getSoundTheme("world");
 }
 
-/**
- * Plays the dominant personality's full theme on the results page.
- *
- * The personality may provide themeMusic directly, or soundThemes.js
- * may define a characterTheme property for that personality.
- */
-export function playCharacterTheme(personality) {
-  if (!soundEnabled || !personality) return null;
+function getCharacterDescriptor(personality) {
+  if (!personality) return null;
 
-  const sounds = theme(personality);
+  const sounds = getSoundTheme(personality);
 
   const src =
     personality.themeMusic ??
@@ -194,38 +204,112 @@ export function playCharacterTheme(personality) {
   if (!src) {
     console.warn(
       `No character theme configured for ${
-        personality.id ?? personality.name ?? "unknown personality"
+        personality.id ??
+        personality.slug ??
+        personality.key ??
+        personality.name ??
+        "unknown personality"
       }.`,
     );
 
     return null;
   }
 
-  const characterId = personality.id ?? personality.name ?? "unknown";
-
-  if (
-    currentMusic &&
-    currentMusicType === "character" &&
-    currentCharacter === characterId
-  ) {
-    return currentMusic;
-  }
-
-  return startMusic({
+  return createDescriptor({
+    type: "character",
     src,
     volume: 0.42,
     loop: true,
     fadeIn: 1000,
-    type: "character",
-    characterId,
+    characterId:
+      personality.id ??
+      personality.slug ??
+      personality.key ??
+      personality.name ??
+      "unknown",
   });
 }
 
-/**
- * Returns the current music phase.
- *
- * Useful when restoring audio after the user unmutes.
- */
+export function playQuizMusic() {
+  const sounds = getWorldMusic();
+
+  if (!sounds?.quiz) {
+    console.warn("No quiz music configured at SOUND_THEMES.world.quiz.");
+
+    return null;
+  }
+
+  return requestMusic(
+    createDescriptor({
+      type: "quiz",
+      src: sounds.quiz,
+      volume: 0.3,
+      loop: true,
+      fadeIn: 1200,
+    }),
+  );
+}
+
+export function playCinematicMusic() {
+  const sounds = getWorldMusic();
+
+  if (!sounds?.cinematic) {
+    console.warn(
+      "No cinematic music configured at " + "SOUND_THEMES.world.cinematic.",
+    );
+
+    return null;
+  }
+
+  return requestMusic(
+    createDescriptor({
+      type: "cinematic",
+      src: sounds.cinematic,
+      volume: 0.38,
+      loop: true,
+      fadeIn: 900,
+    }),
+  );
+}
+
+export function crossfadeToCinematicMusic(durationMs = DEFAULT_FADE_MS) {
+  const sounds = getWorldMusic();
+
+  if (!sounds?.cinematic) {
+    console.warn(
+      "No cinematic music configured at " + "SOUND_THEMES.world.cinematic.",
+    );
+
+    return null;
+  }
+
+  return crossfadeTo(
+    createDescriptor({
+      type: "cinematic",
+      src: sounds.cinematic,
+      volume: 0.38,
+      loop: true,
+    }),
+    durationMs,
+  );
+}
+
+export function playCharacterTheme(personality) {
+  const descriptor = getCharacterDescriptor(personality);
+
+  if (!descriptor) return null;
+
+  return requestMusic(descriptor);
+}
+
+export function crossfadeToCharacterTheme(personality, durationMs = 1200) {
+  const descriptor = getCharacterDescriptor(personality);
+
+  if (!descriptor) return null;
+
+  return crossfadeTo(descriptor, durationMs);
+}
+
 export function getCurrentMusicType() {
-  return currentMusicType;
+  return requestedMusic?.type ?? null;
 }

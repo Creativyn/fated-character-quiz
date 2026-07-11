@@ -3,13 +3,9 @@ import { typewriter } from "../effects/typewriter.js";
 import { crossfadeText } from "../effects/crossfadeText.js";
 
 import {
-  initializeAudio,
   isSoundEnabled,
-  setSoundEnabled,
-  playCinematicMusic,
-  playCharacterTheme,
-  fadeOutCurrentMusic,
-  stopCurrentMusic,
+  crossfadeToCinematicMusic,
+  crossfadeToCharacterTheme,
 } from "../../utils/audioController.js";
 
 import {
@@ -68,37 +64,6 @@ export class CinematicController {
    * Initializes audio and connects the global sound toggle.
    */
   async setupPreferences() {
-    await initializeAudio();
-
-    this._soundToggle = document.getElementById("sound-toggle");
-
-    if (this._soundToggle) {
-      this._soundToggle.checked = isSoundEnabled();
-
-      this._soundToggle.addEventListener("change", async () => {
-        const enabled = this._soundToggle.checked;
-
-        setSoundEnabled(enabled);
-
-        if (!enabled) {
-          await stopCurrentMusic();
-          return;
-        }
-
-        /*
-         * Resume the correct music for the current phase.
-         */
-        if (this._characterThemeStarted) {
-          await this.startCharacterTheme();
-          return;
-        }
-
-        if (this._cinematicMusicStarted) {
-          await playCinematicMusic();
-        }
-      });
-    }
-
     if (this.skipToggle) {
       this.skipped = this.skipToggle.checked;
 
@@ -124,10 +89,7 @@ export class CinematicController {
     this._cinematicMusicStarted = true;
     this._characterThemeStarted = false;
 
-    if (!isSoundEnabled()) return;
-
-    await fadeOutCurrentMusic(900);
-    await playCinematicMusic();
+    await crossfadeToCinematicMusic(1000);
   }
 
   /**
@@ -332,17 +294,11 @@ export class CinematicController {
     this._cinematicMusicStarted = false;
     this._characterThemeStarted = true;
 
-    if (!isSoundEnabled()) {
-      await stopCurrentMusic();
-      return;
-    }
-
     /*
-     * The cinematic track can be longer than the cinematic.
-     * It is faded out here regardless of its total duration.
+     * The character theme begins while the cinematic track fades away.
+     * This avoids the abrupt stop that occurred previously.
      */
-    await fadeOutCurrentMusic(900);
-    await this.startCharacterTheme();
+    await crossfadeToCharacterTheme(this.topResult, 1400);
   }
 
   applyResultTheme() {

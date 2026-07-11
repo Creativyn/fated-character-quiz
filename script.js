@@ -5,6 +5,7 @@ import { VNEngine } from "./vn/VNEngine.js";
 import {
   initializeAudio,
   isSoundEnabled,
+  setSoundEnabled,
   playQuizMusic,
 } from "./utils/audioController.js";
 
@@ -98,6 +99,38 @@ async function bootApp() {
   console.log("VN Engine running");
 }
 
-bootApp().catch((error) => {
-  console.error("Failed to start VN Engine:", error);
-});
+function updateMusicToggleButtons() {
+  const enabled = isSoundEnabled();
+
+  document.querySelectorAll(".music-toggle").forEach((button) => {
+    button.setAttribute("aria-pressed", String(enabled));
+    button.textContent = enabled ? "🔊 Music on" : "🔇 Music off";
+  });
+}
+
+function bindMusicToggleButtons() {
+  document.querySelectorAll(".music-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+      setSoundEnabled(!isSoundEnabled());
+      updateMusicToggleButtons();
+    });
+  });
+
+  updateMusicToggleButtons();
+}
+
+async function bootApp() {
+  bindQuizPreferences();
+
+  await initializeAudio();
+
+  bindMusicToggleButtons();
+  bindQuizMusicStart();
+
+  await VNEngine.start({
+    questions: QUESTIONS,
+    personalities: PERSONALITIES,
+  });
+
+  console.log("VN Engine running");
+}
