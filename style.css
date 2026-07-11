@@ -415,14 +415,15 @@ button:disabled {
 
 .result-hero {
   display: grid;
-  grid-template-columns: minmax(160px, 240px) 1fr;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: center;
 
   margin-bottom: 1.5rem;
   padding: 1.5rem;
 
-  border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
+  border: 1px solid
+    color-mix(in srgb, var(--accent), transparent 45%);
   border-right: 8px solid var(--accent);
   border-radius: 18px;
 
@@ -442,6 +443,16 @@ button:disabled {
     transform 0.75s ease;
 }
 
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.16);
+
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+
+  transition:
+    opacity 0.75s ease,
+    transform 0.75s ease;
+}
+
 .result-hero.reveal {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -449,9 +460,12 @@ button:disabled {
 
 .result-hero-portrait {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
 
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+
+  padding: 0.35rem;
 
   border-radius: 18px;
 
