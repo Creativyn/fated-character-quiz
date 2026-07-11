@@ -265,6 +265,8 @@ button:disabled {
   margin: 0;
 
   border: none;
+  outline: none;
+  box-shadow: none;
   border-radius: 999px;
 
   background: rgba(255, 255, 255, 0.22);
