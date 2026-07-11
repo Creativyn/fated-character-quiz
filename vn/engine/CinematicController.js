@@ -22,11 +22,6 @@ const wait = (ms) =>
     window.setTimeout(resolve, ms);
   });
 
-import { initializeAudio, playQuizMusic } from "./utils/audioController.js";
-
-await initializeAudio();
-playQuizMusic();
-
 /**
  * Controls the cinematic reveal sequence.
  *
