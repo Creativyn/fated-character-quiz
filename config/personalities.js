@@ -11,7 +11,7 @@ export const PERSONALITIES = [
       "I am a free spirit. I have a right to make my way through these woods.",
     color: "#27AE60",
     accent: "#7DCEA0",
-    portrait: "images/prometheia.png",
+    portrait: "assets/portraits/prometheia.png",
     description:
       "A fiery defender of others, you have a romantic soul that secretly longs for a true love soulmate. Your foxy talents allow you to thread a rainbow and just as easily deliver friends and family out of impossible situations. You enjoy your freedom and being out in nature. Your family means much to you, and you spend a lot of time in their company. You are known for your kindness and beauty. When flying atop a magical horse, your dreamy spirit comes alive and touches the stars.",
   },
@@ -69,7 +69,7 @@ export const PERSONALITIES = [
     quote: "It is okay. We <em> will </em> beat the odds. Do not worry.",
     color: "#523817",
     accent: "#81653f",
-    portrait: "images/manus.png",
+    portrait: "assets/portraits/manus.png",
     description:
       "Dedicated to the land, you wish for a helpmate that will work alongside you. Though extremely loyal to family and close friends, you are not particularly social. More of a plain wrap kind of person. When it comes to problems, you are an avoider. Simple and charmingly direct, you hope to lead a modest life unburdened by the unexpected. But life does not always work out that way. Is staying in your comfort zone more important than a true love that demands sacrifices to win and keep?",
   },
@@ -80,7 +80,7 @@ export const PERSONALITIES = [
     quote: "Oh, Manny, I wanted you so. I gave up my home...my ways.",
     color: "#00ACC1",
     accent: "#4DD0E1",
-    portrait: "images/amandas.png",
+    portrait: "assets/portraits/amandas.png",
     description:
       "You are an ethereal spirit who seems out of place in your surroundings, but you are devoted to your soulmate and could not live without that person. You enjoy selling your homegrown produce and homemade jellies and jams, but you also sometimes steal away to dance by moonlight deep in the nearby woods. You want to learn quilting, raise children, and bake homemade bread, but your heart also soars with the butterflies that flutter and twirl over the nearby meadows.",
   },
