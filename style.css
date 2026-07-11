@@ -31,6 +31,7 @@ body {
     color-mix(in srgb, var(--result-theme, var(--bg)), white 70%),
     var(--bg) 55%
   );
+
   color: var(--text);
 
   font-family:
@@ -61,14 +62,48 @@ body {
 ========================================================== */
 
 .header {
+  padding: 1.5rem 1rem 0.65rem;
   text-align: center;
-  padding: 2rem 1rem;
+}
+
+.header h1 {
+  margin: 0;
 }
 
 main {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0.75rem 1rem 2rem;
+}
+
+/* ==========================================================
+   SCREEN TOOLBARS
+========================================================== */
+
+.screen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/*
+ * Keep the quiz music button close to the progress section.
+ */
+.quiz-toolbar {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+/*
+ * Give the results button slightly more room before the result card.
+ */
+.results-toolbar {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
 }
 
 /* ==========================================================
@@ -76,6 +111,7 @@ main {
 ========================================================== */
 
 .progress-wrapper {
+  margin-top: 0;
   margin-bottom: 2rem;
 }
 
@@ -101,9 +137,12 @@ main {
 ========================================================== */
 
 .vn-question-card {
-  background: var(--card);
-  border-radius: 16px;
   padding: 1.5rem;
+
+  border-radius: 16px;
+
+  background: var(--card);
+
   box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14);
 }
 
@@ -122,9 +161,11 @@ main {
   gap: 0.75rem;
 
   padding: 0.75rem 0.9rem;
+
   border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.18);
+
   cursor: pointer;
 
   transition:
@@ -147,11 +188,14 @@ main {
 
 .vn-navigation {
   display: flex;
+  justify-content: center;
   gap: 1rem;
+
   margin-top: 1.5rem;
 }
 
 .vn-navigation button {
+  flex: 0 0 auto;
   min-width: 110px;
 }
 
@@ -170,17 +214,17 @@ main {
 }
 
 button {
-  border: none;
-  border-radius: 10px;
-
   padding: 0.8rem 1.3rem;
 
-  cursor: pointer;
+  border: none;
+  border-radius: 10px;
 
   background: var(--card);
   color: var(--text);
 
   font-weight: 600;
+
+  cursor: pointer;
 
   transition:
     transform 0.2s ease,
@@ -198,23 +242,117 @@ button:disabled {
 }
 
 /* ==========================================================
+   MUSIC TOGGLES
+========================================================== */
+
+.music-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  width: auto;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+
+  margin: 0;
+
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.22);
+
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  color: #222;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  opacity: 0.82;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.15s ease,
+    filter 0.2s ease;
+}
+
+.music-toggle:hover {
+  background: rgba(255, 255, 255, 0.35);
+  opacity: 1;
+  transform: none;
+}
+
+.music-toggle:active {
+  transform: scale(0.97);
+}
+
+.music-toggle[aria-pressed="false"] {
+  opacity: 0.68;
+}
+
+.music-toggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ==========================================================
+   QUIZ PREFERENCES
+========================================================== */
+
+.quiz-preferences {
+  display: flex;
+  justify-content: center;
+
+  margin: 2rem 0 0;
+}
+
+.quiz-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  padding: 0.8rem 1.2rem;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  font-weight: 600;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.quiz-toggle input {
+  accent-color: var(--accent);
+}
+
+/* ==========================================================
    RESULTS
 ========================================================== */
 
 #results-container {
   display: grid;
   gap: 1rem;
+
   margin-bottom: 2rem;
 }
 
 .result-card {
-  background: var(--card);
-
-  border-radius: 14px;
-
   padding: 1rem;
 
+  border-radius: 14px;
   border-right: 6px solid var(--accent);
+
+  background: var(--card);
 
   opacity: 1;
   transform: translateY(0);
@@ -232,8 +370,10 @@ button:disabled {
 
 .result-card-heading {
   margin: 0 0 0.75rem;
-  font-weight: 700;
+
   color: var(--accent);
+
+  font-weight: 700;
 }
 
 .result-description {
@@ -282,9 +422,9 @@ button:disabled {
   margin-bottom: 1.5rem;
   padding: 1.5rem;
 
-  border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
   border-right: 8px solid var(--accent);
+  border-radius: 18px;
 
   background: linear-gradient(
     135deg,
@@ -310,6 +450,7 @@ button:disabled {
 .result-hero-portrait {
   width: 100%;
   aspect-ratio: 1 / 1;
+
   object-fit: cover;
 
   border-radius: 18px;
@@ -326,8 +467,8 @@ button:disabled {
 }
 
 .result-hero-portrait.placeholder {
-  display: block;
   position: relative;
+  display: block;
 }
 
 .result-hero-portrait.placeholder::after {
@@ -343,6 +484,7 @@ button:disabled {
   padding: 1rem;
 
   color: rgba(255, 255, 255, 0.85);
+
   font-weight: 700;
   text-align: center;
 }
@@ -375,10 +517,10 @@ button:disabled {
 .result-hero-heading {
   margin: 0;
 
+  color: var(--accent);
+
   font-size: 1.25rem;
   font-weight: 700;
-
-  color: var(--accent);
 }
 
 .result-hero-quote {
@@ -397,15 +539,15 @@ button:disabled {
   position: fixed;
   inset: 0;
 
+  z-index: 9999;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: var(--overlay-bg);
-
-  z-index: 9999;
-
   padding: 2rem;
+
+  background: var(--overlay-bg);
 }
 
 .hidden {
@@ -413,13 +555,12 @@ button:disabled {
 }
 
 .fate-overlay-content {
-  width: min(92vw, 760px);
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 2rem;
+
+  width: min(92vw, 760px);
 
   text-align: center;
 }
@@ -430,13 +571,11 @@ button:disabled {
   color: white;
 
   font-size: clamp(1.8rem, 3vw, 2.5rem);
-
   font-weight: 600;
 
   letter-spacing: 0.03em;
 
   opacity: 0;
-
   transform: translateY(10px) scale(0.98);
 
   transition:
@@ -459,8 +598,8 @@ button:disabled {
 
 .identity-reveal {
   display: grid;
-  gap: 0.75rem;
   justify-items: center;
+  gap: 0.75rem;
 
   max-width: 760px;
 }
@@ -480,10 +619,10 @@ button:disabled {
 .identity-name {
   margin: 0;
 
+  color: #fff;
+
   font-size: clamp(2.4rem, 7vw, 5rem);
   line-height: 1;
-
-  color: #fff;
 
   text-shadow:
     0 0 18px rgba(255, 255, 255, 0.45),
@@ -493,10 +632,10 @@ button:disabled {
 .identity-heading {
   margin: 0;
 
+  color: var(--accent);
+
   font-size: clamp(1.25rem, 3vw, 2rem);
   font-weight: 700;
-
-  color: var(--accent);
 }
 
 .identity-quote {
@@ -509,6 +648,14 @@ button:disabled {
   line-height: 1.55;
 
   opacity: 0.94;
+}
+
+.identity-quote::after {
+  content: "";
+
+  display: inline-block;
+
+  width: 0.55ch;
 }
 
 .identity-portrait {
@@ -552,6 +699,7 @@ button:disabled {
   padding: 1rem;
 
   color: rgba(255, 255, 255, 0.85);
+
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -569,24 +717,57 @@ button:disabled {
 }
 
 /* ==========================================================
+   PORTRAIT REVEAL PULSE
+========================================================== */
+
+.identity-portrait.pulse,
+.result-hero-portrait.pulse {
+  animation:
+    portraitReveal 0.9s ease forwards,
+    portraitPulse 0.9s 0.15s ease-out;
+}
+
+@keyframes portraitPulse {
+  0% {
+    box-shadow:
+      0 0 0 5px rgba(255, 255, 255, 0.25),
+      0 0 28px color-mix(in srgb, var(--accent), transparent 35%),
+      0 16px 42px rgba(0, 0, 0, 0.4);
+  }
+
+  55% {
+    box-shadow:
+      0 0 0 7px rgba(255, 255, 255, 0.38),
+      0 0 70px color-mix(in srgb, var(--accent), transparent 5%),
+      0 18px 48px rgba(0, 0, 0, 0.44);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 5px rgba(255, 255, 255, 0.25),
+      0 0 40px color-mix(in srgb, var(--accent), transparent 20%),
+      0 16px 42px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ==========================================================
    OVERLAY CONTROL PANEL
 ========================================================== */
 
 .overlay-controls {
   display: flex;
   flex-direction: column;
-
   gap: 0.9rem;
 
   padding: 1.25rem 1.6rem;
 
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
 
   background: var(--glass);
 
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-
-  border: 1px solid var(--glass-border);
 
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
 }
@@ -594,16 +775,14 @@ button:disabled {
 .overlay-toggle {
   display: flex;
   align-items: center;
-
   gap: 0.7rem;
 
   color: white;
 
-  cursor: pointer;
-
-  user-select: none;
-
   font-size: 0.98rem;
+
+  cursor: pointer;
+  user-select: none;
 }
 
 .overlay-toggle input {
@@ -623,6 +802,7 @@ button:disabled {
 .cinematic-mode .result-card {
   opacity: 0;
   transform: translateY(18px) scale(0.98);
+
   pointer-events: none;
 
   transition:
@@ -634,6 +814,7 @@ button:disabled {
 .cinematic-mode .result-card.reveal {
   opacity: 1;
   transform: translateY(0) scale(1);
+
   pointer-events: auto;
 }
 
@@ -682,8 +863,20 @@ button:disabled {
 ========================================================== */
 
 @media (max-width: 640px) {
+  .header {
+    padding: 1rem 1rem 0.5rem;
+  }
+
   main {
-    padding: 1rem;
+    padding: 0.5rem 1rem 1rem;
+  }
+
+  .quiz-toolbar {
+    margin-bottom: 0.25rem;
+  }
+
+  .results-toolbar {
+    margin-bottom: 1.25rem;
   }
 
   .fate-overlay {
@@ -705,6 +898,13 @@ button:disabled {
 
   button {
     width: 100%;
+  }
+
+  /*
+   * Music controls remain compact and centered on mobile.
+   */
+  .music-toggle {
+    width: auto;
   }
 
   .vn-navigation {
@@ -753,143 +953,4 @@ button:disabled {
     opacity: 1;
     transform: none;
   }
-}
-
-/* ==========================================================
-   QUIZ NAVIGATION CENTERING
-========================================================== */
-
-.vn-navigation {
-  justify-content: center;
-}
-
-.vn-navigation button {
-  flex: 0 0 auto;
-}
-
-.identity-quote::after {
-  content: "";
-  display: inline-block;
-  width: 0.55ch;
-}
-
-/* ==========================================================
-   PORTRAIT REVEAL PULSE
-========================================================== */
-
-.identity-portrait.pulse,
-.result-hero-portrait.pulse {
-  animation:
-    portraitReveal 0.9s ease forwards,
-    portraitPulse 0.9s ease 0.15s ease-out;
-}
-
-@keyframes portraitPulse {
-  0% {
-    box-shadow:
-      0 0 0 5px rgba(255, 255, 255, 0.25),
-      0 0 28px color-mix(in srgb, var(--accent), transparent 35%),
-      0 16px 42px rgba(0, 0, 0, 0.4);
-  }
-
-  55% {
-    box-shadow:
-      0 0 0 7px rgba(255, 255, 255, 0.38),
-      0 0 70px color-mix(in srgb, var(--accent), transparent 5%),
-      0 18px 48px rgba(0, 0, 0, 0.44);
-  }
-
-  100% {
-    box-shadow:
-      0 0 0 5px rgba(255, 255, 255, 0.25),
-      0 0 40px color-mix(in srgb, var(--accent), transparent 20%),
-      0 16px 42px rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* ==========================================================
-   QUIZ PREFERENCES
-========================================================== */
-
-.quiz-preferences {
-  display: flex;
-  justify-content: center;
-
-  margin: 2rem 0 0;
-}
-
-.quiz-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-
-  padding: 0.8rem 1.2rem;
-
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.14);
-
-  backdrop-filter: blur(8px);
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  user-select: none;
-}
-
-.quiz-toggle input {
-  accent-color: var(--accent);
-}
-
-.music-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-
-  min-height: 44px;
-  padding: 0.55rem 1rem;
-
-  margin-bottom: 1.5rem; /* More space below the button */
-
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.45); /* Match the softer toggle look */
-  backdrop-filter: blur(8px);
-
-  color: #222;
-  font: inherit;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    opacity 0.2s ease,
-    transform 0.15s ease;
-}
-
-.music-toggle:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-
-.music-toggle:active {
-  transform: scale(0.97);
-}
-
-.music-toggle[aria-pressed="false"] {
-  opacity: 0.7;
-}
-
-.music-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-.results-toolbar {
-  display: flex;
-  justify-content: flex-start;
-
-  margin-bottom: 1.75rem;
 }
