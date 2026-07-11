@@ -296,6 +296,8 @@ export class CinematicController {
     this._cinematicMusicStarted = false;
     this._characterThemeStarted = true;
 
+    crossfadeToCharacterTheme(this.topResult, 1400);
+
     /*
      * The character theme begins while the cinematic track fades away.
      * This avoids the abrupt stop that occurred previously.

@@ -7,6 +7,7 @@ import {
   isSoundEnabled,
   setSoundEnabled,
   playQuizMusic,
+  resumeCurrentMusic,
 } from "./utils/audioController.js";
 
 import {
@@ -16,7 +17,7 @@ import {
 
 /**
  * Controls application startup, quiz preferences,
- * and the shared music controls.
+ * and shared music controls.
  */
 
 let quizMusicStarted = false;
@@ -38,6 +39,7 @@ function updateMusicToggleButtons() {
 
   document.querySelectorAll(".music-toggle").forEach((button) => {
     button.setAttribute("aria-pressed", String(enabled));
+
     button.textContent = enabled ? "🔊 Music on" : "🔇 Music off";
   });
 }
@@ -45,6 +47,12 @@ function updateMusicToggleButtons() {
 function isQuizScreenActive() {
   return Boolean(
     document.getElementById("quiz-section")?.classList.contains("active"),
+  );
+}
+
+function isResultsScreenActive() {
+  return Boolean(
+    document.getElementById("results-section")?.classList.contains("active"),
   );
 }
 
@@ -60,23 +68,21 @@ function bindMusicToggleButtons() {
         return;
       }
 
-      /*
-       * When music is turned back on while the quiz screen is active,
-       * explicitly request the quiz ambience.
-       *
-       * This prevents the audio controller from remaining silent
-       * after the user muted music on the results screen.
-       */
-      if (isQuizScreenActive()) {
-        quizMusicStarted = true;
+      try {
+        if (isQuizScreenActive()) {
+          quizMusicStarted = true;
 
-        try {
           await playQuizMusic();
           removeQuizMusicGestureListeners();
-        } catch (error) {
-          quizMusicStarted = false;
-          console.warn("Quiz music could not restart:", error);
+
+          return;
         }
+
+        if (isResultsScreenActive()) {
+          await resumeCurrentMusic();
+        }
+      } catch (error) {
+        console.warn("Music could not restart:", error);
       }
     });
   });
@@ -85,11 +91,15 @@ function bindMusicToggleButtons() {
 }
 
 /**
- * Starts quiz music after the first user gesture.
- * This avoids browser autoplay restrictions.
+ * Starts quiz music after the browser receives
+ * the first user gesture.
  */
 async function startQuizMusicFromUserGesture() {
   if (quizMusicStarted) return;
+
+  if (!isQuizScreenActive()) {
+    return;
+  }
 
   quizMusicStarted = true;
 
@@ -101,6 +111,7 @@ async function startQuizMusicFromUserGesture() {
     removeQuizMusicGestureListeners();
   } catch (error) {
     quizMusicStarted = false;
+
     console.warn("Quiz music could not start:", error);
   }
 }
