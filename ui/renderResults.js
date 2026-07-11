@@ -1,3 +1,5 @@
+import { setRichText } from "../utils/richText.js";
+
 export function renderResults(results) {
   const container = document.getElementById("results-container");
 
@@ -8,54 +10,70 @@ export function renderResults(results) {
 
   if (!Array.isArray(results) || results.length === 0) {
     console.warn("renderResults: no results supplied");
+    container.replaceChildren();
     return;
   }
 
-  container.innerHTML = "";
+  container.replaceChildren();
 
   const top = results[0];
 
   if (top) {
     const hero = document.createElement("section");
+
     hero.className = "result-hero";
     hero.style.setProperty("--accent", top.accent || top.color || "#60a5fa");
 
+    const portraitMarkup = top.portrait
+      ? `
+        <img
+          class="result-hero-portrait"
+          src="${top.portrait}"
+          alt="${top.name}"
+        />
+      `
+      : `
+        <div
+          class="result-hero-portrait placeholder"
+          aria-hidden="true"
+        ></div>
+      `;
+
+    const headingMarkup = top.heading
+      ? `<p class="result-hero-heading">${top.heading}</p>`
+      : "";
+
+    const quoteMarkup = top.quote ? `<p class="result-hero-quote"></p>` : "";
+
     hero.innerHTML = `
-      ${
-        top.portrait
-          ? `
-            <img
-              class="result-hero-portrait"
-              src="${top.portrait}"
-              alt="${top.name}"
-            />
-          `
-          : `
-            <div
-              class="result-hero-portrait placeholder"
-              aria-hidden="true"
-            ></div>
-          `
-      }
+      ${portraitMarkup}
 
       <div class="result-hero-copy">
         <p class="result-kicker">You are most like...</p>
 
         <h2 class="result-hero-name">${top.name}</h2>
 
-        ${
-          top.heading ? `<p class="result-hero-heading">${top.heading}</p>` : ""
-        }
+        ${headingMarkup}
 
-        ${top.quote ? `<p class="result-hero-quote">“${top.quote}”</p>` : ""}
+        ${quoteMarkup}
       </div>
     `;
+
+    if (top.quote) {
+      const quoteElement = hero.querySelector(".result-hero-quote");
+
+      setRichText(quoteElement, top.quote, {
+        openingQuote: "“",
+        closingQuote: "”",
+      });
+    }
 
     container.appendChild(hero);
   }
 
   results.forEach((personality, index) => {
     const card = document.createElement("article");
+
     card.className = "result-card";
 
     if (index === 0) {
@@ -64,9 +82,22 @@ export function renderResults(results) {
 
     const accent = personality.accent || personality.color || "#60a5fa";
 
+    const percent = Number(personality.percent ?? 0);
+
     card.style.setProperty("--accent", accent);
 
-    const percent = personality.percent ?? 0;
+    const headingMarkup = personality.heading
+      ? `
+        <p class="result-card-heading">
+          ${personality.heading}
+        </p>
+      `
+      : "";
+
+    const descriptionMarkup =
+      index === 0 && personality.description
+        ? `<p class="result-description"></p>`
+        : "";
 
     card.innerHTML = `
       <div class="result-title">
@@ -74,26 +105,24 @@ export function renderResults(results) {
         <span>${percent}%</span>
       </div>
 
-      ${
-        personality.heading
-          ? `<p class="result-card-heading">${personality.heading}</p>`
-          : ""
-      }
+      ${headingMarkup}
 
       <div class="bar">
         <div
           class="bar-fill"
           data-target="${percent}"
-          style="width:0%; background:${accent};"
+          style="width: 0%; background: ${accent};"
         ></div>
       </div>
 
-      ${
-        index === 0 && personality.description
-          ? `<p class="result-description">${personality.description}</p>`
-          : ""
-      }
+      ${descriptionMarkup}
     `;
+
+    if (index === 0 && personality.description) {
+      const descriptionElement = card.querySelector(".result-description");
+
+      setRichText(descriptionElement, personality.description);
+    }
 
     container.appendChild(card);
   });

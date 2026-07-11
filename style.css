@@ -996,3 +996,11 @@ button:disabled {
     transform: none;
   }
 }
+
+.identity-quote em,
+.result-hero-quote em,
+.result-description em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent);
+}

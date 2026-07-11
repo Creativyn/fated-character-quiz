@@ -66,7 +66,7 @@ export const PERSONALITIES = [
     id: "manus",
     name: "Manus Alystarus",
     heading: "The Loyal Friend",
-    quote: "It is okay. We <em> will </em> beat the odds. Do not worry.",
+    quote: "It is okay. We [[will]] beat the odds. Do not worry.",
     color: "#523817",
     accent: "#81653f",
     portrait: "assets/portraits/manus.png",

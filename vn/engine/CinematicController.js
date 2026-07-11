@@ -1,5 +1,5 @@
 import { renderResults } from "../../ui/renderResults.js";
-import { typewriter } from "../effects/typewriter.js";
+import { typewriterRichText } from "../../utils/richText.js";
 import { crossfadeText } from "../effects/crossfadeText.js";
 
 import {
@@ -206,9 +206,11 @@ export class CinematicController {
      */
 
     if (top.quote && quoteElement) {
-      await typewriter(quoteElement, `“${top.quote}”`, {
+      await typewriterRichText(quoteElement, top.quote, {
         speed: 35,
         skip: this.skipped,
+        openingQuote: "“",
+        closingQuote: "”",
       });
     }
 
