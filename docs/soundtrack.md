@@ -74,8 +74,8 @@ Suggested motif
 
 C
 G
-A
 E
+A
 
 The motif should be recognizable while remaining emotionally unique for every character.
 
@@ -491,14 +491,6 @@ Reveal
 
 Played when the dominant personality appears.
 
-Tick
-
-Used while revealing percentage bars and secondary personalities.
-
-Final
-
-The fate confirmation sound.
-
 ---
 
 # Mixing Philosophy
@@ -506,10 +498,6 @@ The fate confirmation sound.
 Ambient should never overpower dialogue.
 
 Reveal should be noticeable without startling the player.
-
-Tick sounds should remain subtle.
-
-Final should provide emotional closure.
 
 Silence is preferable to excessive sound.
 

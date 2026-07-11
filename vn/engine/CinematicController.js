@@ -6,11 +6,10 @@ import {
   initializeAudio,
   isSoundEnabled,
   setSoundEnabled,
-  playAmbient,
-  playReveal,
-  playTick,
-  playFinal,
-  stopAmbient,
+  playCinematicMusic,
+  playCharacterTheme,
+  fadeOutCurrentMusic,
+  stopCurrentMusic,
 } from "../../utils/audioController.js";
 
 import {
@@ -18,14 +17,31 @@ import {
   setSkipCinematicPreference,
 } from "../../utils/preferenceManager.js";
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms) =>
+  new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+
+import { initializeAudio, playQuizMusic } from "./utils/audioController.js";
+
+await initializeAudio();
+playQuizMusic();
 
 /**
- * Controls the cinematic reveal sequence,
- * including overlay messaging, audio,
- * result animations, and user preferences.
+ * Controls the cinematic reveal sequence.
+ *
+ * Music flow:
+ *
+ * Quiz:
+ *   Loop the neutral World of Fated ambience.
+ *
+ * Cinematic:
+ *   Fade out the quiz ambience and play the cinematic ambience.
+ *
+ * Results:
+ *   Fade out the cinematic ambience and play the dominant
+ *   personality's full character theme.
  */
-
 export class CinematicController {
   constructor(context) {
     this.context = context;
@@ -35,12 +51,14 @@ export class CinematicController {
     this.resultsSection = context.resultsSection;
     this.skipToggle = context.skipToggle;
 
-    this.textElement = this.overlay?.querySelector(".fate-text");
+    this.textElement = this.overlay?.querySelector(".fate-text") ?? null;
 
     this.skipped =
       this.skipToggle?.checked ?? getSkipCinematicPreference(false);
 
-    this._ambientStarted = false;
+    this._cinematicMusicStarted = false;
+    this._characterThemeStarted = false;
+    this._soundToggle = null;
 
     document.body.classList.remove("cinematic-mode");
 
@@ -51,21 +69,37 @@ export class CinematicController {
     return this.context.results?.[0] ?? null;
   }
 
+  /**
+   * Initializes audio and connects the global sound toggle.
+   */
   async setupPreferences() {
     await initializeAudio();
 
-    const soundToggle = document.getElementById("sound-toggle");
+    this._soundToggle = document.getElementById("sound-toggle");
 
-    if (soundToggle) {
-      soundToggle.checked = isSoundEnabled();
+    if (this._soundToggle) {
+      this._soundToggle.checked = isSoundEnabled();
 
-      soundToggle.addEventListener("change", () => {
-        setSoundEnabled(soundToggle.checked);
+      this._soundToggle.addEventListener("change", async () => {
+        const enabled = this._soundToggle.checked;
 
-        if (soundToggle.checked) {
-          playAmbient(this.topResult);
-        } else {
-          stopAmbient();
+        setSoundEnabled(enabled);
+
+        if (!enabled) {
+          await stopCurrentMusic();
+          return;
+        }
+
+        /*
+         * Resume the correct music for the current phase.
+         */
+        if (this._characterThemeStarted) {
+          await this.startCharacterTheme();
+          return;
+        }
+
+        if (this._cinematicMusicStarted) {
+          await playCinematicMusic();
         }
       });
     }
@@ -80,6 +114,42 @@ export class CinematicController {
     }
   }
 
+  /**
+   * Starts the reveal cinematic music once.
+   *
+   * The quiz ambience may be any length. It does not need to be cropped.
+   * The audio controller fades out the currently playing quiz track before
+   * beginning the cinematic track.
+   */
+  async startCinematicMusic() {
+    await this.ready;
+
+    if (this._cinematicMusicStarted) return;
+
+    this._cinematicMusicStarted = true;
+    this._characterThemeStarted = false;
+
+    if (!isSoundEnabled()) return;
+
+    await fadeOutCurrentMusic(900);
+    await playCinematicMusic();
+  }
+
+  /**
+   * Starts the dominant personality's theme.
+   */
+  async startCharacterTheme() {
+    const top = this.topResult;
+
+    if (!top || !isSoundEnabled()) return;
+
+    /*
+     * Prefer the stable personality ID, but allow the full result object
+     * so audioController can also read properties such as themeMusic.
+     */
+    await playCharacterTheme(top);
+  }
+
   async onText(message) {
     await this.ready;
 
@@ -88,10 +158,7 @@ export class CinematicController {
     document.body.classList.add("cinematic-mode");
     this.overlay.classList.remove("hidden");
 
-    if (!this._ambientStarted) {
-      this._ambientStarted = true;
-      playAmbient(this.topResult);
-    }
+    await this.startCinematicMusic();
 
     await crossfadeText(this.textElement, message, {
       skip: this.skipped,
@@ -116,15 +183,15 @@ export class CinematicController {
   }
 
   async onRender() {
-    if (!this.context.results?.length) return;
+    if (!this.context.results?.length || !this.container) return;
 
     renderResults(this.context.results);
     this.applyResultTheme();
 
     this.container
       .querySelectorAll(".result-hero, .result-card")
-      .forEach((el) => {
-        el.classList.remove("reveal");
+      .forEach((element) => {
+        element.classList.remove("reveal");
       });
   }
 
@@ -170,12 +237,16 @@ export class CinematicController {
     `;
 
     const quoteElement = this.textElement.querySelector(".identity-quote");
+
     const portraitElement =
       this.textElement.querySelector(".identity-portrait");
 
     this.textElement.classList.add("show");
 
-    playFinal(top);
+    /*
+     * The former final reveal sound has been removed.
+     * Cinematic ambience continues beneath the identity reveal.
+     */
 
     if (top.quote && quoteElement) {
       await typewriter(quoteElement, `“${top.quote}”`, {
@@ -192,14 +263,15 @@ export class CinematicController {
   }
 
   async onRevealCard(index) {
-    const top = this.topResult;
+    if (!this.container) return;
 
     const hero = this.container.querySelector(".result-hero");
     const cards = this.container.querySelectorAll(".result-card");
     const card = cards[index];
 
-    playReveal(top);
-
+    /*
+     * No reveal sting and no tick sound.
+     */
     hero?.classList.add("reveal");
     card?.classList.add("reveal");
 
@@ -209,42 +281,38 @@ export class CinematicController {
   }
 
   async onRevealAll() {
+    if (!this.container) return;
+
     const cards = this.container.querySelectorAll(".result-card");
+    const interval = this.skipped ? 0 : 140;
 
     cards.forEach((card, index) => {
-      setTimeout(
-        () => {
-          if (index > 0) {
-            playTick(this.topResult);
-            card.classList.add("reveal");
-          }
-        },
-        index * (this.skipped ? 0 : 140),
-      );
+      window.setTimeout(() => {
+        card.classList.add("reveal");
+      }, index * interval);
     });
 
     if (!this.skipped) {
-      await wait(cards.length * 140 + 250);
+      await wait(cards.length * interval + 250);
     }
   }
 
   async onBars() {
+    if (!this.container) return;
+
     const bars = this.container.querySelectorAll(".bar-fill");
+    const interval = this.skipped ? 0 : 100;
 
     bars.forEach((bar, index) => {
       const target = Number(bar.dataset.target || 0);
 
-      setTimeout(
-        () => {
-          playTick(this.topResult);
-          bar.style.width = `${target}%`;
-        },
-        index * (this.skipped ? 0 : 100),
-      );
+      window.setTimeout(() => {
+        bar.style.width = `${target}%`;
+      }, index * interval);
     });
 
     if (!this.skipped) {
-      await wait(bars.length * 100 + 300);
+      await wait(bars.length * interval + 300);
     }
   }
 
@@ -254,11 +322,10 @@ export class CinematicController {
     document.documentElement.style.setProperty("--accent", color);
   }
 
+  /**
+   * Ends the cinematic and begins the results-page character theme.
+   */
   async onHideOverlay() {
-    if (isSoundEnabled()) {
-      stopAmbient();
-    }
-
     this.overlay?.classList.add("hidden");
     document.body.classList.remove("cinematic-mode");
 
@@ -266,6 +333,21 @@ export class CinematicController {
       this.textElement.classList.remove("show");
       this.textElement.innerHTML = "";
     }
+
+    this._cinematicMusicStarted = false;
+    this._characterThemeStarted = true;
+
+    if (!isSoundEnabled()) {
+      await stopCurrentMusic();
+      return;
+    }
+
+    /*
+     * The cinematic track can be longer than the cinematic.
+     * It is faded out here regardless of its total duration.
+     */
+    await fadeOutCurrentMusic(900);
+    await this.startCharacterTheme();
   }
 
   applyResultTheme() {

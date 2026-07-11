@@ -3,19 +3,23 @@ import { playLayeredSound, fadeOutSound, stopSound } from "./soundManager.js";
 import { shouldMuteAudio } from "./deviceAudio.js";
 import { getSoundPreference, setSoundPreference } from "./preferenceManager.js";
 
-let ambientAudio = null;
+let currentMusic = null;
+let currentMusicType = null;
+let currentCharacter = null;
 let soundEnabled = true;
 
-/**
- * Controls the sound,
- * including the audio for each personality,
- */
+const DEFAULT_FADE_OUT_MS = 800;
 
+/**
+ * Initializes the saved sound preference.
+ *
+ * Audio may still require a user interaction before the browser
+ * allows playback.
+ */
 export async function initializeAudio() {
   const shouldMute = await shouldMuteAudio();
 
   soundEnabled = getSoundPreference(!shouldMute);
-
   setSoundPreference(soundEnabled);
 }
 
@@ -23,12 +27,15 @@ export function isSoundEnabled() {
   return soundEnabled;
 }
 
+/**
+ * Enables or disables all background music.
+ */
 export function setSoundEnabled(enabled) {
   soundEnabled = Boolean(enabled);
   setSoundPreference(soundEnabled);
 
   if (!soundEnabled) {
-    stopAmbient();
+    stopCurrentMusic();
   }
 }
 
@@ -36,71 +43,189 @@ function theme(personality) {
   return getSoundTheme(personality);
 }
 
-export function playAmbient(personality) {
-  if (!soundEnabled) return;
+/**
+ * Stops the current music immediately.
+ */
+export function stopCurrentMusic() {
+  if (!currentMusic) {
+    currentMusicType = null;
+    currentCharacter = null;
+    return;
+  }
 
-  const sounds = theme(personality);
+  const audio = currentMusic;
 
-  if (!sounds.ambient) return;
+  currentMusic = null;
+  currentMusicType = null;
+  currentCharacter = null;
 
-  stopAmbient();
+  stopSound(audio);
+}
 
-  ambientAudio = playLayeredSound({
-    src: sounds.ambient,
-    volume: 0.35,
-    loop: true,
-    fadeIn: 1200,
+/**
+ * Fades out the current music, then stops it.
+ */
+export function fadeOutCurrentMusic(durationMs = DEFAULT_FADE_OUT_MS) {
+  return new Promise((resolve) => {
+    if (!currentMusic) {
+      currentMusicType = null;
+      currentCharacter = null;
+      resolve();
+      return;
+    }
+
+    const audio = currentMusic;
+
+    /*
+     * Clear the active reference immediately so another track can
+     * safely begin after this promise resolves.
+     */
+    currentMusic = null;
+    currentMusicType = null;
+    currentCharacter = null;
+
+    fadeOutSound(audio, durationMs);
+
+    window.setTimeout(() => {
+      stopSound(audio);
+      resolve();
+    }, durationMs + 50);
   });
 }
 
-export function stopAmbient() {
-  if (!ambientAudio) return;
+/**
+ * Internal helper for starting a music track.
+ */
+function startMusic({ src, volume, loop, fadeIn, type, characterId = null }) {
+  if (!soundEnabled || !src) return null;
 
-  const current = ambientAudio;
-  ambientAudio = null;
+  stopCurrentMusic();
 
-  fadeOutSound(current, 800);
+  currentMusic = playLayeredSound({
+    src,
+    volume,
+    loop,
+    fadeIn,
+  });
 
-  setTimeout(() => {
-    stopSound(current);
-  }, 850);
+  currentMusicType = type;
+  currentCharacter = characterId;
+
+  return currentMusic;
 }
 
-export function playReveal(personality) {
-  if (!soundEnabled) return;
+/**
+ * Plays the looping World of Fated quiz ambience.
+ *
+ * This expects a world or quiz entry in soundThemes.js.
+ */
+export function playQuizMusic() {
+  if (!soundEnabled) return null;
+
+  const sounds = getSoundTheme("world");
+
+  if (!sounds?.quiz) {
+    console.warn("No quiz music configured at soundThemes.world.quiz.");
+    return null;
+  }
+
+  if (currentMusic && currentMusicType === "quiz") {
+    return currentMusic;
+  }
+
+  return startMusic({
+    src: sounds.quiz,
+    volume: 0.3,
+    loop: true,
+    fadeIn: 1200,
+    type: "quiz",
+  });
+}
+
+/**
+ * Plays the dedicated fate-cinematic ambience.
+ *
+ * It may be longer than the cinematic. CinematicController fades it
+ * out when the sequence ends.
+ */
+export function playCinematicMusic() {
+  if (!soundEnabled) return null;
+
+  const sounds = getSoundTheme("world");
+
+  if (!sounds?.cinematic) {
+    console.warn(
+      "No cinematic music configured at " + "soundThemes.world.cinematic.",
+    );
+    return null;
+  }
+
+  if (currentMusic && currentMusicType === "cinematic") {
+    return currentMusic;
+  }
+
+  return startMusic({
+    src: sounds.cinematic,
+    volume: 0.38,
+    loop: true,
+    fadeIn: 900,
+    type: "cinematic",
+  });
+}
+
+/**
+ * Plays the dominant personality's full theme on the results page.
+ *
+ * The personality may provide themeMusic directly, or soundThemes.js
+ * may define a characterTheme property for that personality.
+ */
+export function playCharacterTheme(personality) {
+  if (!soundEnabled || !personality) return null;
 
   const sounds = theme(personality);
 
-  if (sounds.reveal) {
-    playLayeredSound({
-      src: sounds.reveal,
-      volume: 0.5,
-    });
+  const src =
+    personality.themeMusic ??
+    personality.music ??
+    sounds?.characterTheme ??
+    sounds?.theme ??
+    null;
+
+  if (!src) {
+    console.warn(
+      `No character theme configured for ${
+        personality.id ?? personality.name ?? "unknown personality"
+      }.`,
+    );
+
+    return null;
   }
+
+  const characterId = personality.id ?? personality.name ?? "unknown";
+
+  if (
+    currentMusic &&
+    currentMusicType === "character" &&
+    currentCharacter === characterId
+  ) {
+    return currentMusic;
+  }
+
+  return startMusic({
+    src,
+    volume: 0.42,
+    loop: true,
+    fadeIn: 1000,
+    type: "character",
+    characterId,
+  });
 }
 
-export function playTick(personality) {
-  if (!soundEnabled) return;
-
-  const sounds = theme(personality);
-
-  if (sounds.tick) {
-    playLayeredSound({
-      src: sounds.tick,
-      volume: 0.32,
-    });
-  }
-}
-
-export function playFinal(personality) {
-  if (!soundEnabled) return;
-
-  const sounds = theme(personality);
-
-  if (sounds.final) {
-    playLayeredSound({
-      src: sounds.final,
-      volume: 0.6,
-    });
-  }
+/**
+ * Returns the current music phase.
+ *
+ * Useful when restoring audio after the user unmutes.
+ */
+export function getCurrentMusicType() {
+  return currentMusicType;
 }

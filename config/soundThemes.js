@@ -1,91 +1,84 @@
+/**
+ * Central music configuration.
+ *
+ * Music phases:
+ * - world.quiz: looping music while taking the quiz
+ * - world.cinematic: ambience during the fate reveal cinematic
+ * - characterTheme: dominant character's theme on the results page
+ */
+
 export const DEFAULT_SOUND_THEME = {
-  ambient: "./assets/sounds/ambient-soft.mp3",
-  reveal: "./assets/sounds/reveal-soft.mp3",
-  tick: "./assets/sounds/tick-soft.mp3",
-  final: "./assets/sounds/fate-lock.mp3",
+  characterTheme: null,
 };
 
 export const SOUND_THEMES = {
+  world: {
+    quiz: "./assets/music/joilus.mp3",
+    cinematic: "./assets/music/mount-majesticus.mp3",
+  },
+
   prometheia: {
-    ambient: "./assets/sounds/ambient-warm.mp3",
-    reveal: "./assets/sounds/reveal-soft.mp3",
-    tick: "./assets/sounds/tick-soft.mp3",
-    final: "./assets/sounds/fate-lock.mp3",
+    characterTheme: "./assets/music/characters/prometheia.mp3",
   },
 
   fait: {
-    ambient: "./assets/sounds/ambient-dark.mp3",
-    reveal: "./assets/sounds/reveal-deep.mp3",
-    tick: "./assets/sounds/tick-soft.mp3",
-    final: "./assets/sounds/fate-lock.mp3",
-  },
-
-  faeth: {
-    ambient: "./assets/sounds/ambient-ethereal.mp3",
-    reveal: "./assets/sounds/bell-reveal.mp3",
-    tick: "./assets/sounds/bell-tick.mp3",
-    final: "./assets/sounds/chime-lock.mp3",
-  },
-
-  hoep: {
-    ambient: "./assets/sounds/ambient-bass.mp3",
-    reveal: "./assets/sounds/reveal-heavy.mp3",
-    tick: "./assets/sounds/tick-deep.mp3",
-    final: "./assets/sounds/fate-lock-low.mp3",
+    characterTheme: "./assets/music/characters/fait.mp3",
   },
 
   luv: {
-    ambient: "./assets/sounds/ambient-soft.mp3",
-    reveal: "./assets/sounds/bell-reveal.mp3",
-    tick: "./assets/sounds/bell-tick.mp3",
-    final: "./assets/sounds/fate-lock-soft.mp3",
+    characterTheme: "./assets/music/characters/luv.mp3",
   },
 
   manus: {
-    ambient: "./assets/sounds/ambient-minimal.mp3",
-    reveal: "./assets/sounds/reveal-soft.mp3",
-    tick: "./assets/sounds/tick-soft.mp3",
-    final: "./assets/sounds/fate-lock.mp3",
+    characterTheme: "./assets/music/characters/manus.mp3",
   },
 
   amandas: {
-    ambient: "./assets/sounds/ambient-dream.mp3",
-    reveal: "./assets/sounds/reveal-ethereal.mp3",
-    tick: "./assets/sounds/chime-soft.mp3",
-    final: "./assets/sounds/fate-lock.mp3",
+    characterTheme: "./assets/music/characters/amandas.mp3",
+  },
+
+  faeth: {
+    characterTheme: "./assets/music/characters/faeth.mp3",
+  },
+
+  hoep: {
+    characterTheme: "./assets/music/characters/hoep.mp3",
   },
 
   endeavor: {
-    ambient: "./assets/sounds/ambient-hero.mp3",
-    reveal: "./assets/sounds/reveal-bright.mp3",
-    tick: "./assets/sounds/tick-bright.mp3",
-    final: "./assets/sounds/fate-lock.mp3",
+    characterTheme: "./assets/music/characters/endeavor.mp3",
   },
 
   justene: {
-    ambient: "./assets/sounds/ambient-pop.mp3",
-    reveal: "./assets/sounds/reveal-pop.mp3",
-    tick: "./assets/sounds/tick-pop.mp3",
-    final: "./assets/sounds/fate-lock-pop.mp3",
+    characterTheme: "./assets/music/characters/justene.mp3",
   },
 
   rip: {
-    ambient: "./assets/sounds/ambient-tense.mp3",
-    reveal: "./assets/sounds/reveal-danger.mp3",
-    tick: "./assets/sounds/tick-dark.mp3",
-    final: "./assets/sounds/fate-lock-heavy.mp3",
+    characterTheme: "./assets/music/characters/rip.mp3",
   },
 };
 
+/**
+ * Returns the sound configuration for a personality or global music phase.
+ *
+ * Accepts:
+ * - a string such as "world" or "prometheia"
+ * - a personality object containing id, slug, or key
+ */
 export function getSoundTheme(personality) {
   if (!personality) {
     return DEFAULT_SOUND_THEME;
   }
 
-  return (
-    SOUND_THEMES[personality.id] ??
-    SOUND_THEMES[personality.slug] ??
-    SOUND_THEMES[personality.key] ??
-    DEFAULT_SOUND_THEME
-  );
+  if (typeof personality === "string") {
+    return SOUND_THEMES[personality] ?? DEFAULT_SOUND_THEME;
+  }
+
+  const id = personality.id ?? personality.slug ?? personality.key ?? null;
+
+  if (!id) {
+    return DEFAULT_SOUND_THEME;
+  }
+
+  return SOUND_THEMES[id] ?? DEFAULT_SOUND_THEME;
 }
