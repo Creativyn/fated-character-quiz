@@ -2,11 +2,123 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Fated Character Quiz</title>
 
     <link rel="stylesheet" href="./style.css" />
+
+    <!--
+      These layout overrides keep the music controls centered
+      and reduce the large gap beneath the page title.
+
+      They may later be moved into style.css without changing
+      the HTML structure.
+    -->
+    <style>
+      .header {
+        padding-bottom: 0.75rem;
+      }
+
+      .header h1 {
+        margin-bottom: 0;
+      }
+
+      #app {
+        padding-top: 0.5rem;
+      }
+
+      .screen-toolbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        margin: 0 auto 1.5rem;
+      }
+
+      #quiz-section .screen-toolbar {
+        margin-top: 0;
+        margin-bottom: 1rem;
+      }
+
+      #results-section .screen-toolbar {
+        margin-top: 0;
+        margin-bottom: 2rem;
+      }
+
+      .music-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+
+        min-height: 44px;
+        padding: 0.55rem 1rem;
+
+        border: 1px solid rgba(0, 0, 0, 0.14);
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+
+        color: inherit;
+        font: inherit;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+          background 0.2s ease,
+          opacity 0.2s ease,
+          transform 0.15s ease;
+      }
+
+      .music-toggle:hover {
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .music-toggle:active {
+        transform: scale(0.97);
+      }
+
+      .music-toggle[aria-pressed="false"] {
+        opacity: 0.7;
+      }
+
+      .music-toggle:focus-visible {
+        outline: 3px solid var(--accent, #566fb8);
+        outline-offset: 3px;
+      }
+
+      .progress-wrapper {
+        margin-top: 0;
+      }
+
+      .quiz-preferences {
+        margin-top: 1.5rem;
+      }
+
+      @media (max-width: 600px) {
+        .header {
+          padding-bottom: 0.5rem;
+        }
+
+        #app {
+          padding-top: 0.25rem;
+        }
+
+        .screen-toolbar {
+          margin-bottom: 1.25rem;
+        }
+
+        #results-section .screen-toolbar {
+          margin-bottom: 1.5rem;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -25,21 +137,34 @@
         aria-labelledby="quiz-title"
       >
         <h2 id="quiz-title" class="sr-only">Personality Quiz</h2>
-        <button
-          id="quiz-music-toggle"
-          class="music-toggle"
-          type="button"
-          aria-pressed="true"
+
+        <!-- Quiz music control -->
+
+        <div
+          class="screen-toolbar quiz-toolbar"
+          aria-label="Quiz music controls"
         >
-          🔊 Music on
-        </button>
+          <button
+            id="quiz-music-toggle"
+            class="music-toggle"
+            type="button"
+            aria-pressed="true"
+          >
+            🔊 Music on
+          </button>
+        </div>
 
         <!-- Progress -->
 
         <div class="progress-wrapper">
           <label class="progress-label" for="quiz-progress"> Progress </label>
 
-          <progress id="quiz-progress" value="0" max="100" aria-live="polite">
+          <progress
+            id="quiz-progress"
+            value="0"
+            max="100"
+            aria-describedby="progress-text"
+          >
             0%
           </progress>
 
@@ -48,23 +173,23 @@
           </div>
         </div>
 
-        <!-- VN Scene -->
+        <!-- VN question scene -->
 
         <section id="scene-container" aria-live="polite"></section>
+
+        <!-- Quiz preferences -->
+
+        <div class="quiz-preferences">
+          <label class="quiz-toggle">
+            <input type="checkbox" id="skip-cinematic" />
+
+            <span>Skip cinematic reveal</span>
+          </label>
+        </div>
       </section>
 
-      <!-- Quiz Preferences -->
-
-      <div class="quiz-preferences">
-        <label class="quiz-toggle">
-          <input type="checkbox" id="skip-cinematic" />
-
-          <span>Skip cinematic reveal</span>
-        </label>
-      </div>
-
       <!-- =====================================================
-           RESULTS
+           RESULTS SCREEN
       ====================================================== -->
 
       <section
@@ -73,36 +198,28 @@
         aria-labelledby="results-title"
       >
         <h2 id="results-title" class="sr-only">Quiz Results</h2>
-        <button
-          id="results-music-toggle"
-          class="music-toggle"
-          type="button"
-          aria-pressed="true"
+
+        <!-- Results music control -->
+
+        <div
+          class="screen-toolbar results-toolbar"
+          aria-label="Results music controls"
         >
-          🔊 Music on
-        </button>
-
-        <!-- Cinematic Overlay -->
-
-        <div id="fate-overlay" class="fate-overlay hidden" aria-live="polite">
-          <div class="fate-overlay-content">
-            <div class="fate-text"></div>
-
-            <div class="overlay-controls">
-              <label class="overlay-toggle">
-                <input type="checkbox" id="sound-toggle" checked />
-
-                <span>🔊 Sound</span>
-              </label>
-            </div>
-          </div>
+          <button
+            id="results-music-toggle"
+            class="music-toggle"
+            type="button"
+            aria-pressed="true"
+          >
+            🔊 Music on
+          </button>
         </div>
 
-        <!-- Results -->
+        <!-- Rendered quiz results -->
 
         <div id="results-container"></div>
 
-        <!-- Buttons -->
+        <!-- Result actions -->
 
         <div class="results-actions">
           <button id="home-btn" type="button">Return to Quizzes</button>
@@ -116,6 +233,21 @@
           <button id="print-btn" type="button">Print</button>
         </div>
       </section>
+
+      <!-- =====================================================
+           CINEMATIC OVERLAY
+      ====================================================== -->
+
+      <div
+        id="fate-overlay"
+        class="fate-overlay hidden"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="fate-overlay-content">
+          <div class="fate-text"></div>
+        </div>
+      </div>
     </main>
 
     <script type="module" src="./script.js"></script>

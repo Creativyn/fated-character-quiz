@@ -846,31 +846,50 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 
   min-height: 44px;
-  padding: 0.55rem 0.9rem;
+  padding: 0.55rem 1rem;
 
-  border: 1px solid rgba(0, 0, 0, 0.25);
+  margin-bottom: 1.5rem; /* More space below the button */
+
+  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.8);
-  color: inherit;
+  background: rgba(255, 255, 255, 0.45); /* Match the softer toggle look */
+  backdrop-filter: blur(8px);
 
+  color: #222;
   font: inherit;
   font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.15s ease;
 }
 
 .music-toggle:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.6);
 }
 
-.music-toggle:focus-visible {
-  outline: 3px solid var(--accent, #566fb8);
-  outline-offset: 3px;
+.music-toggle:active {
+  transform: scale(0.97);
 }
 
 .music-toggle[aria-pressed="false"] {
-  opacity: 0.75;
+  opacity: 0.7;
+}
+
+.music-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.results-toolbar {
+  display: flex;
+  justify-content: flex-start;
+
+  margin-bottom: 1.75rem;
 }
