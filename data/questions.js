@@ -323,7 +323,7 @@ export const QUESTIONS = [
         value: "justene",
       },
       {
-        text: "Who as time for vacations? Too many deals going forward.",
+        text: "Who has time for vacations? Too many deals going forward.",
         value: "rip",
       },
       {
