@@ -672,12 +672,9 @@ button:disabled {
   color: var(--cinematic-color, #fff);
 
   font-size: clamp(1.25rem, 3vw, 2rem);
-  font-weight: 800;
+  font-style: italic;
+  font-weight: 700;
 
-  /*
-   * No border, pill, button background, or white outline.
-   * Only a restrained dark shadow for contrast.
-   */
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.92);
 }
 

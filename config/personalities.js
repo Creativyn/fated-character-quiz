@@ -10,7 +10,6 @@ export const PERSONALITIES = [
     quote:
       "I am a free spirit. I have a right to make my way through these woods.",
     color: "#27AE60",
-    accent: "#7DCEA0",
     cinematicColor: "#8EF0B0",
     heroColor: "#31B965",
     cardAccent: "#42E47C",
@@ -25,10 +24,9 @@ export const PERSONALITIES = [
     quote:
       "I am an overseer, nothing more. I keep things in balance as best I can.",
     color: "#676d6d",
-    accent: "#514c5a",
-    cinematicColor: "#D7D9DE",
-    heroColor: "#6B6F78",
-    cardAccent: "#C1C4CC",
+    cinematicColor: "#A9B0BA",
+    heroColor: "#596474",
+    cardAccent: "#7E8794",
     portrait: "assets/portraits/fait.png",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
@@ -39,11 +37,10 @@ export const PERSONALITIES = [
     heading: "The Innocent Believer",
     quote:
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
-    color: "#ffffff",
-    accent: "#adb8bd",
-    cinematicColor: "#ffffff",
-    heroColor: "#adb8bd",
-    cardAccent: "#adb8bd",
+    color: "#FFFFFF",
+    cinematicColor: "#F5F7FF",
+    heroColor: "#DDE3F0",
+    cardAccent: "#FFFFFF",
     portrait: "assets/portraits/faeth.png",
     description:
       "You are highly intuitive. Your mystical spirit allows you to heal others through song and silent prayer. You will never allow any harm to come to your family and will do anything to keep them safe. Although sweetly innocent, tiny, and cute, you demonstrate great strength when dealing with those who suffer. Your presence in someone’s life provides them with the inspiration to accomplish any task, endure any hardship.",
@@ -55,7 +52,6 @@ export const PERSONALITIES = [
     quote:
       "I can see that you believe in justice, but what about redemption, Theia? Do you not believe in the spirit of redemption?",
     color: "#4f1181",
-    accent: "#803db6",
     cinematicColor: "#803db6",
     heroColor: "#4f1181",
     cardAccent: "#4f1181",
@@ -69,7 +65,6 @@ export const PERSONALITIES = [
     heading: "The Sympathetic Heart",
     quote: "Now, never mind, sweet one, Luv will find a way. I always do.",
     color: "#E91E63",
-    accent: "#e44b7e",
     cinematicColor: "#e44b7e",
     heroColor: "#E91E63",
     cardAccent: "#E91E63",
@@ -83,7 +78,6 @@ export const PERSONALITIES = [
     heading: "The Loyal Friend",
     quote: "It is okay. We [[will]] beat the odds. Do not worry.",
     color: "#523817",
-    accent: "#81653f",
     cinematicColor: "#81653f",
     heroColor: "#523817",
     cardAccent: "#523817",
@@ -97,7 +91,6 @@ export const PERSONALITIES = [
     heading: "The Devoted Lover",
     quote: "Oh, Manny, I wanted you so. I gave up my home...my ways.",
     color: "#ab4dbe",
-    accent: "#cf76e0",
     cinematicColor: "#cf76e0",
     heroColor: "#ab4dbe",
     cardAccent: "#ab4dbe",
@@ -111,7 +104,6 @@ export const PERSONALITIES = [
     heading: "The Community Leader",
     quote: "It is just a dream right now. But I am working on it, bit by bit.",
     color: "#bdc022",
-    accent: "#bdc022",
     cinematicColor: "#bdc022",
     heroColor: "#bdc022",
     cardAccent: "#bdc022",
@@ -126,7 +118,6 @@ export const PERSONALITIES = [
     quote:
       "I just want to live my life as best I can without all the games. And I want to start helping others, too – not just myself.",
     color: "#e535a1",
-    accent: "#e469b5",
     cinematicColor: "#e469b5",
     heroColor: "#e535a1",
     cardAccent: "#e535a1",
@@ -141,7 +132,6 @@ export const PERSONALITIES = [
     quote:
       "Most people do not even realize what they are missing until I tell them.",
     color: "#E67E22",
-    accent: "#F5B041",
     cinematicColor: "#F5B041",
     heroColor: "#2e0c01",
     cardAccent: "#2e0c01",

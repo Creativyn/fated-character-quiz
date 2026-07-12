@@ -155,8 +155,7 @@ export class CinematicController {
   async onRevealIdentity() {
     const top = this.topResult;
 
-    const cinematicColor =
-      top?.cinematicColor || top?.accent || top?.color || "#ffffff";
+    const cinematicColor = top?.cinematicColor || top?.color || "#ffffff";
 
     if (!this.textElement || !top) return;
 

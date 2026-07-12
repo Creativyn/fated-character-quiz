@@ -4,21 +4,11 @@ const DEFAULT_HERO_COLOR = "#566fb8";
 const DEFAULT_CARD_ACCENT = "#ffffff";
 
 function getHeroColor(personality) {
-  return (
-    personality?.heroColor ||
-    personality?.accent ||
-    personality?.color ||
-    DEFAULT_HERO_COLOR
-  );
+  return personality?.heroColor || personality?.color || "#566fb8";
 }
 
 function getCardAccent(personality) {
-  return (
-    personality?.cardAccent ||
-    personality?.accent ||
-    personality?.color ||
-    DEFAULT_CARD_ACCENT
-  );
+  return personality?.cardAccent || personality?.color || "#ffffff";
 }
 
 export function renderResults(results) {
