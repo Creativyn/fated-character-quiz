@@ -693,7 +693,7 @@ button:disabled {
   line-height: 1;
 
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.35),
+    0 1px 0 #fff,
     0 0 18px
       color-mix(in srgb, var(--personality-accent, #fff), transparent 35%),
     0 0 42px color-mix(in srgb, var(--personality-color, #fff), transparent 55%);
