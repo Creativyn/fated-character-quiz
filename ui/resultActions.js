@@ -1,7 +1,13 @@
 import { VNState } from "../vn/VNState.js";
 import { generateResultCard } from "../utils/shareCard.js";
 
-export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
+/*
+ * Replace these with your actual Wix pages.
+ */
+const HOME_URL = "https://avicornpress.com/quizzes";
+const EXPLORE_URL = "https://avicornpress.com/characters";
+
+export function initResultButtons({ onRetake } = {}) {
   const retakeBtn = document.getElementById("retake-btn");
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
@@ -16,20 +22,18 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
     window.print();
   });
 
+  /*
+   * Return to your Wix homepage.
+   */
   homeBtn?.addEventListener("click", () => {
-    if (onHome) {
-      onHome();
-    } else {
-      window.location.href = "./";
-    }
+    window.location.href = HOME_URL;
   });
 
+  /*
+   * Go to your Wix Characters page.
+   */
   exploreBtn?.addEventListener("click", () => {
-    if (onExplore) {
-      onExplore();
-    } else {
-      window.location.href = "./characters";
-    }
+    window.location.href = EXPLORE_URL;
   });
 
   shareBtn?.addEventListener("click", async () => {
@@ -59,7 +63,9 @@ export function initResultButtons({ onRetake, onHome, onExplore } = {}) {
             const blob = await (await fetch(portrait)).blob();
 
             data.files = [
-              new File([blob], "result.png", { type: "image/png" }),
+              new File([blob], "result.png", {
+                type: "image/png",
+              }),
             ];
           } catch (_) {
             // Ignore portrait failures and share text instead.
