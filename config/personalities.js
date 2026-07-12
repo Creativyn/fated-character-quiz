@@ -21,8 +21,8 @@ export const PERSONALITIES = [
     heading: "The Charming Taskmaster",
     quote:
       "I am an overseer, nothing more. I keep things in balance as best I can.",
-    color: "#3dc5c5",
-    accent: "#363838",
+    color: "#676d6d",
+    accent: "#5b5f5f",
     portrait: "assets/portraits/fait.png",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
