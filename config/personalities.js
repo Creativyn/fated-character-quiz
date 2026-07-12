@@ -33,7 +33,7 @@ export const PERSONALITIES = [
     heading: "The Innocent Believer",
     quote:
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
-    color: "#9c9c9c",
+    color: "#85878f",
     accent: "#adb8bd",
     portrait: "assets/portraits/faeth.png",
     description:
