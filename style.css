@@ -575,14 +575,14 @@ button:disabled {
 .result-hero-heading {
   margin: 0;
 
-  color: var(--personality-color);
+  color: #222;
 
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 800;
 
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.55),
-    0 0 10px color-mix(in srgb, var(--personality-accent), transparent 65%);
+    0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 8px color-mix(in srgb, var(--personality-color), transparent 60%);
 }
 
 .result-hero-quote {
@@ -685,7 +685,7 @@ button:disabled {
 .identity-name {
   margin: 0;
 
-  color: var(--personality-color, #fff);
+  color: #fff;
 
   overflow-wrap: anywhere;
 
@@ -693,19 +693,35 @@ button:disabled {
   line-height: 1;
 
   text-shadow:
-    0 1px 0 #fff,
-    0 0 18px
-      color-mix(in srgb, var(--personality-accent, #fff), transparent 35%),
-    0 0 42px color-mix(in srgb, var(--personality-color, #fff), transparent 55%);
+    0 2px 3px rgba(0, 0, 0, 0.9),
+    0 0 14px color-mix(in srgb, var(--personality-color, #fff), transparent 25%),
+    0 0 34px
+      color-mix(in srgb, var(--personality-accent, #fff), transparent 45%);
 }
 
 .identity-heading {
   margin: 0;
 
-  color: var(--personality-color, var(--accent));
+  display: inline-block;
+
+  padding: 0.25rem 0.65rem;
+
+  border-radius: 999px;
+
+  color: #fff;
+
+  background: color-mix(in srgb, var(--personality-color, #566fb8), black 45%);
+
+  border: 1px solid
+    color-mix(in srgb, var(--personality-color, #fff), white 30%);
 
   font-size: clamp(1.25rem, 3vw, 2rem);
-  font-weight: 700;
+  font-weight: 800;
+
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+
+  box-shadow: 0 0 14px
+    color-mix(in srgb, var(--personality-accent, #fff), transparent 60%);
 }
 
 .identity-quote {
