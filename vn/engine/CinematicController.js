@@ -3,7 +3,6 @@ import { typewriterRichText } from "../../utils/richText.js";
 import { crossfadeText } from "../effects/crossfadeText.js";
 
 import {
-  isSoundEnabled,
   crossfadeToCinematicMusic,
   crossfadeToCharacterTheme,
 } from "../../utils/audioController.js";
@@ -27,10 +26,10 @@ const wait = (ms) =>
  *   Loop the neutral World of Fated ambience.
  *
  * Cinematic:
- *   Fade out the quiz ambience and play the cinematic ambience.
+ *   Crossfade from quiz ambience to cinematic ambience.
  *
  * Results:
- *   Fade out the cinematic ambience and play the dominant
+ *   Crossfade from cinematic ambience to the dominant
  *   personality's full character theme.
  */
 export class CinematicController {
@@ -49,7 +48,6 @@ export class CinematicController {
 
     this._cinematicMusicStarted = false;
     this._characterThemeStarted = false;
-    this._soundToggle = null;
 
     document.body.classList.remove("cinematic-mode");
 
@@ -61,25 +59,21 @@ export class CinematicController {
   }
 
   /**
-   * Initializes audio and connects the global sound toggle.
+   * Connects the saved skip-cinematic preference.
    */
   async setupPreferences() {
-    if (this.skipToggle) {
-      this.skipped = this.skipToggle.checked;
+    if (!this.skipToggle) return;
 
-      this.skipToggle.addEventListener("change", () => {
-        this.skipped = this.skipToggle.checked;
-        setSkipCinematicPreference(this.skipped);
-      });
-    }
+    this.skipped = this.skipToggle.checked;
+
+    this.skipToggle.addEventListener("change", () => {
+      this.skipped = this.skipToggle.checked;
+      setSkipCinematicPreference(this.skipped);
+    });
   }
 
   /**
-   * Starts the reveal cinematic music once.
-   *
-   * The quiz ambience may be any length. It does not need to be cropped.
-   * The audio controller fades out the currently playing quiz track before
-   * beginning the cinematic track.
+   * Starts the cinematic ambience once.
    */
   async startCinematicMusic() {
     await this.ready;
@@ -89,22 +83,7 @@ export class CinematicController {
     this._cinematicMusicStarted = true;
     this._characterThemeStarted = false;
 
-    await crossfadeToCinematicMusic(1000);
-  }
-
-  /**
-   * Starts the dominant personality's theme.
-   */
-  async startCharacterTheme() {
-    const top = this.topResult;
-
-    if (!top || !isSoundEnabled()) return;
-
-    /*
-     * Prefer the stable personality ID, but allow the full result object
-     * so audioController can also read properties such as themeMusic.
-     */
-    await playCharacterTheme(top);
+    crossfadeToCinematicMusic(1000);
   }
 
   async onText(message) {
@@ -136,11 +115,13 @@ export class CinematicController {
       await wait(300);
     }
 
-    this.textElement.innerHTML = "";
+    this.textElement.replaceChildren();
   }
 
   async onRender() {
-    if (!this.context.results?.length || !this.container) return;
+    if (!this.context.results?.length || !this.container) {
+      return;
+    }
 
     renderResults(this.context.results);
     this.applyResultTheme();
@@ -155,12 +136,12 @@ export class CinematicController {
   async onRevealIdentity() {
     const top = this.topResult;
 
-    const cinematicColor = top?.cinematicColor || top?.color || "#ffffff";
-
     if (!this.textElement || !top) return;
 
+    const cinematicColor = top.cinematicColor || top.color || "#ffffff";
+
     this.textElement.classList.remove("show");
-    this.textElement.innerHTML = "";
+    this.textElement.replaceChildren();
 
     if (!this.skipped) {
       await wait(250);
@@ -168,11 +149,23 @@ export class CinematicController {
 
     this.textElement.innerHTML = `
       <div class="identity-reveal">
-        <p class="identity-kicker">You are most like...</p>
+        <p class="identity-kicker">
+          You are most like...
+        </p>
 
-        <h2 class="identity-name">${top.name}</h2>
+        <h2 class="identity-name">
+          ${top.name}
+        </h2>
 
-        ${top.heading ? `<p class="identity-heading">${top.heading}</p>` : ""}
+        ${
+          top.heading
+            ? `
+              <p class="identity-heading">
+                ${top.heading}
+              </p>
+            `
+            : ""
+        }
 
         ${top.quote ? `<p class="identity-quote"></p>` : ""}
 
@@ -200,21 +193,12 @@ export class CinematicController {
     const portraitElement =
       this.textElement.querySelector(".identity-portrait");
 
-    this.textElement.classList.add("show");
-
+    /*
+     * The cinematic title has its own independent color.
+     */
     this.textElement.style.setProperty("--cinematic-color", cinematicColor);
 
-    this.textElement.style.setProperty("--personality-color", personalityColor);
-
-    this.textElement.style.setProperty(
-      "--personality-accent",
-      personalityAccent,
-    );
-
-    /*
-     * The former final reveal sound has been removed.
-     * Cinematic ambience continues beneath the identity reveal.
-     */
+    this.textElement.classList.add("show");
 
     if (top.quote && quoteElement) {
       await typewriterRichText(quoteElement, top.quote, {
@@ -236,12 +220,11 @@ export class CinematicController {
     if (!this.container) return;
 
     const hero = this.container.querySelector(".result-hero");
+
     const cards = this.container.querySelectorAll(".result-card");
+
     const card = cards[index];
 
-    /*
-     * No reveal sting and no tick sound.
-     */
     hero?.classList.add("reveal");
     card?.classList.add("reveal");
 
@@ -254,6 +237,7 @@ export class CinematicController {
     if (!this.container) return;
 
     const cards = this.container.querySelectorAll(".result-card");
+
     const interval = this.skipped ? 0 : 140;
 
     cards.forEach((card, index) => {
@@ -271,6 +255,7 @@ export class CinematicController {
     if (!this.container) return;
 
     const bars = this.container.querySelectorAll(".bar-fill");
+
     const interval = this.skipped ? 0 : 100;
 
     bars.forEach((bar, index) => {
@@ -293,7 +278,8 @@ export class CinematicController {
   }
 
   /**
-   * Ends the cinematic and begins the results-page character theme.
+   * Hides the cinematic and begins the dominant
+   * character's results-page theme.
    */
   async onHideOverlay() {
     this.overlay?.classList.add("hidden");
@@ -301,33 +287,27 @@ export class CinematicController {
 
     if (this.textElement) {
       this.textElement.classList.remove("show");
-      this.textElement.innerHTML = "";
+      this.textElement.replaceChildren();
     }
 
     this._cinematicMusicStarted = false;
     this._characterThemeStarted = true;
 
-    crossfadeToCharacterTheme(this.topResult, 1400);
-
     /*
-     * The character theme begins while the cinematic track fades away.
-     * This avoids the abrupt stop that occurred previously.
+     * Call this only once. The function handles both
+     * fading out the cinematic and fading in the theme.
      */
-    await crossfadeToCharacterTheme(this.topResult, 1400);
+    crossfadeToCharacterTheme(this.topResult, 1400);
   }
 
   applyResultTheme() {
     const top = this.topResult;
 
-    const personalityColor = top?.color || top?.accent || "#ffffff";
-
-    const personalityAccent = top?.accent || top?.color || "#b4aff3";
-
     if (!top) return;
 
     document.documentElement.style.setProperty(
       "--accent",
-      top.accent || top.color || "#60a5fa",
+      top.heroColor || top.color || "#60a5fa",
     );
 
     document.documentElement.style.setProperty(

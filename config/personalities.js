@@ -26,7 +26,7 @@ export const PERSONALITIES = [
     color: "#676d6d",
     cinematicColor: "#A9B0BA",
     heroColor: "#596474",
-    cardAccent: "#7E8794",
+    cardAccent: "#959fad",
     portrait: "assets/portraits/fait.png",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
@@ -39,7 +39,7 @@ export const PERSONALITIES = [
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
     color: "#FFFFFF",
     cinematicColor: "#F5F7FF",
-    heroColor: "#DDE3F0",
+    heroColor: "#afb5be",
     cardAccent: "#FFFFFF",
     portrait: "assets/portraits/faeth.png",
     description:
@@ -54,7 +54,7 @@ export const PERSONALITIES = [
     color: "#4f1181",
     cinematicColor: "#803db6",
     heroColor: "#4f1181",
-    cardAccent: "#4f1181",
+    cardAccent: "#6b1181",
     portrait: "assets/portraits/hoep.png",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
@@ -65,9 +65,9 @@ export const PERSONALITIES = [
     heading: "The Sympathetic Heart",
     quote: "Now, never mind, sweet one, Luv will find a way. I always do.",
     color: "#E91E63",
-    cinematicColor: "#e44b7e",
-    heroColor: "#E91E63",
-    cardAccent: "#E91E63",
+    cinematicColor: "#ff5cc9",
+    heroColor: "#ec3eb2",
+    cardAccent: "#eb2c6c",
     portrait: "assets/portraits/luv.png",
     description:
       "Big and Beautiful. You are filled with love to the bursting. Your empathy literally drives you to tears when sensing someone’s heartache. You enjoy making people happy with your home-baked goodies and mugs of hot cocoa. Your home is as cozy, warm, and welcoming as you are. You share a special relationship with your secret diary and enjoy all the sweet banter between you. You are undoubtedly the most compassionate and loving person in the universe. Need a hug?",
@@ -79,7 +79,7 @@ export const PERSONALITIES = [
     quote: "It is okay. We [[will]] beat the odds. Do not worry.",
     color: "#523817",
     cinematicColor: "#81653f",
-    heroColor: "#523817",
+    heroColor: "#6e4b1d",
     cardAccent: "#523817",
     portrait: "assets/portraits/manus.png",
     description:
@@ -104,8 +104,8 @@ export const PERSONALITIES = [
     heading: "The Community Leader",
     quote: "It is just a dream right now. But I am working on it, bit by bit.",
     color: "#bdc022",
-    cinematicColor: "#bdc022",
-    heroColor: "#bdc022",
+    cinematicColor: "#eaee1b",
+    heroColor: "#d0d317",
     cardAccent: "#bdc022",
     portrait: "assets/portraits/endeavor.png",
     description:
@@ -120,7 +120,7 @@ export const PERSONALITIES = [
     color: "#e535a1",
     cinematicColor: "#e469b5",
     heroColor: "#e535a1",
-    cardAccent: "#e535a1",
+    cardAccent: "#d11488",
     portrait: "assets/portraits/justene.png",
     description:
       "You enjoy being the center of attention, the most popular person in school. Your vibrant personality and strong reactions certainly get you noticed, but your desire for constant celebrity may lead to trouble. You are passionate about your likes and dislikes. Having a great time and making much of yourself consume your day, but you are working on this…trying to give more to others while discovering who you really are. Besides, who knew helping out in the community could be so fun?",
@@ -133,7 +133,7 @@ export const PERSONALITIES = [
       "Most people do not even realize what they are missing until I tell them.",
     color: "#E67E22",
     cinematicColor: "#F5B041",
-    heroColor: "#2e0c01",
+    heroColor: "#F5B041",
     cardAccent: "#2e0c01",
     portrait: "assets/portraits/rip.png",
     description:
