@@ -82,11 +82,10 @@ export function renderResults(results) {
 
     const accent = personality.accent || personality.color || "#60a5fa";
 
-    console.log(personality.name, personality.accent, personality.color);
-
     const percent = Number(personality.percent ?? 0);
 
     card.style.setProperty("--accent", accent);
+    card.style.borderRightColor = accent;
 
     const headingMarkup = personality.heading
       ? `
@@ -109,16 +108,20 @@ export function renderResults(results) {
 
       ${headingMarkup}
 
-      <div class="bar">
-        <div
-          class="bar-fill"
-          data-target="${percent}"
-          style="width: 0%; background: ${accent};"
-        ></div>
-      </div>
+      <div
+  class="bar-fill"
+  data-target="${percent}"
+  style="width:0%;"
+></div>
 
       ${descriptionMarkup}
     `;
+
+    const heading = card.querySelector(".result-card-heading");
+
+    if (heading) {
+      heading.style.color = accent;
+    }
 
     if (index === 0 && personality.description) {
       const descriptionElement = card.querySelector(".result-description");
@@ -128,4 +131,10 @@ export function renderResults(results) {
 
     container.appendChild(card);
   });
+
+  const fill = card.querySelector(".bar-fill");
+
+  if (fill) {
+    fill.style.backgroundColor = accent;
+  }
 }
