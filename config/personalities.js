@@ -21,7 +21,7 @@ export const PERSONALITIES = [
     heading: "The Charming Taskmaster",
     quote:
       "I am an overseer, nothing more. I keep things in balance as best I can.",
-    color: "#455A64",
+    color: "#393f42",
     accent: "#455A64",
     portrait: "assets/portraits/fait.png",
     description:
@@ -45,7 +45,7 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote:
       "I can see that you believe in justice, but what about redemption, Theia? Do you not believe in the spirit of redemption?",
-    color: "#8E44AD",
+    color: "#803db6",
     accent: "#803db6",
     portrait: "assets/portraits/hoep.png",
     description:
@@ -78,8 +78,8 @@ export const PERSONALITIES = [
     name: "Amandas",
     heading: "The Devoted Lover",
     quote: "Oh, Manny, I wanted you so. I gave up my home...my ways.",
-    color: "#00ACC1",
-    accent: "#4DD0E1",
+    color: "#ab4dbe",
+    accent: "#cf76e0",
     portrait: "assets/portraits/amandas.png",
     description:
       "You are an ethereal spirit who seems out of place in your surroundings, but you are devoted to your soulmate and could not live without that person. You enjoy selling your homegrown produce and homemade jellies and jams, but you also sometimes steal away to dance by moonlight deep in the nearby woods. You want to learn quilting, raise children, and bake homemade bread, but your heart also soars with the butterflies that flutter and twirl over the nearby meadows.",
@@ -89,8 +89,8 @@ export const PERSONALITIES = [
     name: "Endeavor",
     heading: "The Community Leader",
     quote: "It is just a dream right now. But I am working on it, bit by bit.",
-    color: "#2980B9",
-    accent: "#85C1E9",
+    color: "#bdc022",
+    accent: "#bdc022",
     portrait: "assets/portraits/endeavor.png",
     description:
       "An enterprising philanthropist, your involvement in the community’s welfare is the focus of your life. As a licensed apothecary, you are ever ready to come to the aid of those in need. You are truly interested in making people’s dreams come true and bettering their lives. Your generosity and goodhearted nature make you beloved in your community. Everyone feels comfortable and at home in your presence. Unfortunately, your naivety could make you fall prey to the unscrupulous.",
