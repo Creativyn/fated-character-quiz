@@ -34,7 +34,7 @@ export const PERSONALITIES = [
     quote:
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
     color: "#9ea8ad",
-    accent: "#c8d6dd",
+    accent: "#adb8bd",
     portrait: "assets/portraits/faeth.png",
     description:
       "You are highly intuitive. Your mystical spirit allows you to heal others through song and silent prayer. You will never allow any harm to come to your family and will do anything to keep them safe. Although sweetly innocent, tiny, and cute, you demonstrate great strength when dealing with those who suffer. Your presence in someone’s life provides them with the inspiration to accomplish any task, endure any hardship.",
