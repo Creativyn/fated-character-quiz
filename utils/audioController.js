@@ -1,6 +1,11 @@
 import { getSoundTheme } from "../config/soundThemes.js";
 
-import { playLayeredSound, fadeOutSound, stopSound } from "./soundManager.js";
+import {
+  playLayeredSound,
+  fadeOutSound,
+  stopSound,
+  preloadSounds,
+} from "./soundManager.js";
 
 import { shouldMuteAudio } from "./deviceAudio.js";
 
@@ -20,6 +25,10 @@ export async function initializeAudio() {
 
   soundEnabled = getSoundPreference(!shouldMute);
   setSoundPreference(soundEnabled);
+
+  const worldTheme = getSoundTheme("world");
+
+  preloadSounds([worldTheme?.quiz, worldTheme?.cinematic]);
 }
 
 export function isSoundEnabled() {

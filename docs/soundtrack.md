@@ -81,7 +81,7 @@ The motif should be recognizable while remaining emotionally unique for every ch
 
 ---
 
-# Prometheia Alystarus
+# Prometheia Alystaris
 
 Theme
 
@@ -281,7 +281,7 @@ Warm strings
 
 ---
 
-# Manus Alystarus
+# Manus Alystaris
 
 Theme
 

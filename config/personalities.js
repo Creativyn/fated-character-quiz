@@ -5,7 +5,7 @@
 export const PERSONALITIES = [
   {
     id: "prometheia",
-    name: "Prometheia Alystarus",
+    name: "Prometheia Alystaris",
     heading: "The Foxy Trickster",
     quote:
       "I am a free spirit. I have a right to make my way through these woods.",
@@ -33,7 +33,7 @@ export const PERSONALITIES = [
     heading: "The Innocent Believer",
     quote:
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
-    color: "#85878f",
+    color: "#ffffff",
     accent: "#adb8bd",
     portrait: "assets/portraits/faeth.png",
     description:
@@ -64,7 +64,7 @@ export const PERSONALITIES = [
   },
   {
     id: "manus",
-    name: "Manus Alystarus",
+    name: "Manus Alystaris",
     heading: "The Loyal Friend",
     quote: "It is okay. We [[will]] beat the odds. Do not worry.",
     color: "#523817",
