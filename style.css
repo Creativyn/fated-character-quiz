@@ -15,7 +15,7 @@
   --accent: #b4aff3;
   --result-theme: var(--bg);
 
-  --overlay-bg: rgba(6, 10, 22, 0.88);
+  --overlay-bg: rgba(6, 10, 22, 0.96);
   --glass: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.16);
 }
@@ -1018,4 +1018,18 @@ button:disabled {
   font-style: italic;
   font-weight: 700;
   color: var(--accent);
+}
+
+/* ==========================================================
+   HIDE PAGE UI DURING CINEMATIC
+========================================================== */
+
+.cinematic-mode .header,
+.cinematic-mode #quiz-section,
+.cinematic-mode #results-section > :not(#fate-overlay) {
+  visibility: hidden;
+}
+
+.cinematic-mode #fate-overlay {
+  visibility: visible;
 }
