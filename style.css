@@ -359,8 +359,11 @@ button:disabled {
   padding: 1rem;
 
   border-radius: 14px;
-  border-right: 6px solid var(--accent);
+  border-right: 6px solid var(--personality-color);
 
+  /*
+   Every result card remains the same blue.
+   */
   background: var(--card);
 
   opacity: 1;
@@ -380,9 +383,20 @@ button:disabled {
 .result-card-heading {
   margin: 0 0 0.75rem;
 
-  color: var(--accent);
+  /*
+   Uses the character's true color.
+   */
+  color: var(--personality-color);
 
   font-weight: 700;
+
+  /*
+   This faint neutral edge helps preserve the apparent color
+   against the blue card without altering the color itself.
+   */
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.26),
+    0 0 8px color-mix(in srgb, var(--personality-accent), transparent 70%);
 }
 
 .result-description {
@@ -391,7 +405,8 @@ button:disabled {
 }
 
 .top-result-card {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 50%);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--personality-accent), transparent 42%);
 }
 
 /* ==========================================================
@@ -406,13 +421,35 @@ button:disabled {
 
   border-radius: 999px;
 
+  /*
+    Keep your existing darker blue background.
+   */
   background: rgba(0, 0, 0, 0.18);
+
+  /*
+   A subtle pale edge separates the true character color
+   from the surrounding blue.
+   */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
 .bar-fill {
   width: 0%;
   height: 100%;
-  background: var(--accent);
+
+  /*
+    Uses personality.color exactly.
+   */
+  background: var(--personality-color);
+
+  /*
+   Accent is now a secondary highlight rather than replacing
+   the character's true color.
+   */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 8px color-mix(in srgb, var(--personality-accent), transparent 55%);
+
   transition: width 0.9s ease;
 }
 
@@ -431,8 +468,10 @@ button:disabled {
 
   overflow: hidden;
 
-  border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
-  border-right: 8px solid var(--accent);
+  border: 1px solid
+    color-mix(in srgb, var(--personality-accent), transparent 45%);
+
+  border-right: 8px solid var(--personality-color);
   border-radius: 18px;
 
   background: linear-gradient(
@@ -536,10 +575,14 @@ button:disabled {
 .result-hero-heading {
   margin: 0;
 
-  color: var(--accent);
+  color: var(--personality-color);
 
   font-size: 1.25rem;
   font-weight: 700;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 10px color-mix(in srgb, var(--personality-accent), transparent 65%);
 }
 
 .result-hero-quote {
@@ -642,7 +685,7 @@ button:disabled {
 .identity-name {
   margin: 0;
 
-  color: #fff;
+  color: var(--personality-color, #fff);
 
   overflow-wrap: anywhere;
 
@@ -650,14 +693,16 @@ button:disabled {
   line-height: 1;
 
   text-shadow:
-    0 0 18px rgba(255, 255, 255, 0.45),
-    0 0 42px color-mix(in srgb, var(--accent), transparent 45%);
+    0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 18px
+      color-mix(in srgb, var(--personality-accent, #fff), transparent 35%),
+    0 0 42px color-mix(in srgb, var(--personality-color, #fff), transparent 55%);
 }
 
 .identity-heading {
   margin: 0;
 
-  color: var(--accent);
+  color: var(--personality-color, var(--accent));
 
   font-size: clamp(1.25rem, 3vw, 2rem);
   font-weight: 700;

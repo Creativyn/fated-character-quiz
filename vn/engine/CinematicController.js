@@ -200,6 +200,13 @@ export class CinematicController {
 
     this.textElement.classList.add("show");
 
+    this.textElement.style.setProperty("--personality-color", personalityColor);
+
+    this.textElement.style.setProperty(
+      "--personality-accent",
+      personalityAccent,
+    );
+
     /*
      * The former final reveal sound has been removed.
      * Cinematic ambience continues beneath the identity reveal.
@@ -307,6 +314,10 @@ export class CinematicController {
 
   applyResultTheme() {
     const top = this.topResult;
+
+    const personalityColor = top?.color || top?.accent || "#ffffff";
+
+    const personalityAccent = top?.accent || top?.color || "#b4aff3";
 
     if (!top) return;
 
