@@ -21,7 +21,7 @@ export const PERSONALITIES = [
     heading: "The Charming Taskmaster",
     quote:
       "I am an overseer, nothing more. I keep things in balance as best I can.",
-    color: "#676d6d",
+    color: "#3dc5c5",
     accent: "#363838",
     portrait: "assets/portraits/fait.png",
     description:
