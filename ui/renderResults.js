@@ -1,5 +1,15 @@
 import { setRichText } from "../utils/richText.js";
 
+const DEFAULT_ACCENT = "#60a5fa";
+
+/**
+ * Returns a personality's accent color without changing
+ * the uniform blue result-card background.
+ */
+function getAccent(personality) {
+  return personality?.accent || personality?.color || DEFAULT_ACCENT;
+}
+
 export function renderResults(results) {
   const container = document.getElementById("results-container");
 
@@ -10,6 +20,7 @@ export function renderResults(results) {
 
   if (!Array.isArray(results) || results.length === 0) {
     console.warn("renderResults: no results supplied");
+
     container.replaceChildren();
     return;
   }
@@ -18,11 +29,23 @@ export function renderResults(results) {
 
   const top = results[0];
 
+  /* ========================================================
+     DOMINANT RESULT HERO
+  ======================================================== */
+
   if (top) {
+    const topAccent = getAccent(top);
     const hero = document.createElement("section");
 
     hero.className = "result-hero";
-    hero.style.setProperty("--accent", top.accent || top.color || "#60a5fa");
+
+    /*
+     * The CSS variable supports the existing stylesheet.
+     * Direct styles ensure the accent always responds.
+     */
+    hero.style.setProperty("--accent", topAccent);
+
+    hero.style.borderRightColor = topAccent;
 
     const portraitMarkup = top.portrait
       ? `
@@ -40,18 +63,30 @@ export function renderResults(results) {
       `;
 
     const headingMarkup = top.heading
-      ? `<p class="result-hero-heading">${top.heading}</p>`
+      ? `
+        <p class="result-hero-heading">
+          ${top.heading}
+        </p>
+      `
       : "";
 
-    const quoteMarkup = top.quote ? `<p class="result-hero-quote"></p>` : "";
+    const quoteMarkup = top.quote
+      ? `
+        <p class="result-hero-quote"></p>
+      `
+      : "";
 
     hero.innerHTML = `
       ${portraitMarkup}
 
       <div class="result-hero-copy">
-        <p class="result-kicker">You are most like...</p>
+        <p class="result-kicker">
+          You are most like...
+        </p>
 
-        <h2 class="result-hero-name">${top.name}</h2>
+        <h2 class="result-hero-name">
+          ${top.name}
+        </h2>
 
         ${headingMarkup}
 
@@ -59,10 +94,16 @@ export function renderResults(results) {
       </div>
     `;
 
-    if (top.quote) {
-      const quoteElement = hero.querySelector(".result-hero-quote");
+    const heroHeading = hero.querySelector(".result-hero-heading");
 
-      setRichText(quoteElement, top.quote, {
+    if (heroHeading) {
+      heroHeading.style.color = topAccent;
+    }
+
+    const heroQuote = hero.querySelector(".result-hero-quote");
+
+    if (top.quote && heroQuote) {
+      setRichText(heroQuote, top.quote, {
         openingQuote: "“",
         closingQuote: "”",
       });
@@ -71,8 +112,18 @@ export function renderResults(results) {
     container.appendChild(hero);
   }
 
+  /* ========================================================
+     PERCENTAGE RESULT CARDS
+  ======================================================== */
+
   results.forEach((personality, index) => {
     const card = document.createElement("article");
+
+    const accent = getAccent(personality);
+    const percent = Math.max(
+      0,
+      Math.min(100, Number(personality.percent ?? 0)),
+    );
 
     card.className = "result-card";
 
@@ -80,24 +131,30 @@ export function renderResults(results) {
       card.classList.add("top-result-card");
     }
 
-    const accent = personality.accent || personality.color || "#60a5fa";
-
-    const percent = Number(personality.percent ?? 0);
-
+    /*
+     * Keep the card background controlled by:
+     *
+     *   background: var(--card);
+     *
+     * Only the personality accents change.
+     */
     card.style.setProperty("--accent", accent);
+
     card.style.borderRightColor = accent;
 
     const headingMarkup = personality.heading
       ? `
-        <p class="result-card-heading">
-          ${personality.heading}
-        </p>
-      `
+          <p class="result-card-heading">
+            ${personality.heading}
+          </p>
+        `
       : "";
 
     const descriptionMarkup =
       index === 0 && personality.description
-        ? `<p class="result-description"></p>`
+        ? `
+          <p class="result-description"></p>
+        `
         : "";
 
     card.innerHTML = `
@@ -108,33 +165,37 @@ export function renderResults(results) {
 
       ${headingMarkup}
 
-      <div
-  class="bar-fill"
-  data-target="${percent}"
-  style="width:0%;"
-></div>
+      <div class="bar">
+        <div
+          class="bar-fill"
+          data-target="${percent}"
+          style="width: 0%;"
+        ></div>
+      </div>
 
       ${descriptionMarkup}
     `;
 
-    const heading = card.querySelector(".result-card-heading");
+    const cardHeading = card.querySelector(".result-card-heading");
 
-    if (heading) {
-      heading.style.color = accent;
+    if (cardHeading) {
+      cardHeading.style.color = accent;
+    }
+
+    const barFill = card.querySelector(".bar-fill");
+
+    if (barFill) {
+      barFill.style.backgroundColor = accent;
     }
 
     if (index === 0 && personality.description) {
       const descriptionElement = card.querySelector(".result-description");
 
-      setRichText(descriptionElement, personality.description);
+      if (descriptionElement) {
+        setRichText(descriptionElement, personality.description);
+      }
     }
 
     container.appendChild(card);
   });
-
-  const fill = card.querySelector(".bar-fill");
-
-  if (fill) {
-    fill.style.backgroundColor = accent;
-  }
 }
