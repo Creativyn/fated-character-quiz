@@ -155,6 +155,9 @@ export class CinematicController {
   async onRevealIdentity() {
     const top = this.topResult;
 
+    const cinematicColor =
+      top?.cinematicColor || top?.accent || top?.color || "#ffffff";
+
     if (!this.textElement || !top) return;
 
     this.textElement.classList.remove("show");
@@ -199,6 +202,8 @@ export class CinematicController {
       this.textElement.querySelector(".identity-portrait");
 
     this.textElement.classList.add("show");
+
+    this.textElement.style.setProperty("--cinematic-color", cinematicColor);
 
     this.textElement.style.setProperty("--personality-color", personalityColor);
 

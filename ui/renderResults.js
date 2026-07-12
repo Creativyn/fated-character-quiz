@@ -1,14 +1,24 @@
 import { setRichText } from "../utils/richText.js";
 
-const DEFAULT_COLOR = "#60a5fa";
-const DEFAULT_ACCENT = "#b4aff3";
+const DEFAULT_HERO_COLOR = "#566fb8";
+const DEFAULT_CARD_ACCENT = "#ffffff";
 
-function getPersonalityColor(personality) {
-  return personality?.color || personality?.accent || DEFAULT_COLOR;
+function getHeroColor(personality) {
+  return (
+    personality?.heroColor ||
+    personality?.accent ||
+    personality?.color ||
+    DEFAULT_HERO_COLOR
+  );
 }
 
-function getPersonalityAccent(personality) {
-  return personality?.accent || personality?.color || DEFAULT_ACCENT;
+function getCardAccent(personality) {
+  return (
+    personality?.cardAccent ||
+    personality?.accent ||
+    personality?.color ||
+    DEFAULT_CARD_ACCENT
+  );
 }
 
 export function renderResults(results) {
@@ -21,7 +31,6 @@ export function renderResults(results) {
 
   if (!Array.isArray(results) || results.length === 0) {
     console.warn("renderResults: no results supplied");
-
     container.replaceChildren();
     return;
   }
@@ -31,20 +40,16 @@ export function renderResults(results) {
   const top = results[0];
 
   /* ========================================================
-     DOMINANT RESULT HERO
+     DOMINANT PERSONALITY CARD
   ======================================================== */
 
   if (top) {
-    const color = getPersonalityColor(top);
-    const accent = getPersonalityAccent(top);
-
+    const heroColor = getHeroColor(top);
     const hero = document.createElement("section");
 
     hero.className = "result-hero";
 
-    hero.style.setProperty("--personality-color", color);
-
-    hero.style.setProperty("--personality-accent", accent);
+    hero.style.setProperty("--hero-color", heroColor);
 
     const portraitMarkup = top.portrait
       ? `
@@ -102,15 +107,13 @@ export function renderResults(results) {
   }
 
   /* ========================================================
-     RESULT CARDS
+     BLUE PERCENTAGE CARDS
   ======================================================== */
 
   results.forEach((personality, index) => {
     const card = document.createElement("article");
 
-    const color = getPersonalityColor(personality);
-
-    const accent = getPersonalityAccent(personality);
+    const cardAccent = getCardAccent(personality);
 
     const percent = Math.max(
       0,
@@ -123,9 +126,7 @@ export function renderResults(results) {
       card.classList.add("top-result-card");
     }
 
-    card.style.setProperty("--personality-color", color);
-
-    card.style.setProperty("--personality-accent", accent);
+    card.style.setProperty("--card-accent", cardAccent);
 
     const headingMarkup = personality.heading
       ? `
