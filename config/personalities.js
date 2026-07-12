@@ -22,7 +22,7 @@ export const PERSONALITIES = [
     quote:
       "I am an overseer, nothing more. I keep things in balance as best I can.",
     color: "#363838",
-    accent: "#455A64",
+    accent: "#363838",
     portrait: "assets/portraits/fait.png",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
@@ -45,8 +45,8 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote:
       "I can see that you believe in justice, but what about redemption, Theia? Do you not believe in the spirit of redemption?",
-    color: "#803db6",
-    accent: "#4f1181",
+    color: "#4f1181",
+    accent: "#803db6",
     portrait: "assets/portraits/hoep.png",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
