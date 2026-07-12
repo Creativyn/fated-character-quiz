@@ -88,7 +88,7 @@ export const PERSONALITIES = [
     id: "endeavor",
     name: "Endeavor",
     heading: "The Community Leader",
-    quote: "It is just a dream right now. But I am working on it, bit by bit",
+    quote: "It is just a dream right now. But I am working on it, bit by bit.",
     color: "#2980B9",
     accent: "#85C1E9",
     portrait: "assets/portraits/endeavor.png",
