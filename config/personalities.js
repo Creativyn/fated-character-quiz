@@ -120,7 +120,7 @@ export const PERSONALITIES = [
     color: "#e535a1",
     cinematicColor: "#e469b5",
     heroColor: "#e535a1",
-    cardAccent: "#ff009d",
+    cardAccent: "#ff27ac",
     portrait: "assets/portraits/justene.png",
     description:
       "You enjoy being the center of attention, the most popular person in school. Your vibrant personality and strong reactions certainly get you noticed, but your desire for constant celebrity may lead to trouble. You are passionate about your likes and dislikes. Having a great time and making much of yourself consume your day, but you are working on this…trying to give more to others while discovering who you really are. Besides, who knew helping out in the community could be so fun?",
