@@ -23,7 +23,7 @@ export const PERSONALITIES = [
       "I am an overseer, nothing more. I keep things in balance as best I can.",
     color: "#455A64",
     accent: "#455A64",
-    portrait: "images/creator.webp",
+    portrait: "assets/portraits/fait.png",
     description:
       "Your burdens are taxing, but you face them with determination and strength. You have a sense of honor that is heroic and brave. Sometimes your grip on events becomes too controlling as you fight to protect the people you love (especially your beloved). You are sincerely devoted to your  whole family. A mysterious aura surrounds you. People describe you as enigmatic. Fascinated by magical gizmos and gadgets, you also enjoy verbal games and lively banter. You are a well-read traveler.",
   },
@@ -35,7 +35,7 @@ export const PERSONALITIES = [
       "Whenever you feel down on your luck, just press it lightly to your heart, and it will sing you my song. It will be as if I am right there by your side.",
     color: "#9ea8ad",
     accent: "#c8d6dd",
-    portrait: "images/scholar.webp",
+    portrait: "assets/portraits/faeth.png",
     description:
       "You are highly intuitive. Your mystical spirit allows you to heal others through song and silent prayer. You will never allow any harm to come to your family and will do anything to keep them safe. Although sweetly innocent, tiny, and cute, you demonstrate great strength when dealing with those who suffer. Your presence in someone’s life provides them with the inspiration to accomplish any task, endure any hardship.",
   },
@@ -47,7 +47,7 @@ export const PERSONALITIES = [
       "I can see that you believe in justice, but what about redemption, Theia? Do you not believe in the spirit of redemption?",
     color: "#8E44AD",
     accent: "#803db6",
-    portrait: "images/guardian.webp",
+    portrait: "assets/portraits/hoep.png",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
   },
@@ -58,7 +58,7 @@ export const PERSONALITIES = [
     quote: "Now, never mind, sweet one, Luv will find a way. I always do.",
     color: "#E91E63",
     accent: "#e44b7e",
-    portrait: "images/adventurer.webp",
+    portrait: "assets/portraits/luv.png",
     description:
       "Big and Beautiful. You are filled with love to the bursting. Your empathy literally drives you to tears when sensing someone’s heartache. You enjoy making people happy with your home-baked goodies and mugs of hot cocoa. Your home is as cozy, warm, and welcoming as you are. You share a special relationship with your secret diary and enjoy all the sweet banter between you. You are undoubtedly the most compassionate and loving person in the universe. Need a hug?",
   },
@@ -91,7 +91,7 @@ export const PERSONALITIES = [
     quote: "It is just a dream right now. But I am working on it, bit by bit",
     color: "#2980B9",
     accent: "#85C1E9",
-    portrait: "images/diplomat.webp",
+    portrait: "assets/portraits/endeavor.png",
     description:
       "An enterprising philanthropist, your involvement in the community’s welfare is the focus of your life. As a licensed apothecary, you are ever ready to come to the aid of those in need. You are truly interested in making people’s dreams come true and bettering their lives. Your generosity and goodhearted nature make you beloved in your community. Everyone feels comfortable and at home in your presence. Unfortunately, your naivety could make you fall prey to the unscrupulous.",
   },
@@ -103,7 +103,7 @@ export const PERSONALITIES = [
       "I just want to live my life as best I can without all the games. And I want to start helping others, too – not just myself.",
     color: "#e535a1",
     accent: "#e469b5",
-    portrait: "images/entertainer.webp",
+    portrait: "assets/portraits/justene.png",
     description:
       "You enjoy being the center of attention, the most popular person in school. Your vibrant personality and strong reactions certainly get you noticed, but your desire for constant celebrity may lead to trouble. You are passionate about your likes and dislikes. Having a great time and making much of yourself consume your day, but you are working on this…trying to give more to others while discovering who you really are. Besides, who knew helping out in the community could be so fun?",
   },
@@ -115,7 +115,7 @@ export const PERSONALITIES = [
       "Most people do not even realize what they are missing until I tell them.",
     color: "#E67E22",
     accent: "#F5B041",
-    portrait: "images/strategist.webp",
+    portrait: "assets/portraits/rip.png",
     description:
       "Manipulative, underhanded, and unscrupulous, you are eager to promote any deal that will get you ahead. Making money, personal advancement, and gain are the only things that really matter to you…although feverish, mind-blowing sex is a close follow-up. You cannot be trusted, and you never trust. Naturally wary of everyone, you enjoy preying upon the innocent as they make the easiest targets, bestowing the quickest returns.",
   },
