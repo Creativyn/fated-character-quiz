@@ -82,6 +82,8 @@ export function renderResults(results) {
 
     const accent = personality.accent || personality.color || "#60a5fa";
 
+    console.log(personality.name, personality.accent, personality.color);
+
     const percent = Number(personality.percent ?? 0);
 
     card.style.setProperty("--accent", accent);
