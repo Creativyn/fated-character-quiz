@@ -50,7 +50,7 @@ export const PERSONALITIES = [
     name: "Hoep Majesticus",
     heading: "The Steady Guardian",
     quote:
-      "I can see that you believe in justice, but what about redemption, Theia? Do you not believe in the spirit of redemption?",
+      "Why does learning need to be fun? The result is what drives the effort.",
     color: "#4f1181",
     cinematicColor: "#803db6",
     heroColor: "#4f1181",
