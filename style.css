@@ -1033,3 +1033,19 @@ button:disabled {
 .cinematic-mode #fate-overlay {
   visibility: visible;
 }
+
+#newsletter-signup {
+  width: min(90%, 900px);
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+#newsletter-signup h2 {
+  margin-bottom: 0.75rem;
+}
+
+#newsletter-signup > p {
+  max-width: 650px;
+  margin: 0 auto 2rem;
+}
