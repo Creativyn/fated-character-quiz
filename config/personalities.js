@@ -51,10 +51,10 @@ export const PERSONALITIES = [
     heading: "The Steady Guardian",
     quote:
       "Why does learning need to be fun? The result is what drives the effort.",
-    color: "#4f1181",
-    cinematicColor: "#803db6",
-    heroColor: "#4f1181",
-    cardAccent: "#6b1181",
+    color: "#181181",
+    cinematicColor: "#3d49b6",
+    heroColor: "#111c81",
+    cardAccent: "#181181",
     portrait: "assets/portraits/hoep.png",
     description:
       "You are strength personified, a robust and vigorous individual who keeps fit and ready at all times. You enjoy living in a palace upon a mountaintop…your own private fortress. Protecting the privacy and health of those you love is tantamount to you. Your bravery and resilience make you more than capable of this task. Traveling to other worlds, dimensions, and times is a treat that you indulge in sparingly but enjoy immensely. Most of all, you love a good work-out.",
