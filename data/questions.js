@@ -131,7 +131,7 @@ export const QUESTIONS = [
       { text: "Neon pink", value: "justene" },
       { text: "Earthen tones", value: "manus" },
       { text: "Reds and soft pinks", value: "luv" },
-      { text: "Storm grays", value: "fait" },
+      { text: "Storm grays and black", value: "fait" },
       { text: "Yellow", value: "endeavor" },
       { text: "Royal blue and dark, rich colors", value: "hoep" },
     ],
