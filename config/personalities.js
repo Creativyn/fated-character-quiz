@@ -83,7 +83,7 @@ export const PERSONALITIES = [
     cardAccent: "#523817",
     portrait: "assets/portraits/manus.png",
     description:
-      "Dedicated to the land, you wish for a helpmate that will work alongside you. Though extremely loyal to family and close friends, you are not particularly social. More of a plain wrap kind of person. When it comes to problems, you are an avoider. Simple and charmingly direct, you hope to lead a modest life unburdened by the unexpected. But life does not always work out that way. Is staying in your comfort zone more important than a true love that demands sacrifices to win and keep?",
+      "Dedicated to the land, you wish for a helpmate that will work alongside you. Though extremely loyal to family and close friends, you are not particularly social. More of a plain wrap kind of person. When it comes to problems, you are an avoider. Simple and charmingly candid, you hope to lead a modest life unburdened by the unexpected. But life does not always work out that way. Is staying in your comfort zone more important than a true love that demands sacrifices to win and keep?",
   },
   {
     id: "amandas",

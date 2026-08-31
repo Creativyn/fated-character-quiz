@@ -55,7 +55,7 @@ export const QUESTIONS = [
     answers: [
       { text: "Healer or apothecary", value: "endeavor" },
       { text: "CEO", value: "fait" },
-      { text: "Guidance counselor", value: "luv" },
+      { text: "Relationship counselor", value: "luv" },
       { text: "Broker", value: "rip" },
       { text: "Influencer", value: "justene" },
       { text: "Farmer", value: "manus" },
@@ -192,7 +192,7 @@ export const QUESTIONS = [
     id: "q10",
     text: "What is the most important to you?",
     answers: [
-      { text: "True love", value: "manus" },
+      { text: "A partner", value: "manus" },
       { text: "Free choice", value: "prometheia" },
       { text: "Protecting those I love", value: "fait" },
       { text: "Universal love", value: "luv" },
