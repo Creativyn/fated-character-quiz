@@ -194,6 +194,8 @@ main {
 .vn-navigation button {
   flex: 0 0 auto;
   min-width: 110px;
+  padding: 0.7rem 1.5rem;
+  border-radius: 999px;
 }
 
 /* ==========================================================
