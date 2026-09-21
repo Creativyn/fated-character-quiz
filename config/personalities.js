@@ -87,7 +87,7 @@ export const PERSONALITIES = [
   },
   {
     id: "amandas",
-    name: "Amandas",
+    name: "Amandas Fae",
     heading: "The Devoted Lover",
     quote: "Oh, Manny, I wanted you so. I gave up my home...my ways.",
     color: "#ab4dbe",
