@@ -5,14 +5,12 @@ import { generateResultCard } from "../utils/shareCard.js";
  * Replace these with your actual Wix pages.
  */
 const HOME_URL = "https://avicornpress.com/quizzes";
-const EXPLORE_URL = "https://avicornpress.com/characters";
 
 export function initResultButtons({ onRetake } = {}) {
   const retakeBtn = document.getElementById("retake-btn");
   const printBtn = document.getElementById("print-btn");
   const shareBtn = document.getElementById("share-btn");
   const homeBtn = document.getElementById("home-btn");
-  const exploreBtn = document.getElementById("explore-btn");
 
   retakeBtn?.addEventListener("click", () => {
     onRetake?.();
