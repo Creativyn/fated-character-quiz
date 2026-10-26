@@ -27,13 +27,6 @@ export function initResultButtons({ onRetake } = {}) {
     window.location.href = HOME_URL;
   });
 
-  /*
-   * Go to your Wix Characters page.
-   */
-  exploreBtn?.addEventListener("click", () => {
-    window.location.href = EXPLORE_URL;
-  });
-
   shareBtn?.addEventListener("click", async () => {
     try {
       const results = VNState.getResults();
